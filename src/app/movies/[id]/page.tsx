@@ -1,5 +1,5 @@
 import MoviePlayer from "@/components/movies-ui/movie-players";
-import { MovieInfo } from "@/utils/request";
+import { MovieInfo } from "@/utils/movie-requests/request";
 import MoreMovieInfo from "@/components/movies-ui/movie-info-tabs";
 
 import Image from "next/image";

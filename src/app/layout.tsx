@@ -2,7 +2,12 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 import Navbar from "@/components/ui/navbar";
-import { font_rubik, font_raleway } from "@/components/fonts";
+import {
+  font_rubik,
+  font_raleway,
+  font_atkinson,
+  font_lexend,
+} from "@/components/fonts";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -16,7 +21,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" data-theme="dark">
-      <body className={font_raleway.className} data-theme="dark">
+      <body className={font_lexend.className} data-theme="dark">
         <Navbar />
         <section data-theme="dark">{children}</section>
       </body>

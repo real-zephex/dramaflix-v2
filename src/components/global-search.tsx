@@ -3,9 +3,11 @@
 import { SetStateAction, useEffect, useState, useCallback } from "react";
 import { usePathname } from "next/navigation";
 import { useHotkeys } from "react-hotkeys-hook";
-import MoviesSearch from "./movies-ui/movie-search-formatter";
 
-import { MoviesSearchRequest } from "@/utils/request";
+import MoviesSearch from "./movies-ui/movie-search-formatter";
+import { AnimeRequestHandler } from "@/utils/anime-requests/request";
+import { MoviesSearchRequest } from "@/utils/movie-requests/request";
+import AnimesSearchFormatter from "./anime-ui/anime-search-formatter";
 
 const Search = () => {
   const pathname = usePathname() as string;
@@ -37,6 +39,10 @@ const Search = () => {
       if (provider === "movies") {
         data = await MoviesSearchRequest(title);
         const search_formatter = await MoviesSearch(data);
+        setFormat(search_formatter);
+      } else if (provider === "animes") {
+        data = await AnimeRequestHandler({ search: true, searchQuery: title });
+        const search_formatter = await AnimesSearchFormatter({ data });
         setFormat(search_formatter);
       }
     },
@@ -87,20 +93,23 @@ const Search = () => {
       </button>
       <dialog id="my_modal_4" className="modal">
         <div className="modal-box md:w-11/12 md:max-w-6xl p-2 w-full">
-          <form method="dialog ">
-            {/* if there is a button in form, it will close the modal */}
-            <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
-              ✕
+          {/* <form method="dialog ">
+            <button className="btn  btn-ghost ">
+              
             </button>
-          </form>
-          <section className="flex mt-10">
+          </form> */}
+          <div className="modal-action">
+            <form method="dialog">
+              <button className="btn btn-sm btn-circle absolute right-2 top-2">✕</button>
+            </form>
+          </div>
+          <section className="flex mt-4">
             <div className="w-full">
               <label className="input input-bordered flex items-center gap-2">
                 <input
                   type="search"
                   className="grow"
                   placeholder="Search"
-                  required
                   value={title}
                   onChange={(event) => {
                     setTitle(event.target.value);
@@ -137,11 +146,6 @@ const Search = () => {
             </select>
           </section>
           <div className="mt-1">{format}</div>
-          {/* <div className="modal-action">
-            <form method="dialog">
-              <button className="btn">Close</button>
-            </form>
-          </div> */}
         </div>
       </dialog>
     </div>

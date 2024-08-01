@@ -2,7 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { MdOutlineStar } from "react-icons/md";
 
-import { MoviesDiscover } from "@/utils/request";
+import { MoviesDiscover } from "@/utils/movie-requests/request";
 
 const MoviesGridConstructor = async ({ type }: { type: string }) => {
   const data = await MoviesDiscover(type);
@@ -23,7 +23,7 @@ const MoviesGridConstructor = async ({ type }: { type: string }) => {
               alt={item.title}
               width={500}
               height={750}
-              className="w-full"
+              className="w-full h-auto"
             />
             <div className="p-4 bg-background">
               <h3 className="text-xl font-bold">{item.title}</h3>

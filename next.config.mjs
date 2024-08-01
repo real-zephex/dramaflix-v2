@@ -1,5 +1,10 @@
 /** @type {import('next').NextConfig} */
-const remotePatterns = ["image.tmdb.org"];
+const remotePatterns = [
+  "image.tmdb.org",
+  "s4.anilist.co",
+  "media.kitsu.io",
+  "artworks.thetvdb.com",
+];
 
 const nextConfig = {
   images: {

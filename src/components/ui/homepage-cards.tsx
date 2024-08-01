@@ -2,17 +2,22 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { getRandomMovie } from "@/utils/request";
+import { getRandomMovie } from "@/utils/movie-requests/request";
+import { getRandomAnime } from "@/utils/anime-requests/request";
 import { useEffect, useState } from "react";
 
 const HomepageCards = () => {
   const [randomImage, setRandomImage] = useState<string>("/placeholder.svg");
+  const [randomAnimePoster, setRandomAnimePoster] =
+    useState<string>("/placeholder.svg");
 
   useEffect(() => {
     // Fetch the initial random image
     const fetchImage = async () => {
       const image: any = await getRandomMovie(true);
+      const anime_image: any = await getRandomAnime(true);
       setRandomImage(image);
+      setRandomAnimePoster(anime_image);
     };
 
     fetchImage(); // Fetch image on component mount
@@ -29,7 +34,8 @@ const HomepageCards = () => {
       {generateCards(
         "Anime",
         "Dive into the captivating world of anime, from classic masterpieces to the latest hits.",
-        "animes"
+        "animes",
+        randomAnimePoster
       )}
       {generateCards(
         "K-Dramas",
@@ -67,7 +73,7 @@ const generateCards = (
         width={400}
         height={300}
         alt="Web Series"
-        className="h-72 rounded-xl object-cover"
+        className="h-80 rounded-xl object-cover"
       />
       <h3 className="text-2xl font-bold mt-4">{title}</h3>
       <p className="text-muted-foreground mt-2">{message}</p>

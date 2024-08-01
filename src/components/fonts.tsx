@@ -22,3 +22,9 @@ export const font_raleway = Raleway({
   weight: "400",
   variable: "--font-rubik",
 });
+
+export const font_lexend = Lexend_Deca({
+  subsets: ["latin"],
+  weight: ["400", "700", "900"],
+  variable: "--font-rubik",
+});

@@ -1,8 +1,5 @@
 import Image from "next/image";
-import Link from "next/link";
 import HomepageCards from "@/components/ui/homepage-cards";
-
-import { getRandomMovie } from "@/utils/request";
 
 export default async function Home() {
   return (
