@@ -317,3 +317,71 @@ interface Source {
   isM3U8?: boolean;
   quality?: string;
 }
+
+// Kdrama Content
+
+export interface DramaSearchRecentPopular {
+  currentPage?: number;
+  totalPages?: number;
+  hasNextPage?: boolean;
+  results?: KdramaSearchResult[];
+}
+
+interface KdramaSearchResult {
+  id?: string;
+  title?: string;
+  url?: string;
+  image?: string;
+}
+
+export interface DramaInfo {
+  id?: string;
+  title?: string;
+  duration?: string;
+  status?: string;
+  genres?: string[];
+  otherNames?: string[];
+  image?: string;
+  description?: string;
+  releaseDate?: string;
+  contentRating?: string;
+  airsOn?: string;
+  director?: string;
+  originalNetwork?: string;
+  trailer?: DramaTrailer;
+  characters?: DramaCharacter[];
+  episodes?: DramaEpisode[];
+}
+
+interface DramaCharacter {
+  url?: string;
+  imageUrl?: string;
+  name?: string;
+}
+
+export interface DramaEpisode {
+  id?: string;
+  title?: string;
+  episode?: number;
+  subType?: SubType;
+  releaseDate?: Date;
+  url?: string;
+}
+
+enum SubType {
+  Sub = "SUB",
+}
+
+interface DramaTrailer {
+  url?: string;
+  id?: string;
+}
+
+export interface DramaLinks {
+  sources?: DramaSource[];
+}
+
+interface DramaSource {
+  url?: string;
+  isM3U8?: boolean;
+}

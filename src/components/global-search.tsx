@@ -4,10 +4,14 @@ import { SetStateAction, useEffect, useState, useCallback } from "react";
 import { usePathname } from "next/navigation";
 import { useHotkeys } from "react-hotkeys-hook";
 
-import MoviesSearch from "./movies-ui/movie-search-formatter";
 import { AnimeRequestHandler } from "@/utils/anime-requests/request";
-import { MoviesSearchRequest } from "@/utils/movie-requests/request";
 import AnimesSearchFormatter from "./anime-ui/anime-search-formatter";
+
+import MoviesSearch from "./movies-ui/movie-search-formatter";
+import { MoviesSearchRequest } from "@/utils/movie-requests/request";
+
+import { SearchDramas } from "@/utils/kdrama-requests/request";
+import DramaSearchFormatter from "./kdrama-ui/drama-search-formatter";
 
 const Search = () => {
   const pathname = usePathname() as string;
@@ -43,6 +47,10 @@ const Search = () => {
       } else if (provider === "animes") {
         data = await AnimeRequestHandler({ search: true, searchQuery: title });
         const search_formatter = await AnimesSearchFormatter({ data });
+        setFormat(search_formatter);
+      } else if (provider === "kdramas") {
+        data = await SearchDramas(title);
+        const search_formatter = await DramaSearchFormatter({ data });
         setFormat(search_formatter);
       }
     },
@@ -100,7 +108,9 @@ const Search = () => {
           </form> */}
           <div className="modal-action">
             <form method="dialog">
-              <button className="btn btn-sm btn-circle absolute right-2 top-2">✕</button>
+              <button className="btn btn-sm btn-circle absolute right-2 top-2">
+                ✕
+              </button>
             </form>
           </div>
           <section className="flex mt-4">

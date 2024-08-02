@@ -4,6 +4,7 @@ const remotePatterns = [
   "s4.anilist.co",
   "media.kitsu.io",
   "artworks.thetvdb.com",
+  "asianimg.pro",
 ];
 
 const nextConfig = {

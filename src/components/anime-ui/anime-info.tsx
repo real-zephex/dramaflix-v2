@@ -17,6 +17,7 @@ const AnimeInfoComponent = async ({ animeInfo }: { animeInfo: AnimeInfo }) => {
             placeholder="blur"
             blurDataURL="/placeholder.svg"
             className="rounded-md border-2 border-zinc-600"
+            quality={100}
           />
           <p className="text-xl md:text-2xl lg:text-3xl ml-2 font-semibold">
             {animeInfo.title?.english || animeInfo.title?.romaji}
@@ -197,8 +198,8 @@ const AnimeInfoComponent = async ({ animeInfo }: { animeInfo: AnimeInfo }) => {
                     className="w-auto h-44 md:h-48 lg:h-52 xl:h-72 mx-1 rounded-lg "
                     alt="Anime Artwork"
                     unoptimized
-                    loading="lazy"
                     placeholder="blur"
+                    quality={100}
                     blurDataURL="/placeholder.svg"
                   />
                 </div>

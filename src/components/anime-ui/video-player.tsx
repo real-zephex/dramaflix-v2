@@ -54,7 +54,7 @@ const AnimeVideoPage = ({ data }: { data: AnimeInfo }) => {
     end: number | undefined
   ) => {
     return (
-      <div className="grid grid-cols-5 xl:grid-cols-4 2xl:grid-cols-5 gap-2 md:grid-cols-10 lg:grid-cols-12 my-2">
+      <div className="grid grid-cols-5 2xl:grid-cols-5 gap-2 md:grid-cols-10 lg:grid-cols-12 my-2">
         {data.episodes &&
           data.episodes.slice(start, end).map((item, index) => (
             <button
@@ -116,8 +116,7 @@ const AnimeVideoPage = ({ data }: { data: AnimeInfo }) => {
           aspectRatio="16/9"
           load="eager"
           playsInline
-          volume={0}
-          autoPlay
+          volume={1}
         >
           <MediaProvider />
 
@@ -147,9 +146,9 @@ const AnimeVideoPage = ({ data }: { data: AnimeInfo }) => {
 
   return (
     <main>
-      <div className="flex xl:flex-row flex-col w-full">
+      <div className="flex 2xl:flex-row flex-col w-full">
         <div className="w-full">{videoPlayer}</div>
-        <div className="xl:w-1/4 w-full">
+        <div className="2xl:w-1/4 w-full">
           <div
             className="collapse bg-gradient-to-b from-base-300 to-base-100 rounded-none p-0"
             defaultChecked

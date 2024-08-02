@@ -2,13 +2,17 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useEffect, useState } from "react";
+
 import { getRandomMovie } from "@/utils/movie-requests/request";
 import { getRandomAnime } from "@/utils/anime-requests/request";
-import { useEffect, useState } from "react";
+import { getRandomKdramaImage } from "@/utils/kdrama-requests/request";
 
 const HomepageCards = () => {
   const [randomImage, setRandomImage] = useState<string>("/placeholder.svg");
   const [randomAnimePoster, setRandomAnimePoster] =
+    useState<string>("/placeholder.svg");
+  const [randomDramaImage, setRandomDramaImage] =
     useState<string>("/placeholder.svg");
 
   useEffect(() => {
@@ -16,8 +20,10 @@ const HomepageCards = () => {
     const fetchImage = async () => {
       const image: any = await getRandomMovie(true);
       const anime_image: any = await getRandomAnime(true);
+      const drama_image: any = await getRandomKdramaImage();
       setRandomImage(image);
       setRandomAnimePoster(anime_image);
+      setRandomDramaImage(drama_image);
     };
 
     fetchImage(); // Fetch image on component mount
@@ -30,7 +36,7 @@ const HomepageCards = () => {
   }, []);
 
   return (
-    <div className="mx-auto p-2 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:w-10/12 w-full">
+    <div className="mx-auto p-2 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 lg:w-10/12 w-full">
       {generateCards(
         "Anime",
         "Dive into the captivating world of anime, from classic masterpieces to the latest hits.",
@@ -40,7 +46,8 @@ const HomepageCards = () => {
       {generateCards(
         "K-Dramas",
         "Immerse yourself in the addictive and emotionally-charged stories of Korean dramas.",
-        "kdramas"
+        "kdramas",
+        randomDramaImage
       )}
       {generateCards(
         "Movies",
@@ -66,14 +73,14 @@ const generateCards = (
   return (
     <Link
       href={`/${redirect}`}
-      className="transition duration-300 ease-in-out hover:bg-zinc-200/50 p-2 rounded-xl hover:-translate-y-1 hover:shadow-xl"
+      className="transition duration-300 ease-in-out hover:bg-base-300/50 rounded-xl hover:-translate-y-1 hover:shadow-xl p-2 bg-base-300/75"
     >
       <Image
         src={image}
         width={400}
         height={300}
         alt="Web Series"
-        className="h-80 rounded-xl object-cover"
+        className="h-80 rounded-t-xl object-cover"
       />
       <h3 className="text-2xl font-bold mt-4">{title}</h3>
       <p className="text-muted-foreground mt-2">{message}</p>

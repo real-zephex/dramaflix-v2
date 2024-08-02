@@ -27,7 +27,7 @@ const AnimesSearchFormatter = async ({ data }: { data: AnimeSearch }) => {
                 priority
               />
               <div className="flex-col ml-2">
-                <p className="font-semibold text-xl">
+                <p className="text-xl">
                   {item.title?.english || item.title?.userPreferred}
                 </p>
                 <div className="flex flex-row items-center">
