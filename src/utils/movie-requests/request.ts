@@ -35,7 +35,7 @@ export async function getRandomMovie(imageOnly: boolean = false) {
   const url = constructUrl(randomEndpoint);
 
   try {
-    const response = await fetch(url, { next: { revalidate: 600 } });
+    const response = await fetch(url, { next: { revalidate: 86400 } });
     if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
 
     const data: MoviesHomepageResults = await response.json();
@@ -101,7 +101,9 @@ export async function MovieInfo(
   const url = constructUrl(endpoint);
 
   try {
-    const response = await fetch(url, { next: { revalidate: CACHE_DURATION } });
+    const response = await fetch(url, {
+      next: { revalidate: CACHE_DURATION * 4 },
+    });
     if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
 
     const data: MovieInfoType = await response.json();

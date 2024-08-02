@@ -152,7 +152,7 @@ const AnimeInfoComponent = async ({ animeInfo }: { animeInfo: AnimeInfo }) => {
                   <Image
                     src={item.image ? item.image : "/placeholder.svg"}
                     width={80}
-                    height={130}
+                    height={110}
                     alt="Anime Poster"
                     placeholder="blur"
                     blurDataURL="/placeholder.svg"

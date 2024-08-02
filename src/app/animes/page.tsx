@@ -8,7 +8,7 @@ const AnimeHomepage = async () => {
   const recent = await AnimeRequestHandler({ recent: true });
 
   return (
-    <main className="lg:w-11/12 w-full mx-auto">
+    <main className="container mx-auto">
       <div className="divider divider-primary py-4 text-2xl lg:text-3xl font-bold">
         Popular Animes
       </div>
@@ -18,10 +18,6 @@ const AnimeHomepage = async () => {
         Trending Animes
       </div>
       <AnimeHomepageCards data={trending} />
-      <div className="divider divider-primary py-4 text-2xl lg:text-3xl font-bold">
-        Recent Animes
-      </div>
-      <AnimeHomepageCards data={recent} />
     </main>
   );
 };

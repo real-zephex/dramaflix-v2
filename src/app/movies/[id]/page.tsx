@@ -27,7 +27,7 @@ const MovieInfoPage = async ({ params }: { params: { id: string } }) => {
           className="rounded-xl border-2 border-zinc-700"
         />
         <div className="ml-2">
-          <p className="font-extrabold text-xl md:text-2xl lg:text-3xl">
+          <p className="font-semibold text-xl md:text-2xl">
             {data.title}{" "}
             {data.title === data.original_title
               ? ""

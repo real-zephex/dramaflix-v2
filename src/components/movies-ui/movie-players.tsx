@@ -39,7 +39,6 @@ const MoviePlayer = async ({ id }: { id: string }) => {
             <iframe
               src={items.link}
               allowFullScreen
-              referrerPolicy="origin"
               height={720}
               className="w-full h-[240px] md:h-[480px] lg:h-[720px] rounded-lg"
               sandbox="allow-same-origin allow-scripts"

@@ -3,36 +3,33 @@
 import Image from "next/image";
 import Link from "next/link";
 
-import { DramaSearchRecentPopular } from "@/utils/types";
+import { TVSearch } from "@/utils/types";
 
-const DramaSearchFormatter = async ({
-  data,
-}: {
-  data: DramaSearchRecentPopular;
-}) => {
+const SeriesSearchFormatter = async ({ data }: { data: TVSearch }) => {
   return (
     <div className="flex flex-col mt-4">
       {data.results &&
         data.results.map((item) => (
-          <Link
-            href={`/kdramas/${item.id?.split("drama-detail/")[1]}`}
-            key={item.id}
-          >
-            <span className="sr-only">View {item.title}</span>
+          <Link href={`/web-series/${item.id}`} key={item.id}>
+            <span className="sr-only">View {item.name}</span>
             <section
               key={item.id}
               className="flex flex-row items-center mb-2 bg-base-300 rounded-xl transition delay-50 ease-in-out hover:bg-base-200"
             >
               <Image
-                src={item.image ? item.image : "/placeholder.svg"}
+                src={
+                  item.poster_path
+                    ? `https://image.tmdb.org/t/p/original${item.poster_path}`
+                    : "/placeholder.svg"
+                }
                 width={100}
                 height={150}
-                alt={`${item.title} poster`}
+                alt={`${item.name} poster`}
                 className="rounded-l-xl"
                 priority
               />
               <div className="flex-col ml-2">
-                <p className="text-xl">{item.title}</p>
+                <p className="text-xl">{item.name}</p>
               </div>
             </section>
           </Link>
@@ -41,4 +38,4 @@ const DramaSearchFormatter = async ({
   );
 };
 
-export default DramaSearchFormatter;
+export default SeriesSearchFormatter;

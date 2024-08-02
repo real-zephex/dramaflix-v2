@@ -13,6 +13,9 @@ import { MoviesSearchRequest } from "@/utils/movie-requests/request";
 import { SearchDramas } from "@/utils/kdrama-requests/request";
 import DramaSearchFormatter from "./kdrama-ui/drama-search-formatter";
 
+import { SearchTV } from "@/utils/tv-requests/request";
+import SeriesSearchFormatter from "./web-ui/search-cards";
+
 const Search = () => {
   const pathname = usePathname() as string;
   const [provider, setProvider] = useState<string>("");
@@ -51,6 +54,10 @@ const Search = () => {
       } else if (provider === "kdramas") {
         data = await SearchDramas(title);
         const search_formatter = await DramaSearchFormatter({ data });
+        setFormat(search_formatter);
+      } else if (provider === "web-series") {
+        data = await SearchTV({ title: title });
+        const search_formatter = await SeriesSearchFormatter({ data });
         setFormat(search_formatter);
       }
     },

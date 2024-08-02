@@ -9,20 +9,25 @@ import React from "react";
 const AnimeHomepageCards = async ({ data }: { data: AnimeSearch }) => {
   return (
     <main>
-      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-7 gap-3 p-2">
+      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-4 gap-3 p-2">
         {data.results?.map((item) => (
           <Link
             key={item.id}
             href={`/animes/${item.id}`}
             className="relative bg-muted rounded-lg  group bg-base-300 shadow-md"
-            title={item.title?.english || item.title?.romaji}
           >
             <Image
-              src={item.image ? item.image : "/placeholder.svg"}
+              src={
+                item.cover
+                  ? item.cover
+                  : item.image
+                  ? item.image
+                  : "/placeholder.svg"
+              }
               alt={`Anime ${item.malId}`}
               width={500}
               height={700}
-              className="w-full h-72 lg:h-96 object-cover group-hover:opacity-80 transition-opacity rounded-t-md"
+              className="w-full h-28 object-center  group-hover:opacity-80 transition-opacity rounded-t-md"
               quality={100}
               placeholder="blur"
               blurDataURL="/placeholder.svg"
@@ -45,10 +50,22 @@ const AnimeHomepageCards = async ({ data }: { data: AnimeSearch }) => {
               <FaPlay size={30} />
             </div>
 
-            <div className="absolute bottom-0 left-0 translate-y-[50%] translate-x-1/3 right-0 bg-zinc-900/90 text-white p-4 hidden transition-opacity duration-300 group-hover:lg:flex z-10 overflow-auto rounded-xl flex-col w-full h-72">
-              <h1 className="font-bold text-primary text-xl">
-                {item.title?.english || item.title?.romaji}
-              </h1>
+            <div className="absolute bottom-0 left-0 translate-x-[50%] translate-y-[90%] right-0 bg-zinc-900 text-white p-4 hidden transition-opacity duration-300 group-hover:lg:flex z-10 overflow-auto rounded-xl flex-col w-full h-96 ">
+              <div className="flex flex-row items-center my-2 bg-base-200 rounded-lg">
+                <Image
+                  src={item.image!}
+                  width={80}
+                  height={120}
+                  alt="Anime poster"
+                  className="rounded-l-lg"
+                  quality={100}
+                  placeholder="blur"
+                  blurDataURL="/placeholder.svg"
+                />
+                <h1 className="font-bold text-primary text-xl ml-1  ">
+                  {item.title?.english || item.title?.romaji}
+                </h1>
+              </div>
               <div className="flex flex-row items-center">
                 {item.totalEpisodes && (
                   <div className="badge badge-outline badge-md badge-accent">
@@ -58,7 +75,7 @@ const AnimeHomepageCards = async ({ data }: { data: AnimeSearch }) => {
               </div>
               {item.description && (
                 <p
-                  className="line-clamp-5 text-sm mt-2 overflow-auto"
+                  className="line-clamp-7 text-sm mt-2 overflow-auto shadow-lg shadow-base-200 drop-shadow-xl rounded-lg"
                   dangerouslySetInnerHTML={{ __html: `${item.description}` }}
                 ></p>
               )}
