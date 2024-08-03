@@ -1,21 +1,131 @@
-type Params = {
-  season: string; // or number, depending on your use case
-  episode: string; // or number
-  id: string; // or whatever type id should be
-};
+import { EpisodeInfo } from "@/utils/tv-requests/request";
+import Image from "next/image";
+import { FaStar } from "react-icons/fa";
+import Link from "next/link";
+import { FiDownload } from "react-icons/fi";
 
 const SeriesPlayer = async ({ params }: { params: { slugs: string[] } }) => {
-  // Now you can use season, episode, and id as expected
+  const series_id = params.slugs[2];
+  const season_number = params.slugs[0];
+  const episode_number = params.slugs[1];
+
+  const epData = await EpisodeInfo({
+    id: series_id,
+    season: season_number,
+    episode: episode_number,
+  });
+
   return (
-    <main>
+    <main className="bg-gradient-to-b from-base-300 to-base-100">
       <div className="container mx-auto">
-        <iframe
-          src={`https://vidsrc.pro/embed/tv/${params.slugs[2]}/${params.slugs[0]}/${params.slugs[1]}`}
-          allowFullScreen
-          height={720}
-          className="w-full h-[240px] md:h-[480px] lg:h-[720px] rounded-lg"
-          sandbox="allow-same-origin allow-scripts"
-        ></iframe>
+        <div role="tablist" className="tabs tabs-boxed">
+          <input
+            type="radio"
+            name="my_tabs_1"
+            role="tab"
+            className="tab"
+            aria-label="vidsrc"
+          />
+          <div role="tabpanel" className="tab-content p-2">
+            <iframe
+              src={`https://vidsrc.pro/embed/tv/${series_id}/${season_number}/${episode_number}`}
+              allowFullScreen
+              height={720}
+              className="w-full h-[240px] md:h-[480px] lg:h-[720px] rounded-lg"
+              sandbox="allow-forms allow-pointer-lock allow-same-origin allow-scripts allow-top-navigation"
+            ></iframe>
+          </div>
+
+          <input
+            type="radio"
+            name="my_tabs_1"
+            role="tab"
+            className="tab"
+            aria-label="2embed"
+          />
+          <div role="tabpanel" className="tab-content p-2">
+            <iframe
+              src={`https://www.2embed.cc/embedtv/${series_id}?s=${season_number}&e=${episode_number}`}
+              allowFullScreen
+              height={720}
+              className="w-full h-[240px] md:h-[480px] lg:h-[720px] rounded-lg"
+              sandbox="allow-forms allow-pointer-lock allow-same-origin allow-scripts allow-top-navigation"
+            ></iframe>
+          </div>
+
+          <input
+            type="radio"
+            name="my_tabs_1"
+            role="tab"
+            className="tab"
+            aria-label="superembed"
+            defaultChecked
+          />
+          <div role="tabpanel" className="tab-content p-2">
+            <iframe
+              src={`https://multiembed.mov/directstream.php?video_id=${series_id}&tmdb=1&s=${season_number}&e=${episode_number}`}
+              allowFullScreen
+              height={720}
+              className="w-full h-[240px] md:h-[480px] lg:h-[720px] rounded-lg"
+            ></iframe>
+          </div>
+
+          <input
+            type="radio"
+            name="my_tabs_1"
+            role="tab"
+            className="tab"
+            aria-label="vidsrc 2"
+          />
+          <div role="tabpanel" className="tab-content p-2">
+            <iframe
+              src={`https://vidsrc.in/embed/tv?tmdb=${series_id}&season=${season_number}&episode=${episode_number}`}
+              referrerPolicy="origin"
+              allowFullScreen
+              className="w-full h-[240px] md:h-[480px] lg:h-[720px] rounded-lg"
+            ></iframe>
+          </div>
+        </div>
+
+        <section className="mt-2 flex flex-col md:flex-row items-center justify-center bg-base-200 rounded-xl p-2">
+          <div className="bg-base-200 rounded-xl cursor-pointer w-full md:w-auto">
+            <Image
+              src={`https://image.tmdb.org/t/p/original${epData.still_path}`}
+              width={300}
+              height={150}
+              alt="Episode Poster"
+              className="w-full rounded-t-xl md:rounded-tl-xl"
+            />
+            <div className="p-2">
+              <p className="text-sm">Episode {episode_number}</p>
+              <h1 className="text-xl font-semibold mt-1">{epData.name}</h1>
+              <section className="flex flex-row items-center">
+                <FaStar className="text-yellow-300" />
+                <span className="ml-1">{epData.vote_average}</span>
+              </section>
+            </div>
+          </div>
+
+          <div className="mt-2 md:ml-2">
+            <p className="text-sm bg-base-300 md:w-fit w-full px-2 py-1 rounded-xl text-center">
+              Watching Episode {episode_number} - Season {season_number}
+            </p>
+            <p className="text-lg">
+              <strong>Overview</strong>:{" "}
+              <span className="font-normal">{epData.overview}</span>
+            </p>
+            <div className="my-1">
+              <Link
+                href={`https://dl.vidsrc.vip/tv/${series_id}/${season_number}/${episode_number}`}
+                target="_blank"
+              >
+                <button className="btn btn-success btn-sm btn-outline">
+                  Download <FiDownload />
+                </button>
+              </Link>
+            </div>
+          </div>
+        </section>
       </div>
     </main>
   );

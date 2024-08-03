@@ -3,16 +3,16 @@ import HomepageCards from "@/components/ui/homepage-cards";
 
 export default async function Home() {
   return (
-    <main>
-      <div className="bg-gradient-to-b from-base-300 to-base-100">
-        <div className="lg:w-10/12 mx-auto w-full p-2">
+    <main className="bg-gradient-to-b from-base-300 to-base-100">
+      <div className="container mx-auto">
+        <div className=" p-2">
           <div className="flex flex-row items-center justify-center py-12 md:py-24">
             <div className="flex flex-col">
               <h1 className="font-bold text-3xl md:text-4xl lg:text-5xl tracking-tight">
                 Unlimited Access to Your Favorite Media
               </h1>
-              <p className="text-md lg:text-xl md:flex hidden md:w-11/12">
-                Streamify offers a vast library of anime, K-dramas, movies, and
+              <p className="text-md lg:text-xl md:flex hidden">
+                Dramaflix offers a vast library of anime, K-dramas, movies, and
                 web series for you to enjoy anytime, anywhere.
               </p>
             </div>
@@ -33,8 +33,8 @@ export default async function Home() {
       <footer className="footer footer-center bg-base-300 text-base-content p-4">
         <aside>
           <p>
-            Copyright © {new Date().getFullYear()} - All right reserved by ACME
-            Industries Ltd
+            Copyright © {new Date().getFullYear()} - All right reserved by
+            Dramaflix
           </p>
         </aside>
       </footer>

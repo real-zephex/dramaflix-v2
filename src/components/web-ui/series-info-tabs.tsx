@@ -45,7 +45,8 @@ const SeriesInfoTabs = async ({
             <p className="flex flex-row">
               <strong>Vote Average:</strong>
               <span className="flex flex-row items-center ml-1">
-                {data.vote_average?.toString()} <FaStar className="ml-1 text-yellow-500" />
+                {data.vote_average?.toString()}{" "}
+                <FaStar className="ml-1 text-yellow-500" />
               </span>
             </p>
             <p>
@@ -78,7 +79,7 @@ const SeriesInfoTabs = async ({
             {credits.cast && credits.cast.length > 0 ? (
               credits.cast.map((item, index) => (
                 <div
-                  className="flex flex-row items-center bg-base-200 rounded-md"
+                  className="flex flex-row items-center bg-base-200 rounded-md transition-colors hover:bg-base-300 cursor-pointer"
                   key={index}
                 >
                   <Image
@@ -102,7 +103,7 @@ const SeriesInfoTabs = async ({
                 </div>
               ))
             ) : (
-              <p>No artwork found</p>
+              <p>No cast info found</p>
             )}
           </div>
         </div>

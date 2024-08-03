@@ -74,7 +74,7 @@ const AnimeInfoComponent = async ({ animeInfo }: { animeInfo: AnimeInfo }) => {
           </section>
           <section>
             <Link
-              href={`https://anilist.co/anime/${animeInfo.malId}`}
+              href={`https://anilist.co/anime/${animeInfo.id}`}
               target="_blank"
             >
               <p>
@@ -197,8 +197,8 @@ const AnimeInfoComponent = async ({ animeInfo }: { animeInfo: AnimeInfo }) => {
                     height={700}
                     className="w-auto h-44 md:h-48 lg:h-52 xl:h-72 mx-1 rounded-lg "
                     alt="Anime Artwork"
-                    unoptimized
                     placeholder="blur"
+                    loading="lazy"
                     quality={100}
                     blurDataURL="/placeholder.svg"
                   />

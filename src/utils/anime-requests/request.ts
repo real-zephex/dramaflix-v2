@@ -61,37 +61,3 @@ export const AnimeRequestHandler = async ({
     throw error;
   }
 };
-
-export async function getRandomAnime(image_only: boolean = false) {
-  const endpoints = [
-    `${parent_url}/meta/anilist/trending`,
-    `${parent_url}/meta/anilist/recent-episodes`,
-    `${parent_url}/meta/anilist/popular`,
-  ];
-
-  // Choose a random endpoint
-  const randomEndpoint =
-    endpoints[Math.floor(Math.random() * endpoints.length)];
-
-  try {
-    const response = await fetch(randomEndpoint, { next: { revalidate: 600 } });
-    if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`);
-    }
-
-    const data: AnimeSearch = await response.json();
-    // Choose a random movie from the results
-
-    const randomAnime =
-      data.results![Math.floor(Math.random() * data.results!.length)];
-
-    if (image_only) {
-      return randomAnime.image;
-    } else {
-      return randomAnime;
-    }
-  } catch (error) {
-    console.error("Error fetching movie:", error);
-    throw error;
-  }
-}

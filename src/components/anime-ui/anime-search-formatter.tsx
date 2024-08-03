@@ -23,7 +23,7 @@ const AnimesSearchFormatter = async ({ data }: { data: AnimeSearch }) => {
                 width={100}
                 height={150}
                 alt={`${item.title?.native} poster`}
-                className="rounded-xl border-4 border-zinc-700"
+                className="rounded-l-xl"
                 priority
               />
               <div className="flex-col ml-2">

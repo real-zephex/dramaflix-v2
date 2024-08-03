@@ -56,7 +56,7 @@ const Navbar = async () => {
           <polygon points="6 3 20 12 6 21 6 3"></polygon>
         </svg>
         <Link href={"/"} className="font-semibold text-xl ml-1">
-          Streamflix
+          Dramaflix
         </Link>
       </div>
       <div className="navbar-center hidden lg:flex">
@@ -76,7 +76,7 @@ const Navbar = async () => {
         </ul>
       </div>
       <div className="navbar-end">
-          <Search />
+        <Search />
       </div>
     </div>
   );

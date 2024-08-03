@@ -2,7 +2,12 @@
 
 // Movies Related Request
 
-import { MoviesHomepageResults, MovieInfoType } from "../types";
+import {
+  MoviesHomepageResults,
+  MovieInfoType,
+  TVCredits,
+  TVImages,
+} from "../types";
 
 // Constants
 const BASE_URL = "https://api.themoviedb.org/3";
@@ -24,31 +29,6 @@ function constructUrl(
     url.searchParams.set(key, queryParams[key])
   );
   return url.toString();
-}
-
-// Get a random movie from various endpoints
-export async function getRandomMovie(imageOnly: boolean = false) {
-  const endpoints = ["movie/popular", "movie/top_rated", "movie/upcoming"];
-
-  const randomEndpoint =
-    endpoints[Math.floor(Math.random() * endpoints.length)];
-  const url = constructUrl(randomEndpoint);
-
-  try {
-    const response = await fetch(url, { next: { revalidate: 86400 } });
-    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-
-    const data: MoviesHomepageResults = await response.json();
-    const randomMovie =
-      data.results[Math.floor(Math.random() * data.results.length)];
-
-    return imageOnly
-      ? `https://image.tmdb.org/t/p/original${randomMovie.poster_path}`
-      : randomMovie;
-  } catch (error) {
-    console.error("Error fetching movie:", error);
-    throw error;
-  }
 }
 
 // Discover movies based on type and time window
@@ -111,5 +91,22 @@ export async function MovieInfo(
   } catch (error) {
     console.error("Error fetching movie info:", error);
     throw error;
+  }
+}
+
+export async function MovieCredits({
+  id,
+  type = "credits",
+}: {
+  id: string;
+  type: "credits" | "images";
+}) {
+  const url = `${BASE_URL}/movie/${id}/${type}?api_key=${API_KEY}`;
+  const res = await fetch(url, { cache: "force-cache" });
+  // return (await res.json()) as TVCredits;
+  if (type === "credits") {
+    return (await res.json()) as TVCredits;
+  } else {
+    return (await res.json()) as TVImages;
   }
 }

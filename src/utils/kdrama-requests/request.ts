@@ -54,32 +54,3 @@ export const SearchDramas = async (title: string) => {
   const url = `${consumet_api}/movies/dramacool/${encodeURIComponent(title)}`;
   return RequestFetcher(url) as Promise<DramaSearchRecentPopular>;
 };
-
-export async function getRandomKdramaImage() {
-  const endpoints = [
-    `${dramacool_scraper}/recent`,
-    `${dramacool_scraper}/popular`,
-  ];
-
-  // Choose a random endpoint
-  const randomEndpoint =
-    endpoints[Math.floor(Math.random() * endpoints.length)];
-
-  try {
-    const response = await fetch(randomEndpoint, { next: { revalidate: 600 } });
-    if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`);
-    }
-
-    const data: DramaSearchRecentPopular = await response.json();
-    // Choose a random movie from the results
-
-    const randomAnime =
-      data.results![Math.floor(Math.random() * data.results!.length)];
-
-    return randomAnime.image;
-  } catch (error) {
-    console.error("Error fetching movie:", error);
-    throw error;
-  }
-}

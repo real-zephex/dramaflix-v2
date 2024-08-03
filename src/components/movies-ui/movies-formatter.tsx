@@ -13,7 +13,7 @@ const MoviesGridConstructor = async ({ type }: { type: string }) => {
         data.results.map((item) => (
           <div
             key={item.id}
-            className="relative overflow-hidden rounded-lg shadow-lg transition-transform duration-300 ease-in-out hover:-translate-y-2 hover:shadow-xl bg-base-300"
+            className="relative overflow-hidden rounded-lg shadow-xl transition-transform duration-300 ease-in-out hover:-translate-y-2 hover:shadow-xl bg-base-300 "
           >
             <Link href={`/movies/${item.id}`} className="absolute inset-0 z-10">
               <span className="sr-only">View {item.title}</span>

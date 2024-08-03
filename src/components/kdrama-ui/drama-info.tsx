@@ -1,14 +1,13 @@
 import { DramaInfo } from "@/utils/types";
 import Image from "next/image";
-import Link from "next/link";
 import React from "react";
 
 const DramaInfoComponent = async ({ data }: { data: DramaInfo }) => {
   return (
     <main className=" w-full overflow-hidden">
-      <div className="flex flex-col p-1">
+      <div className="flex flex-col">
         {/* Hero Section */}
-        <section className="flex flex-row items-center bg-base-300/50 rounded-md">
+        <section className="flex flex-row items-center bg-base-300/50 rounded-md p-1">
           <Image
             src={data.image ? data.image : "/placeholder.svg"}
             width={150}
@@ -23,7 +22,7 @@ const DramaInfoComponent = async ({ data }: { data: DramaInfo }) => {
         </section>
       </div>
 
-      <div role="tablist" className="tabs tabs-boxed w-full mt-2">
+      <div role="tablist" className="tabs tabs-boxed w-full">
         <input
           type="radio"
           name="my_tabs_2"
@@ -74,7 +73,7 @@ const DramaInfoComponent = async ({ data }: { data: DramaInfo }) => {
             {data.characters && data.characters.length > 0 ? (
               data.characters.map((item, index) => (
                 <div
-                  className="flex flex-row items-center bg-base-200 rounded-md"
+                  className="flex flex-row items-center bg-base-200 rounded-md transition-colors hover:bg-base-300 cursor-pointer"
                   key={index}
                 >
                   <Image
@@ -91,7 +90,7 @@ const DramaInfoComponent = async ({ data }: { data: DramaInfo }) => {
                 </div>
               ))
             ) : (
-              <p>No artwork found</p>
+              <p>No character info found</p>
             )}
           </div>
         </div>

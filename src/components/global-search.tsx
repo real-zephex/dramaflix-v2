@@ -41,7 +41,11 @@ const Search = () => {
       } else {
         return; // Exit the function if it's not the Enter key
       }
-      console.log(provider);
+      setFormat(
+        <div className="flex items-center justify-center">
+          <span className="loading loading-dots loading-md"></span>
+        </div>
+      );
       let data;
       if (provider === "movies") {
         data = await MoviesSearchRequest(title);
@@ -106,13 +110,11 @@ const Search = () => {
           </svg>
         </div>
       </button>
-      <dialog id="my_modal_4" className="modal">
+      <dialog id="my_modal_4" className="modal items-start p-2">
+        <form method="dialog" className="modal-backdrop">
+          <button>close</button>
+        </form>
         <div className="modal-box md:w-11/12 md:max-w-6xl p-2 w-full">
-          {/* <form method="dialog ">
-            <button className="btn  btn-ghost ">
-              
-            </button>
-          </form> */}
           <div className="modal-action">
             <form method="dialog">
               <button className="btn btn-sm btn-circle absolute right-2 top-2">
@@ -120,6 +122,7 @@ const Search = () => {
               </button>
             </form>
           </div>
+
           <section className="flex mt-4">
             <div className="w-full">
               <label className="input input-bordered flex items-center gap-2">
@@ -162,7 +165,19 @@ const Search = () => {
               <option value={"web-series"}>Web-Series</option>
             </select>
           </section>
-          <div className="mt-1">{format}</div>
+          <div
+            className="mt-1"
+            onClick={() => {
+              const modal = document.getElementById(
+                "my_modal_4"
+              ) as HTMLDialogElement | null;
+              if (modal) {
+                modal.close();
+              }
+            }}
+          >
+            {format}
+          </div>
         </div>
       </dialog>
     </div>

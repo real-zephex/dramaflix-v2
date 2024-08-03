@@ -22,10 +22,10 @@ const MoviesSearch = async (data: MoviesHomepageResults) => {
                     ? `https://image.tmdb.org/t/p/original${item.poster_path}`
                     : "/placeholder.svg"
                 }
-                width={120}
-                height={170}
+                width={100}
+                height={150}
                 alt={`${item.original_title} poster`}
-                className="rounded-xl border-4 border-zinc-700"
+                className="rounded-l-xl"
                 priority
               />
               <div className="flex-col ml-2">

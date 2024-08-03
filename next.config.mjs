@@ -5,6 +5,9 @@ const remotePatterns = [
   "media.kitsu.io",
   "artworks.thetvdb.com",
   "asianimg.pro",
+  "img.freepik.com",
+  "i.pinimg.com",
+  "cdn.myanimelist.net",
 ];
 
 const nextConfig = {

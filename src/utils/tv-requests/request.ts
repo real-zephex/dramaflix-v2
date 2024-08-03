@@ -7,6 +7,7 @@ import {
   TVImages,
   TVInfo,
   TVSeasonInfo,
+  TVEpisodeInfo,
 } from "../types";
 
 const api_key = process.env.TMDB_API_KEY;
@@ -84,4 +85,17 @@ export const SeasonInfo = async ({
 }) => {
   const url = `${parent_url}/tv/${id}/season/${season}?api_key=${api_key}`;
   return (await requestHandler(url)) as TVSeasonInfo;
+};
+
+export const EpisodeInfo = async ({
+  id,
+  season,
+  episode,
+}: {
+  id: string;
+  season: string;
+  episode: string;
+}) => {
+  const url = `${parent_url}/tv/${id}/season/${season}/episode/${episode}?api_key=${api_key}`;
+  return (await requestHandler(url)) as TVEpisodeInfo;
 };

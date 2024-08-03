@@ -68,7 +68,7 @@ const AnimeVideoPage = ({ data }: { data: AnimeInfo }) => {
                 setCurrentPlaying(item.title!);
               }}
             >
-              {item.title}
+              {item.number}
             </button>
           ))}
       </div>

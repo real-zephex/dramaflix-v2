@@ -9,20 +9,20 @@ const KdramaHomecard = async ({
   dramaData: DramaSearchRecentPopular;
 }) => {
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 p-2 my-4">
+    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 p-2 my-4">
       {dramaData.results &&
         dramaData.results.slice(0, 20).map((item, index) => (
           <Link
             href={`/kdramas/${item.id?.split("/drama-detail/")[1]}`}
             key={index}
-            className="rounded-md group bg-[#2e3440]/20"
+            className="rounded-md group bg-base-200 shadow-xl"
           >
             <Image
               src={item.image ? item.image : "/placeholder.svg"}
               width={200}
               height={300}
               alt={`${item.title} poster`}
-              className="w-full h-72 xl:h-80 2xl:h-[23.5rem]  group-hover:opacity-80 transition-opacity rounded-t-md"
+              className="w-full h-72 xl:h-80 2xl:h-[25rem] group-hover:opacity-80 transition-opacity rounded-t-md"
               placeholder="blur"
               blurDataURL="/placeholder.svg"
               quality={100}

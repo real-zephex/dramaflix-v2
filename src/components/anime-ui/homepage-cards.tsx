@@ -2,14 +2,13 @@ import { AnimeSearch } from "@/utils/types";
 import Link from "next/link";
 import Image from "next/image";
 
-import { BsStar } from "react-icons/bs";
-import { FaPlay } from "react-icons/fa";
+import { FaPlay, FaStar } from "react-icons/fa";
 import React from "react";
 
 const AnimeHomepageCards = async ({ data }: { data: AnimeSearch }) => {
   return (
     <main>
-      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-4 gap-3 p-2">
+      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3 p-2">
         {data.results?.map((item) => (
           <Link
             key={item.id}
@@ -17,31 +16,25 @@ const AnimeHomepageCards = async ({ data }: { data: AnimeSearch }) => {
             className="relative bg-muted rounded-lg  group bg-base-300 shadow-md"
           >
             <Image
-              src={
-                item.cover
-                  ? item.cover
-                  : item.image
-                  ? item.image
-                  : "/placeholder.svg"
-              }
+              src={item.image ? item.image : "/placeholder.svg"}
               alt={`Anime ${item.malId}`}
               width={500}
               height={700}
-              className="w-full h-28 object-center  group-hover:opacity-80 transition-opacity rounded-t-md"
+              className="w-full h-80 object-center  group-hover:opacity-80 transition-opacity rounded-t-md"
               quality={100}
               placeholder="blur"
               blurDataURL="/placeholder.svg"
             />
-            <div className="absolute top-0 right-0 bg-gradient-to-t from-background/80 to-transparent p-2 bg-neutral-800/90 rounded-bl-xl">
+            <div className="absolute top-0 right-0 p-2 bg-neutral-800/90 rounded-bl-xl rounded-tr-md">
               {item.rating && (
                 <div className="flex flex-row items-center">
-                  <BsStar className="w-4 h-4 mr-1" />
+                  <FaStar className="w-4 h-4 mr-1 text-yellow-300" />
                   <span>{item.rating! / 10}</span>
                 </div>
               )}
             </div>
             <div className="p-4">
-              <h3 className="text-lg font-semibold text-muted-foreground line-clamp-1">
+              <h3 className="text-lg font-semibold line-clamp-2">
                 {item.title?.english || item.title?.romaji}
               </h3>
             </div>
@@ -50,7 +43,7 @@ const AnimeHomepageCards = async ({ data }: { data: AnimeSearch }) => {
               <FaPlay size={30} />
             </div>
 
-            <div className="absolute bottom-0 left-0 translate-x-[50%] translate-y-[90%] right-0 bg-zinc-900 text-white p-4 hidden transition-opacity duration-300 group-hover:lg:flex z-10 overflow-auto rounded-xl flex-col w-full h-96 ">
+            <div className="absolute bottom-0 left-0 translate-x-[35%] translate-y-[70%] right-0 bg-zinc-900 text-white p-4 hidden transition-opacity duration-300 group-hover:lg:flex z-10 overflow-auto rounded-xl flex-col w-80 h-96 ">
               <div className="flex flex-row items-center my-2 bg-base-200 rounded-lg">
                 <Image
                   src={item.image!}

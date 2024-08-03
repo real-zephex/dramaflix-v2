@@ -15,7 +15,7 @@ import { DramaLinksFetcher } from "@/utils/kdrama-requests/request";
 const DramaVideoPage = ({ data }: { data: DramaInfo }) => {
   const mediaId: string = data.id!;
   const [videoPlayer, setVideoPlayer] = useState<JSX.Element>(
-    <div className="flex flex-col gap-4 justify-center mb-2">
+    <div className="flex flex-col gap-4 justify-center">
       <div
         className="skeleton h-64 2xl:h-[53.5rem] md:h-[27rem] xl:h-[37rem] w-full"
         aria-label="Loading video player"
@@ -60,7 +60,7 @@ const DramaVideoPage = ({ data }: { data: DramaInfo }) => {
   const videoFormatter = useCallback(
     async (id: string) => {
       setVideoPlayer(
-        <div className="flex flex-col gap-4 justify-center mb-2">
+        <div className="flex flex-col justify-center">
           <div
             className="skeleton h-64 2xl:h-[53.5rem] md:h-[27rem] xl:h-[37rem]"
             aria-label="Loading video player"
@@ -103,9 +103,9 @@ const DramaVideoPage = ({ data }: { data: DramaInfo }) => {
     <main>
       <div className="flex 2xl:flex-row flex-col w-full">
         <div className="w-full">{videoPlayer}</div>
-        <div className="2xl:w-1/4 w-full ">
+        <div className="2xl:w-1/4 w-full 2xl:mt-0">
           <div
-            className="collapse bg-gradient-to-b from-base-300 to-base-100 rounded-none p-0"
+            className="collapse bg-gradient-to-b from-base-300 to-base-100 rounded-none"
             defaultChecked
             onClick={toggleAccordion}
           >
