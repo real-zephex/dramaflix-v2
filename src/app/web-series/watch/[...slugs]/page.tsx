@@ -41,15 +41,15 @@ const SeriesPlayer = async ({ params }: { params: { slugs: string[] } }) => {
             name="my_tabs_1"
             role="tab"
             className="tab"
-            aria-label="2embed"
+            aria-label="vidsrc.vip"
+            defaultChecked
           />
           <div role="tabpanel" className="tab-content p-2">
             <iframe
-              src={`https://www.2embed.cc/embedtv/${series_id}?s=${season_number}&e=${episode_number}`}
+              src={`https://vidsrc.vip/embed/tv/${series_id}/${season_number}/${episode_number}`}
               allowFullScreen
               height={720}
               className="w-full h-[240px] md:h-[480px] lg:h-[720px] rounded-lg"
-              sandbox="allow-forms allow-pointer-lock allow-same-origin allow-scripts allow-top-navigation"
             ></iframe>
           </div>
 
@@ -59,7 +59,6 @@ const SeriesPlayer = async ({ params }: { params: { slugs: string[] } }) => {
             role="tab"
             className="tab"
             aria-label="superembed"
-            defaultChecked
           />
           <div role="tabpanel" className="tab-content p-2">
             <iframe
@@ -70,7 +69,7 @@ const SeriesPlayer = async ({ params }: { params: { slugs: string[] } }) => {
             ></iframe>
           </div>
 
-          <input
+          {/* <input
             type="radio"
             name="my_tabs_1"
             role="tab"
@@ -84,11 +83,11 @@ const SeriesPlayer = async ({ params }: { params: { slugs: string[] } }) => {
               allowFullScreen
               className="w-full h-[240px] md:h-[480px] lg:h-[720px] rounded-lg"
             ></iframe>
-          </div>
+          </div> */}
         </div>
 
         <section className="mt-2 flex flex-col md:flex-row items-center justify-center bg-base-200 rounded-xl p-2">
-          <div className="bg-base-200 rounded-xl cursor-pointer w-full md:w-auto">
+          <div className="bg-base-300 rounded-xl cursor-pointer w-full md:w-auto">
             <Image
               src={`https://image.tmdb.org/t/p/original${epData.still_path}`}
               width={300}

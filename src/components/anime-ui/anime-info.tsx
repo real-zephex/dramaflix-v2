@@ -6,9 +6,9 @@ import React from "react";
 const AnimeInfoComponent = async ({ animeInfo }: { animeInfo: AnimeInfo }) => {
   return (
     <main className=" w-full overflow-hidden">
-      <div className="flex flex-col">
+      <div className="flex flex-col bg-base-200">
         {/* Hero Section */}
-        <section className="flex flex-row items-center p-2">
+        <section className="flex flex-row items-center bg-base-300/50 p-1 ">
           <Image
             src={animeInfo.image ? animeInfo.image : "/placeholder.svg"}
             width={150}
@@ -16,7 +16,7 @@ const AnimeInfoComponent = async ({ animeInfo }: { animeInfo: AnimeInfo }) => {
             alt="Anime Poster"
             placeholder="blur"
             blurDataURL="/placeholder.svg"
-            className="rounded-md border-2 border-zinc-600"
+            className="rounded-l-md"
             quality={100}
           />
           <p className="text-xl md:text-2xl lg:text-3xl ml-2 font-semibold">

@@ -20,7 +20,7 @@ const WebHomepageCards = async ({
             <Link href={`/web-series/${item.id}`} className="block">
               <Image
                 src={
-                  item.poster_path
+                  item.poster_path 
                     ? `https://image.tmdb.org/t/p/original${item.backdrop_path}`
                     : "/placeholder.svg"
                 }

@@ -105,7 +105,7 @@ const DramaVideoPage = ({ data }: { data: DramaInfo }) => {
         <div className="w-full">{videoPlayer}</div>
         <div className="2xl:w-1/4 w-full 2xl:mt-0">
           <div
-            className="collapse bg-gradient-to-b from-base-300 to-base-100 rounded-none"
+            className="collapse bg-gradient-to-b from-base-300 to-base-200/40 rounded-none"
             defaultChecked
             onClick={toggleAccordion}
           >

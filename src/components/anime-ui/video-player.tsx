@@ -150,7 +150,7 @@ const AnimeVideoPage = ({ data }: { data: AnimeInfo }) => {
         <div className="w-full">{videoPlayer}</div>
         <div className="2xl:w-1/4 w-full">
           <div
-            className="collapse bg-gradient-to-b from-base-300 to-base-100 rounded-none p-0"
+            className="collapse bg-gradient-to-b from-base-300 to-base-200/75 rounded-none p-0"
             defaultChecked
             onClick={toggleAccordion}
           >

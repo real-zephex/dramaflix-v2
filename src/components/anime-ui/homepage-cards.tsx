@@ -43,7 +43,7 @@ const AnimeHomepageCards = async ({ data }: { data: AnimeSearch }) => {
               <FaPlay size={30} />
             </div>
 
-            <div className="absolute bottom-0 left-0 translate-x-[35%] translate-y-[70%] right-0 bg-zinc-900 text-white p-4 hidden transition-opacity duration-300 group-hover:lg:flex z-10 overflow-auto rounded-xl flex-col w-80 h-96 ">
+            <div className="absolute bottom-0 left-0 translate-x-[35%] translate-y-[70%] right-0 bg-zinc-900 text-white p-4 hidden transition-opacity duration-300 group-hover:2xl:flex z-10 overflow-auto rounded-xl flex-col w-80 h-96 ">
               <div className="flex flex-row items-center my-2 bg-base-200 rounded-lg">
                 <Image
                   src={item.image!}

@@ -26,7 +26,7 @@ const MovieInfoPage = async ({ params }: { params: { id: string } }) => {
             width={150}
             height={200}
             alt={`${data.title} poster`}
-            className="rounded-xl border-2 border-zinc-700"
+            className="rounded-l-xl"
           />
           <div className="ml-2">
             <p className="font-semibold text-xl md:text-2xl">

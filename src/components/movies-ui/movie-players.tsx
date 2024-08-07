@@ -9,7 +9,7 @@ const MoviePlayer = async ({ id }: { id: string }) => {
       link: `https://multiembed.mov/directstream.php?video_id=${id}&tmdb=1`,
     },
     // { title: "vidsrc.net", link: `https://vidsrc.in/embed/movie?tmdb=${id}` },
-    { title: "2embed.cc", link: `https://www.2embed.cc/embed/${id}` },
+    { title: "vidsrc.vip", link: `https://vidsrc.vip/embed/movie/${id}` },
     // {
     //   title: "autoembed",
     //   link: `https://sup-proxy.zephex0-f6c.workers.dev/api-content?url=https://stable-one.autoembed.cc/movie/${id}`,
@@ -36,9 +36,7 @@ const MoviePlayer = async ({ id }: { id: string }) => {
             role="tabpanel"
             className="tab-content bg-base-100 border-base-300 rounded-box p-2 "
           >
-            {items.title === "multiembed" ||
-            items.title === "playsrc" ||
-            items.title === "vidsrc.net" ? (
+            {items.title === "multiembed" || items.title === "vidsrc.vip" ? (
               <iframe
                 src={items.link}
                 allowFullScreen

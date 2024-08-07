@@ -10,7 +10,7 @@ const AnimeInfoPage = async ({ params }: { params: { id: string } }) => {
   });
 
   return (
-    <main>
+    <main className="bg-gradient-to-b from-base-300 to-base-100">
       <AnimeVideoPage data={data} />
       <AnimeInfoComponent animeInfo={data} />
     </main>

@@ -18,7 +18,7 @@ export default async function Home() {
             </div>
             <div className="p-2">
               <Image
-                src="/placeholder.svg"
+                src="/hero.png"
                 width={500}
                 height={300}
                 alt="Hero Image"
