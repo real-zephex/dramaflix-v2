@@ -86,7 +86,7 @@ const SeriesPlayer = async ({ params }: { params: { slugs: string[] } }) => {
           </div> */}
         </div>
 
-        <section className="mt-2 flex flex-col md:flex-row items-center justify-center bg-base-200 rounded-xl p-2">
+        <section className="mt-2 flex flex-col md:flex-row items-center bg-base-200 rounded-xl p-2">
           <div className="bg-base-300 rounded-xl cursor-pointer w-full md:w-auto">
             <Image
               src={`https://image.tmdb.org/t/p/original${epData.still_path}`}

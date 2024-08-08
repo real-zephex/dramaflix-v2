@@ -28,7 +28,7 @@ import {
 
 const HLS_PROXY = "https://m3u8.justchill.workers.dev/?url=";
 
-const AnimeVideoPage = ({ data }: { data: GogoanimeInfo }) => {
+const   AnimeVideoPage = ({ data }: { data: GogoanimeInfo }) => {
   const [currentPlaying, setCurrentPlaying] = useState<string>("");
   const [buttonGroups, setButtonGroups] = useState<JSX.Element>(<></>);
   const [accordionStatus, setAccordionStatus] = useState<"shrink" | "expand">(

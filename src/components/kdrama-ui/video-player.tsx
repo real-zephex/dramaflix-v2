@@ -1,32 +1,39 @@
 "use client";
 
-import { MediaPlayer, MediaProvider } from "@vidstack/react";
+import {
+  isHLSProvider,
+  MediaPlayer,
+  MediaPlayerInstance,
+  MediaProvider,
+  MediaProviderAdapter,
+  MediaProviderChangeEvent,
+  Poster,
+} from "@vidstack/react";
 import "@vidstack/react/player/styles/default/theme.css";
 import "@vidstack/react/player/styles/default/layouts/video.css";
 import {
+  DefaultAudioLayout,
   defaultLayoutIcons,
   DefaultVideoLayout,
 } from "@vidstack/react/player/layouts/default";
-import { useState, useEffect, useMemo, useCallback, memo } from "react";
+import { useState, useEffect, useMemo, useCallback, memo, useRef } from "react";
 
 import { DramaInfo, DramaLinks, DramaEpisode } from "@/utils/types";
 import { DramaLinksFetcher } from "@/utils/kdrama-requests/request";
 
+const HLS_PROXY = "https://m3u8.justchill.workers.dev/?url=";
+
 const DramaVideoPage = ({ data }: { data: DramaInfo }) => {
   const mediaId: string = data.id!;
-  const [videoPlayer, setVideoPlayer] = useState<JSX.Element>(
-    <div className="flex flex-col gap-4 justify-center">
-      <div
-        className="skeleton h-64 2xl:h-[53.5rem] md:h-[27rem] xl:h-[37rem] w-full"
-        aria-label="Loading video player"
-      ></div>
-    </div>
-  );
+
+  const [src, setSrc] = useState<string>("");
+  const player = useRef<MediaPlayerInstance>(null);
   const [currentPlaying, setCurrentPlaying] = useState<string>("");
   const [accordionStatus, setAccordionStatus] = useState<"shrink" | "expand">(
     "shrink"
   );
-
+  const [episodeTitle, setEpisodeTitle] = useState<string>("");
+  const [loading, setLoading] = useState<JSX.Element>(<></>);
   const memoizedData = useMemo(() => data, [data]);
 
   const first_entry: DramaEpisode | any = useMemo(
@@ -44,6 +51,7 @@ const DramaVideoPage = ({ data }: { data: DramaInfo }) => {
   }, []);
 
   const vidLinksFetcher = async (id: string) => {
+    setLoading(vidLoadingIndicator);
     const res: DramaLinks = await DramaLinksFetcher({
       dramaId: mediaId,
       episodeId: id,
@@ -54,19 +62,27 @@ const DramaVideoPage = ({ data }: { data: DramaInfo }) => {
       return null;
     }
 
-    return res.sources![0].url;
+    setLoading(<></>);
+    const sourcesArray = Array.from(res.sources!, (item) => item.url);
+
+    const tempRes = await fetch(`${HLS_PROXY}${sourcesArray[0]}`, {
+      cache: "no-cache",
+    });
+    if (!tempRes.ok) {
+      return `${HLS_PROXY}${sourcesArray[1]}`;
+    } else {
+      return `${HLS_PROXY}${sourcesArray[0]}`;
+    }
   };
+
+  const vidLoadingIndicator = (
+    <div className="absolute top-0 right-0 left-0 bg-black/75 z-10 w-full h-full flex justify-center items-center">
+      <span className="loading loading-ring loading-lg"></span>
+    </div>
+  );
 
   const videoFormatter = useCallback(
     async (id: string) => {
-      setVideoPlayer(
-        <div className="flex flex-col justify-center">
-          <div
-            className="skeleton h-64 2xl:h-[53.5rem] md:h-[27rem] xl:h-[37rem]"
-            aria-label="Loading video player"
-          ></div>
-        </div>
-      );
       let url;
       try {
         url = await vidLinksFetcher(id);
@@ -74,24 +90,20 @@ const DramaVideoPage = ({ data }: { data: DramaInfo }) => {
         url = "/not_found.mp4";
       }
 
-      const formatted = (
-        <MediaPlayer
-          src={url!}
-          aspectRatio="16/9"
-          load="eager"
-          playsInline
-          volume={1}
-        >
-          <MediaProvider />
-
-          <DefaultVideoLayout icons={defaultLayoutIcons} />
-        </MediaPlayer>
-      );
-
-      setVideoPlayer(formatted);
+      setEpisodeTitle(epTitle(id));
+      setSrc(url!);
     },
     [memoizedData]
   );
+
+  const epTitle = (id: string) => {
+    try {
+      const splitTitle = id.split("-");
+      return splitTitle[splitTitle.length - 1];
+    } catch (error) {
+      return "not released yet";
+    }
+  };
 
   const toggleAccordion = () => {
     setAccordionStatus((prevStatus) =>
@@ -99,10 +111,53 @@ const DramaVideoPage = ({ data }: { data: DramaInfo }) => {
     );
   };
 
+  function onProviderChange(
+    provider: MediaProviderAdapter | null,
+    _nativeEvent: MediaProviderChangeEvent
+  ) {
+    if (isHLSProvider(provider)) {
+      provider.config = {};
+    }
+  }
+
   return (
     <main>
       <div className="flex 2xl:flex-row flex-col w-full">
-        <div className="w-full">{videoPlayer}</div>
+        <div className="w-full relative h-full">
+          {loading}
+          <MediaPlayer
+            title={`${data.title} - Episode ${episodeTitle}`}
+            src={src}
+            aspectRatio="16/9"
+            load="eager"
+            playsInline
+            ref={player}
+            volume={0.5}
+            crossOrigin
+            keyTarget="player"
+            onProviderChange={onProviderChange}
+            streamType="on-demand"
+            className="py-2 "
+            onCanPlay={() => {
+              if (src === "/not_found.mp4") {
+                return;
+              }
+              const qualities = player.current?.qualities!;
+              const preferredQuality = qualities[qualities?.length! - 1];
+              preferredQuality!.selected = true;
+            }}
+          >
+            <MediaProvider>
+              <Poster
+                className="absolute inset-0 block h-full w-full rounded-md opacity-0 transition-opacity data-[visible]:opacity-100 object-cover"
+                src={`${HLS_PROXY}${data.image}`}
+                alt={`${data.title} Poster`}
+              />
+            </MediaProvider>
+            <DefaultAudioLayout icons={defaultLayoutIcons} />
+            <DefaultVideoLayout icons={defaultLayoutIcons} />
+          </MediaPlayer>
+        </div>
         <div className="2xl:w-1/4 w-full 2xl:mt-0">
           <div
             className="collapse bg-gradient-to-b from-base-300 to-base-200/40 rounded-none"
@@ -117,7 +172,12 @@ const DramaVideoPage = ({ data }: { data: DramaInfo }) => {
                 <span className="text-violet-400">{currentPlaying}</span>
               </p>
             </div>
-            <div className="collapse-content w-full">
+            <div
+              className="collapse-content w-full"
+              onClick={(e) => {
+                e.stopPropagation();
+              }}
+            >
               <div className="grid grid-cols-5 2xl:grid-cols-5 gap-2 md:grid-cols-10 lg:grid-cols-12 max-h-[15rem] md:max-h-[20rem] lg:max-h-[25rem] xl:max-h-[30rem] 2xl:max-h-[35rem] overflow-auto">
                 {memoizedData.episodes && memoizedData.episodes.length > 0 ? (
                   memoizedData.episodes.map((item, _) => (
@@ -133,7 +193,12 @@ const DramaVideoPage = ({ data }: { data: DramaInfo }) => {
                     </button>
                   ))
                 ) : (
-                  <button className="btn-wide btn btn-error btn-outline ">
+                  <button
+                    className="btn-wide btn btn-error btn-outline "
+                    onClick={(e) => {
+                      e.stopPropagation();
+                    }}
+                  >
                     No episodes found.
                   </button>
                 )}
