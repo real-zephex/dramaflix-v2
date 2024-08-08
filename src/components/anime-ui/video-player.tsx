@@ -128,7 +128,8 @@ const AnimeVideoPage = ({ data }: { data: GogoanimeInfo }) => {
       console.log("No data found");
       return null;
     }
-    const temp = res.sources?.find((source) => source.quality === "default");
+    const temp = res.sources?.find((source) => source.quality === "backup");
+    const download = res.download;
 
     return `https://m3u8.justchill.workers.dev/?url=${temp?.url}`;
   };

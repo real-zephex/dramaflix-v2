@@ -20,7 +20,7 @@ const AnimeHomepageCards = async ({ data }: { data: GogoanimeSearch }) => {
               alt={`Anime ${item.id}`}
               width={500}
               height={700}
-              className="w-full h-80 object-center  group-hover:opacity-80 transition-opacity rounded-t-md"
+              className="w-full h-auto md:h-80 object-center  group-hover:opacity-80 transition-opacity rounded-t-md"
               quality={100}
               placeholder="blur"
               blurDataURL="/placeholder.svg"
@@ -35,7 +35,8 @@ const AnimeHomepageCards = async ({ data }: { data: GogoanimeSearch }) => {
             </div> */}
             <div className="p-4">
               <h3 className="text-lg font-semibold line-clamp-2">
-                {item.title}
+                {item.title ||
+                  item.id?.replaceAll("-", " ").toLocaleUpperCase()}
               </h3>
             </div>
 
