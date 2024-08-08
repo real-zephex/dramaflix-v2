@@ -51,6 +51,9 @@ const DramaVideoPage = ({ data }: { data: DramaInfo }) => {
   }, []);
 
   const vidLinksFetcher = async (id: string) => {
+    if (data.episodes?.length === 0) {
+      return;
+    }
     setLoading(vidLoadingIndicator);
     const res: DramaLinks = await DramaLinksFetcher({
       dramaId: mediaId,

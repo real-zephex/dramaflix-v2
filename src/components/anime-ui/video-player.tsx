@@ -28,7 +28,7 @@ import {
 
 const HLS_PROXY = "https://m3u8.justchill.workers.dev/?url=";
 
-const   AnimeVideoPage = ({ data }: { data: GogoanimeInfo }) => {
+const AnimeVideoPage = ({ data }: { data: GogoanimeInfo }) => {
   const [currentPlaying, setCurrentPlaying] = useState<string>("");
   const [buttonGroups, setButtonGroups] = useState<JSX.Element>(<></>);
   const [accordionStatus, setAccordionStatus] = useState<"shrink" | "expand">(
@@ -43,6 +43,10 @@ const   AnimeVideoPage = ({ data }: { data: GogoanimeInfo }) => {
   const [download, setDownload] = useState<string>("");
   const [loading, setLoading] = useState<JSX.Element>(<></>);
   const [backup, setBackup] = useState<string>("");
+  const [autoplay, setAutoPlay] = useState<boolean>(false);
+  const [episodeId, setEpisodeId] = useState<string>("");
+
+  const remote = useMediaRemote();
 
   const memoizedData = useMemo(() => data, [data]);
   const groups = createGroups(data.episodes!, 100);
@@ -88,7 +92,7 @@ const   AnimeVideoPage = ({ data }: { data: GogoanimeInfo }) => {
 
   const cacheMessage = (start: number, end: number) => {
     return (
-      <div className="toast z-50">
+      <div className="toast z-50 ">
         <div className="alert alert-info">
           <span>
             Links for Episodes {start.toString()} - {end.toString()} fetched
@@ -116,6 +120,10 @@ const   AnimeVideoPage = ({ data }: { data: GogoanimeInfo }) => {
               id={item.id}
               type="button"
               onClick={(event) => {
+                if (player.current) {
+                  player.current.paused = true;
+                  player.current.currentTime = 0;
+                }
                 event.currentTarget.style.backgroundColor = "gray";
                 videoFormatter(item.id!);
                 setCurrentPlaying(item.number?.toString()!);
@@ -130,7 +138,7 @@ const   AnimeVideoPage = ({ data }: { data: GogoanimeInfo }) => {
 
   const vidLinksFetcher = async (id: string) => {
     setLoading(vidLoadingIndicator);
-
+    setEpisodeId(id);
     const res: AnimeLinks = await AnimeRequestHandler({
       watch: true,
       episodeId: id,
@@ -190,8 +198,12 @@ const   AnimeVideoPage = ({ data }: { data: GogoanimeInfo }) => {
   );
 
   function getEpisodeNumber(id: string): string {
-    const parts = id.split("-");
-    return parts[parts.length - 1];
+    try {
+      const parts = id.split("-");
+      return parts[parts.length - 1];
+    } catch (error) {
+      return "not released yet";
+    }
   }
 
   function handleSelectChange(item: Episode[]) {
@@ -209,6 +221,42 @@ const   AnimeVideoPage = ({ data }: { data: GogoanimeInfo }) => {
     );
   };
 
+  function onTimeUpdate() {
+    if (player.current) {
+      if (player.current.currentTime === 0) {
+        return;
+      }
+      const currentTime = player.current.currentTime;
+      const duration = player.current.duration || 1;
+      const playbackPercentage = (currentTime / duration) * 100;
+      const playbackInfo = {
+        currentTime,
+        playbackPercentage,
+      };
+      const allPlaybackInfo = JSON.parse(
+        localStorage.getItem("all_episode_times") || "{}"
+      );
+      allPlaybackInfo[episodeId] = playbackInfo;
+      localStorage.setItem(
+        "all_episode_times",
+        JSON.stringify(allPlaybackInfo)
+      );
+    }
+  }
+
+  function setPlayerTime() {
+    const localData: any =
+      JSON.parse(localStorage.getItem("all_episode_times")!) || "{}";
+
+    if (!localData[episodeId]) {
+      return;
+    }
+    const current = localData[episodeId]["currentTime"];
+    if (player.current) {
+      player.current.currentTime = current;
+    }
+  }
+
   return (
     <main>
       {cacheConfirmation}
@@ -223,14 +271,29 @@ const   AnimeVideoPage = ({ data }: { data: GogoanimeInfo }) => {
             playsInline
             ref={player}
             volume={0.5}
+            autoPlay={autoplay}
             crossOrigin
             keyTarget="player"
             onProviderChange={onProviderChange}
             streamType="on-demand"
+            onTimeUpdate={onTimeUpdate}
             onCanPlay={() => {
+              setAutoPlay(false);
               const qualities = player.current?.qualities!;
               const preferredQuality = qualities[qualities?.length! - 1];
               preferredQuality!.selected = true;
+
+              setPlayerTime();
+            }}
+            onHlsError={() => {
+              if (src === backup) {
+                console.log("video source changed to backup");
+                setSrc(src);
+              } else {
+                console.log("video source changed to default");
+                setSrc(backup);
+              }
+              setAutoPlay(true);
             }}
           >
             <MediaProvider>

@@ -113,7 +113,7 @@ const AnimeInfoComponent = async ({
               </React.Fragment>
             ))}
           </p>
-          {/* <p>Season: {animeInfo.season}</p> */}
+          <p>Status: {animeInfo.status}</p>
           {/* <p>
             Studios:{" "}
             {animeInfo.studios?.map((item, index) => (
