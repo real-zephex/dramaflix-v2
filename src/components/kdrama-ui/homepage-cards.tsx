@@ -18,7 +18,11 @@ const KdramaHomecard = async ({
             className="rounded-md group bg-base-200 shadow-xl"
           >
             <Image
-              src={item.image ? item.image : "/placeholder.svg"}
+              src={
+                item.image
+                  ? `${process.env.PROXY}${item.image}`
+                  : "/placeholder.svg"
+              }
               width={200}
               height={300}
               alt={`${item.title} poster`}

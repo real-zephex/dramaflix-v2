@@ -8,6 +8,8 @@ const remotePatterns = [
   "img.freepik.com",
   "i.pinimg.com",
   "cdn.myanimelist.net",
+  "sup-proxy.zephex0-f6c.workers.dev",
+  "gogocdn.net",
 ];
 
 const nextConfig = {

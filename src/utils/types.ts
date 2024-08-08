@@ -276,7 +276,7 @@ export interface AnimeSearch {
 interface Result {
   id?: string;
   malId?: number;
-  title?: Title;
+  title?: string | Title;
   status?: string;
   image?: string;
   imageHash?: string;
@@ -290,7 +290,7 @@ interface Result {
   totalEpisodes?: number;
   currentEpisodeCount?: number;
   type?: string;
-  releaseDate?: number;
+  releaseDate?: number | string;
   episodeTitle?: string;
   episodeNumber?: number;
 }
@@ -641,3 +641,41 @@ interface TVGuestStar {
   popularity?: number;
   profile_path?: string;
 }
+
+export interface GogoanimeSearch {
+  currentPage?: number;
+  hasNextPage?: boolean;
+  results?: GogoResult[];
+}
+
+interface GogoResult {
+  id?: string;
+  title?: string;
+  url?: string;
+  image?: string;
+  releaseDate?: string;
+  subOrDub?: string;
+}
+
+export interface GogoanimeInfo {
+  id?: string;
+  title?: string;
+  url?: string;
+  genres?: string[];
+  totalEpisodes?: number;
+  image?: string;
+  releaseDate?: string;
+  description?: string;
+  subOrDub?: string;
+  type?: string;
+  status?: string;
+  otherName?: string;
+  episodes?: GogoEpisode[];
+}
+
+export interface GogoEpisode {
+  id?: string;
+  number?: number;
+  url?: string;
+}
+

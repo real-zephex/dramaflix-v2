@@ -1,11 +1,11 @@
-import { AnimeSearch } from "@/utils/types";
+import { GogoanimeSearch } from "@/utils/types";
 import Link from "next/link";
 import Image from "next/image";
 
 import { FaPlay, FaStar } from "react-icons/fa";
 import React from "react";
 
-const AnimeHomepageCards = async ({ data }: { data: AnimeSearch }) => {
+const AnimeHomepageCards = async ({ data }: { data: GogoanimeSearch }) => {
   return (
     <main>
       <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3 p-2">
@@ -17,7 +17,7 @@ const AnimeHomepageCards = async ({ data }: { data: AnimeSearch }) => {
           >
             <Image
               src={item.image ? item.image : "/placeholder.svg"}
-              alt={`Anime ${item.malId}`}
+              alt={`Anime ${item.id}`}
               width={500}
               height={700}
               className="w-full h-80 object-center  group-hover:opacity-80 transition-opacity rounded-t-md"
@@ -25,25 +25,25 @@ const AnimeHomepageCards = async ({ data }: { data: AnimeSearch }) => {
               placeholder="blur"
               blurDataURL="/placeholder.svg"
             />
-            <div className="absolute top-0 right-0 p-2 bg-neutral-800/90 rounded-bl-xl rounded-tr-md">
+            {/* <div className="absolute top-0 right-0 p-2 bg-neutral-800/90 rounded-bl-xl rounded-tr-md">
               {item.rating && (
                 <div className="flex flex-row items-center">
                   <FaStar className="w-4 h-4 mr-1 text-yellow-300" />
                   <span>{item.rating! / 10}</span>
                 </div>
               )}
-            </div>
+            </div> */}
             <div className="p-4">
               <h3 className="text-lg font-semibold line-clamp-2">
-                {item.title?.english || item.title?.romaji}
+                {item.title}
               </h3>
             </div>
 
-            <div className="absolute top-0 left-0 right-0 bg-gradient-to-t from-black/40 to-black/90 p-4 opacity-0 transition-opacity duration-300 group-hover:opacity-80 h-full flex justify-center items-center">
-              <FaPlay size={30} />
+            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/40 to-black/90 p-4 opacity-0 transition-opacity duration-300 group-hover:opacity-80 h-full flex justify-center items-center">
+              <FaPlay size={30} className="-translate-y-5" />
             </div>
 
-            <div className="absolute bottom-0 left-0 translate-x-[35%] translate-y-[70%] right-0 bg-zinc-900 text-white p-4 hidden transition-opacity duration-300 group-hover:2xl:flex z-10 overflow-auto rounded-xl flex-col w-80 h-96 ">
+            {/* <div className="absolute bottom-0 left-0 translate-x-[35%] translate-y-[70%] right-0 bg-zinc-900 text-white p-4 hidden transition-opacity duration-300 group-hover:2xl:flex z-10 overflow-auto rounded-xl flex-col w-80 h-96 ">
               <div className="flex flex-row items-center my-2 bg-base-200 rounded-lg">
                 <Image
                   src={item.image!}
@@ -94,7 +94,7 @@ const AnimeHomepageCards = async ({ data }: { data: AnimeSearch }) => {
                   </span>
                 </p>
               )}
-            </div>
+            </div> */}
           </Link>
         ))}
       </div>

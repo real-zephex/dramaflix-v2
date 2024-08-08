@@ -1,9 +1,13 @@
-import { AnimeInfo } from "@/utils/types";
+import { AnimeInfo, GogoanimeInfo } from "@/utils/types";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 
-const AnimeInfoComponent = async ({ animeInfo }: { animeInfo: AnimeInfo }) => {
+const AnimeInfoComponent = async ({
+  animeInfo,
+}: {
+  animeInfo: GogoanimeInfo;
+}) => {
   return (
     <main className=" w-full overflow-hidden">
       <div className="flex flex-col bg-base-200">
@@ -20,7 +24,7 @@ const AnimeInfoComponent = async ({ animeInfo }: { animeInfo: AnimeInfo }) => {
             quality={100}
           />
           <p className="text-xl md:text-2xl lg:text-3xl ml-2 font-semibold">
-            {animeInfo.title?.english || animeInfo.title?.romaji}
+            {animeInfo.title}
           </p>
         </section>
       </div>
@@ -39,27 +43,14 @@ const AnimeInfoComponent = async ({ animeInfo }: { animeInfo: AnimeInfo }) => {
           className="tab-content bg-base-100 border-base-300 rounded-box p-2"
         >
           <section>
-            <h1 className="font-bold text-2xl">Titles</h1>
-            <p>
-              Romaji: <span>{animeInfo.title?.romaji || "?"}</span>
-            </p>
-            <p>
-              Enlgish: <span>{animeInfo.title?.english || "?"}</span>
-            </p>
-            <p>
-              User-Preferred:{" "}
-              <span>{animeInfo.title?.userPreferred || "?"}</span>
-            </p>
-          </section>
-          <br />
-          <section>
             <h1 className="font-bold text-2xl">Description</h1>
             <p
               dangerouslySetInnerHTML={{ __html: `${animeInfo.description}` }}
             ></p>
           </section>
           <br />
-          <section>
+
+          {/* <section>
             <Link
               href={`https://myanimelist.net/anime/${animeInfo.malId}`}
               target="_blank"
@@ -71,8 +62,9 @@ const AnimeInfoComponent = async ({ animeInfo }: { animeInfo: AnimeInfo }) => {
                 </span>
               </p>
             </Link>
-          </section>
-          <section>
+          </section> */}
+
+          {/* <section>
             <Link
               href={`https://anilist.co/anime/${animeInfo.id}`}
               target="_blank"
@@ -82,13 +74,14 @@ const AnimeInfoComponent = async ({ animeInfo }: { animeInfo: AnimeInfo }) => {
                 <span className="text-info">{animeInfo.id} - click here </span>
               </p>
             </Link>
-          </section>
-          <p>
+          </section> */}
+
+          {/* <p>
             Adult:{" "}
             {animeInfo.isAdult ? "true" : !animeInfo.isAdult ? "false" : "?"}
-          </p>
-          <p>Country: {animeInfo.countryOfOrigin}</p>
-          <p>
+          </p> */}
+          {/* <p>Country: {animeInfo.countryOfOrigin}</p> */}
+          {/* <p>
             From{" "}
             {animeInfo.startDate ? (
               <span className="text-green-400">
@@ -107,10 +100,10 @@ const AnimeInfoComponent = async ({ animeInfo }: { animeInfo: AnimeInfo }) => {
             ) : (
               "?"
             )}
-          </p>
+          </p> */}
           <p>Total episodes: {animeInfo.totalEpisodes}</p>
-          <p>Rating: {animeInfo.rating! / 10}/10</p>
-          <p>Duration: {animeInfo.duration} minutes</p>
+          {/* <p>Rating: {animeInfo.rating! / 10}/10</p> */}
+          {/* <p>Duration: {animeInfo.duration} minutes</p> */}
           <p>
             Genres:{" "}
             {animeInfo.genres?.map((item, index) => (
@@ -120,8 +113,8 @@ const AnimeInfoComponent = async ({ animeInfo }: { animeInfo: AnimeInfo }) => {
               </React.Fragment>
             ))}
           </p>
-          <p>Season: {animeInfo.season}</p>
-          <p>
+          {/* <p>Season: {animeInfo.season}</p> */}
+          {/* <p>
             Studios:{" "}
             {animeInfo.studios?.map((item, index) => (
               <React.Fragment key={index}>
@@ -129,11 +122,11 @@ const AnimeInfoComponent = async ({ animeInfo }: { animeInfo: AnimeInfo }) => {
                 {index < animeInfo.studios!.length - 1 && ", "}
               </React.Fragment>
             ))}
-          </p>
+          </p> */}
           <p>Type: {animeInfo.type}</p>
         </div>
 
-        <input
+        {/* <input
           type="radio"
           name="my_tabs_2"
           role="tab"
@@ -174,9 +167,9 @@ const AnimeInfoComponent = async ({ animeInfo }: { animeInfo: AnimeInfo }) => {
           ) : (
             <p>No recommendations found</p>
           )}
-        </div>
+        </div> */}
 
-        <input
+        {/* <input
           type="radio"
           name="my_tabs_2"
           role="tab"
@@ -208,7 +201,7 @@ const AnimeInfoComponent = async ({ animeInfo }: { animeInfo: AnimeInfo }) => {
               <p>No artwork found</p>
             )}
           </div>
-        </div>
+        </div> */}
       </div>
     </main>
   );

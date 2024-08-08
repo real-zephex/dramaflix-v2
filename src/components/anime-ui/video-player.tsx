@@ -1,33 +1,44 @@
 "use client";
 
-import { MediaPlayer, MediaProvider } from "@vidstack/react";
+import {
+  isHLSProvider,
+  MediaPlayer,
+  MediaProvider,
+  MediaProviderAdapter,
+  MediaProviderChangeEvent,
+  Poster,
+  useMediaStore,
+  type MediaPlayerInstance,
+  useMediaRemote,
+} from "@vidstack/react";
 import "@vidstack/react/player/styles/default/theme.css";
 import "@vidstack/react/player/styles/default/layouts/video.css";
 import {
+  DefaultAudioLayout,
   defaultLayoutIcons,
   DefaultVideoLayout,
 } from "@vidstack/react/player/layouts/default";
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 
-import { AnimeInfo, AnimeLinks, Episode } from "@/utils/types";
+import { AnimeLinks, Episode, GogoanimeInfo } from "@/utils/types";
+import {
+  AnimeRequestHandler,
+  animeLinksCacher,
+} from "@/utils/anime-requests/request";
 
-import { AnimeRequestHandler } from "@/utils/anime-requests/request";
-
-const AnimeVideoPage = ({ data }: { data: AnimeInfo }) => {
-  const [videoPlayer, setVideoPlayer] = useState<JSX.Element>(
-    <div className="flex flex-col gap-4 justify-center mb-2">
-      <div
-        className="skeleton h-64 2xl:h-[47rem] md:h-[27rem] xl:h-[37rem] w-full"
-        aria-label="Loading video player"
-      ></div>
-    </div>
-  );
+const AnimeVideoPage = ({ data }: { data: GogoanimeInfo }) => {
   const [currentPlaying, setCurrentPlaying] = useState<string>("");
   const [buttonGroups, setButtonGroups] = useState<JSX.Element>(<></>);
   const [accordionStatus, setAccordionStatus] = useState<"shrink" | "expand">(
     "shrink"
   );
-
+  const player = useRef<MediaPlayerInstance>(null);
+  const [cacheConfirmation, setCacheConfirmation] = useState<JSX.Element>(
+    <></>
+  );
+  const [src, setSrc] = useState<string>("");
+  const [episodeTitle, setEpisodeTitle] = useState<string>("");
+  const remote = useMediaRemote();
   const memoizedData = useMemo(() => data, [data]);
   const groups = createGroups(data.episodes!, 100);
 
@@ -39,7 +50,8 @@ const AnimeVideoPage = ({ data }: { data: AnimeInfo }) => {
   useEffect(() => {
     const init = async () => {
       await videoFormatter(first_id.id);
-      setCurrentPlaying(first_id.title);
+
+      setCurrentPlaying(first_id.number.toString()!);
     };
 
     init();
@@ -47,14 +59,45 @@ const AnimeVideoPage = ({ data }: { data: AnimeInfo }) => {
 
   useEffect(() => {
     setButtonGroups(createButtonGroups(0, 100));
+    cacheInit(0, data.episodes?.length! < 100 ? data.episodes?.length! : 100);
   }, []);
+
+  const cacheInit = async (start: number, end: number) => {
+    const cacheConfirmation = await animeLinksCacher(
+      data.episodes!,
+      start,
+      end
+    );
+    if (cacheConfirmation) {
+      setCacheConfirmation(cacheMessage(start, end));
+    }
+    setTimeout(() => {
+      setCacheConfirmation(<></>);
+    }, 3000);
+  };
+
+  const cacheMessage = (start: number, end: number) => {
+    return (
+      <div className="toast z-50">
+        <div className="alert alert-info">
+          <span>
+            Links for Episodes {start.toString()} - {end.toString()} fetched
+            successfully
+          </span>
+        </div>
+      </div>
+    );
+  };
 
   const createButtonGroups = (
     start: number | undefined,
     end: number | undefined
   ) => {
     return (
-      <div className="grid grid-cols-5 2xl:grid-cols-5 gap-2 md:grid-cols-10 lg:grid-cols-12 my-2">
+      <div
+        className="grid grid-cols-5 2xl:grid-cols-5 gap-2 md:grid-cols-10 lg:grid-cols-12 my-2"
+        onClick={(e) => e.stopPropagation()}
+      >
         {data.episodes &&
           data.episodes.slice(start, end).map((item, index) => (
             <button
@@ -65,7 +108,7 @@ const AnimeVideoPage = ({ data }: { data: AnimeInfo }) => {
               onClick={(event) => {
                 event.currentTarget.style.backgroundColor = "gray";
                 videoFormatter(item.id!);
-                setCurrentPlaying(item.title!);
+                setCurrentPlaying(item.number?.toString()!);
               }}
             >
               {item.number}
@@ -85,24 +128,22 @@ const AnimeVideoPage = ({ data }: { data: AnimeInfo }) => {
       console.log("No data found");
       return null;
     }
+    const temp = res.sources?.find((source) => source.quality === "default");
 
-    const sourcesArray: string[] = Array.from(
-      res.sources!,
-      (item) => item.url!
-    );
-    return sourcesArray[sourcesArray.length - 2];
+    return `https://m3u8.justchill.workers.dev/?url=${temp?.url}`;
   };
+
+  function onProviderChange(
+    provider: MediaProviderAdapter | null,
+    _nativeEvent: MediaProviderChangeEvent
+  ) {
+    if (isHLSProvider(provider)) {
+      provider.config = {};
+    }
+  }
 
   const videoFormatter = useCallback(
     async (id: string) => {
-      setVideoPlayer(
-        <div className="flex flex-col gap-4 justify-center mb-2">
-          <div
-            className="skeleton h-64 2xl:h-[47rem] md:h-[27rem] xl:h-[37rem]"
-            aria-label="Loading video player"
-          ></div>
-        </div>
-      );
       let url;
       try {
         url = await vidLinksFetcher(id);
@@ -110,32 +151,24 @@ const AnimeVideoPage = ({ data }: { data: AnimeInfo }) => {
         url = "/not_found.mp4";
       }
 
-      const formatted = (
-        <MediaPlayer
-          src={url!}
-          aspectRatio="16/9"
-          load="eager"
-          playsInline
-          volume={1}
-        >
-          <MediaProvider />
-
-          <DefaultVideoLayout icons={defaultLayoutIcons} />
-        </MediaPlayer>
-      );
-
-      setVideoPlayer(formatted);
+      setSrc(url!);
+      setEpisodeTitle(getEpisodeNumber(id));
     },
     [memoizedData]
   );
 
+  function getEpisodeNumber(id: string): string {
+    const parts = id.split("-");
+    return parts[parts.length - 1];
+  }
+
   function handleSelectChange(item: Episode[]) {
-    // console.log(item[item.length - 1].number);
-    console.log(item);
-    setButtonGroups(<></>);
     const start_index = item[0].number;
     const end_index = item[item.length - 1].number;
     setButtonGroups(createButtonGroups(start_index! - 1, end_index));
+    if (start_index && end_index) {
+      cacheInit(start_index, end_index);
+    }
   }
 
   const toggleAccordion = () => {
@@ -146,8 +179,34 @@ const AnimeVideoPage = ({ data }: { data: AnimeInfo }) => {
 
   return (
     <main>
+      {cacheConfirmation}
       <div className="flex 2xl:flex-row flex-col w-full">
-        <div className="w-full">{videoPlayer}</div>
+        <div className="w-full">
+          {" "}
+          <MediaPlayer
+            title={`${data.title} - Episode ${episodeTitle}`}
+            src={src}
+            aspectRatio="16/9"
+            load="eager"
+            playsInline
+            ref={player}
+            volume={0.5}
+            crossOrigin
+            keyTarget="player"
+            onProviderChange={onProviderChange}
+            streamType="on-demand"
+            className="border-none"
+            onCanPlay={() => {
+              const qualities = player.current?.qualities!;
+              const preferredQuality = qualities[qualities?.length! - 1];
+              preferredQuality!.selected = true;
+            }}
+          >
+            <MediaProvider />
+            <DefaultAudioLayout icons={defaultLayoutIcons} />
+            <DefaultVideoLayout icons={defaultLayoutIcons} />
+          </MediaPlayer>
+        </div>
         <div className="2xl:w-1/4 w-full">
           <div
             className="collapse bg-gradient-to-b from-base-300 to-base-200/75 rounded-none p-0"
@@ -179,6 +238,7 @@ const AnimeVideoPage = ({ data }: { data: AnimeInfo }) => {
                       handleSelectChange(JSON.parse(target!));
                       // handleSelectChange(target);
                     }}
+                    onClick={(e) => e.stopPropagation()}
                   >
                     <option disabled>Episode Group</option>
                     {groups.length > 0 ? (

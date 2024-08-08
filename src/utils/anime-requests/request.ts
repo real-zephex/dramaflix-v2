@@ -2,7 +2,14 @@
 
 const parent_url = process.env.CONSUMET_API_URL;
 
-import { AnimeInfo, AnimeSearch, AnimeLinks } from "../types";
+import {
+  AnimeInfo,
+  AnimeSearch,
+  AnimeLinks,
+  GogoanimeSearch,
+  GogoanimeInfo,
+  GogoEpisode,
+} from "../types";
 
 export const AnimeRequestHandler = async ({
   search = false,
@@ -14,6 +21,7 @@ export const AnimeRequestHandler = async ({
   trending = false,
   popular = false,
   recent = false,
+  cacheDuration = 21600,
 }: {
   search?: boolean;
   searchQuery?: string;
@@ -24,24 +32,23 @@ export const AnimeRequestHandler = async ({
   trending?: boolean;
   popular?: boolean;
   recent?: boolean;
+  cacheDuration?: number;
 }): Promise<AnimeSearch | AnimeInfo | AnimeLinks | any> => {
   const url =
     search && searchQuery
-      ? `${parent_url}/meta/anilist/${encodeURIComponent(searchQuery)}`
+      ? `${parent_url}/anime/gogoanime/${encodeURIComponent(searchQuery)}`
       : info && animeId
-      ? `${parent_url}/meta/anilist/info/${animeId}`
+      ? `${parent_url}/anime/gogoanime/info/${animeId}`
       : watch && episodeId
-      ? `${parent_url}/meta/anilist/watch/${episodeId}`
+      ? `${parent_url}/anime/gogoanime/watch/${episodeId}`
       : trending
-      ? `${parent_url}/meta/anilist/trending`
-      : popular
-      ? `${parent_url}/meta/anilist/popular`
+      ? `${parent_url}/anime/gogoanime/top-airing`
       : recent
-      ? `${parent_url}/meta/anilist/recent-episodes`
+      ? `${parent_url}/anime/gogoanime/recent-episodes`
       : "";
 
   try {
-    const res = await fetch(url, { next: { revalidate: 21600 } });
+    const res = await fetch(url, { next: { revalidate: cacheDuration } });
 
     if (!res.ok) {
       throw new Error(`HTTP error! Status: ${res.status}`);
@@ -50,9 +57,9 @@ export const AnimeRequestHandler = async ({
     const data = await res.json();
 
     return search || trending
-      ? (data as AnimeSearch)
+      ? (data as GogoanimeSearch)
       : info
-      ? (data as AnimeInfo)
+      ? (data as GogoanimeInfo)
       : watch
       ? (data as AnimeLinks)
       : data;
@@ -61,3 +68,23 @@ export const AnimeRequestHandler = async ({
     throw error;
   }
 };
+
+export async function animeLinksCacher(
+  data: GogoEpisode[],
+  start: number,
+  end: number
+) {
+  const array = data.slice(start, end);
+  try {
+    const fetchPromise = array.map(async (element) => {
+      await fetch(`${parent_url}/anime/gogoanime/watch/${element.id}`, {
+        cache: "force-cache",
+      });
+    });
+    await Promise.all(fetchPromise);
+    return true;
+  } catch (error) {
+    console.error("Error: ", error);
+    return false;
+  }
+}
