@@ -6,10 +6,9 @@ import {
   MediaProvider,
   MediaProviderAdapter,
   MediaProviderChangeEvent,
-  Poster,
-  useMediaStore,
   type MediaPlayerInstance,
   useMediaRemote,
+  Poster,
 } from "@vidstack/react";
 import "@vidstack/react/player/styles/default/theme.css";
 import "@vidstack/react/player/styles/default/layouts/video.css";
@@ -19,12 +18,15 @@ import {
   DefaultVideoLayout,
 } from "@vidstack/react/player/layouts/default";
 import { useState, useEffect, useMemo, useCallback, useRef } from "react";
+import { FaDownload } from "react-icons/fa";
 
 import { AnimeLinks, Episode, GogoanimeInfo } from "@/utils/types";
 import {
   AnimeRequestHandler,
   animeLinksCacher,
 } from "@/utils/anime-requests/request";
+
+const HLS_PROXY = "https://m3u8.justchill.workers.dev/?url=";
 
 const AnimeVideoPage = ({ data }: { data: GogoanimeInfo }) => {
   const [currentPlaying, setCurrentPlaying] = useState<string>("");
@@ -38,13 +40,21 @@ const AnimeVideoPage = ({ data }: { data: GogoanimeInfo }) => {
   );
   const [src, setSrc] = useState<string>("");
   const [episodeTitle, setEpisodeTitle] = useState<string>("");
-  const remote = useMediaRemote();
+  const [download, setDownload] = useState<string>("");
+  const [loading, setLoading] = useState<JSX.Element>(<></>);
+  const [backup, setBackup] = useState<string>("");
+
   const memoizedData = useMemo(() => data, [data]);
   const groups = createGroups(data.episodes!, 100);
 
   const first_id: any = useMemo(
     () => (data.episodes?.length! > 0 ? data.episodes![0] : []),
     [data]
+  );
+  const vidLoadingIndicator = (
+    <div className="absolute top-0 right-0 left-0 bg-black/75 z-10 w-full h-full flex justify-center items-center">
+      <span className="loading loading-ring loading-lg"></span>
+    </div>
   );
 
   useEffect(() => {
@@ -119,6 +129,8 @@ const AnimeVideoPage = ({ data }: { data: GogoanimeInfo }) => {
   };
 
   const vidLinksFetcher = async (id: string) => {
+    setLoading(vidLoadingIndicator);
+
     const res: AnimeLinks = await AnimeRequestHandler({
       watch: true,
       episodeId: id,
@@ -129,9 +141,28 @@ const AnimeVideoPage = ({ data }: { data: GogoanimeInfo }) => {
       return null;
     }
     const temp = res.sources?.find((source) => source.quality === "backup");
+    const defaultUrl = res.sources?.find(
+      (source) => source.quality === "default"
+    );
     const download = res.download;
+    // Backup source will be used first
 
-    return `https://m3u8.justchill.workers.dev/?url=${temp?.url}`;
+    if (download) {
+      setDownload(download);
+    }
+    if (defaultUrl) {
+      setBackup(defaultUrl.url!);
+    }
+    const tempRes = await fetch(`${HLS_PROXY}${temp?.url}`, {
+      cache: "no-cache",
+    });
+    setLoading(<></>);
+
+    if (!tempRes.ok) {
+      return `${HLS_PROXY}${defaultUrl?.url}`;
+    } else {
+      return `${HLS_PROXY}${temp?.url}`;
+    }
   };
 
   function onProviderChange(
@@ -182,8 +213,8 @@ const AnimeVideoPage = ({ data }: { data: GogoanimeInfo }) => {
     <main>
       {cacheConfirmation}
       <div className="flex 2xl:flex-row flex-col w-full">
-        <div className="w-full">
-          {" "}
+        <div className="w-full relative">
+          {loading}
           <MediaPlayer
             title={`${data.title} - Episode ${episodeTitle}`}
             src={src}
@@ -196,16 +227,34 @@ const AnimeVideoPage = ({ data }: { data: GogoanimeInfo }) => {
             keyTarget="player"
             onProviderChange={onProviderChange}
             streamType="on-demand"
-            className="border-none"
             onCanPlay={() => {
               const qualities = player.current?.qualities!;
               const preferredQuality = qualities[qualities?.length! - 1];
               preferredQuality!.selected = true;
             }}
           >
-            <MediaProvider />
+            <MediaProvider>
+              <Poster
+                className="absolute inset-0 block h-full w-full rounded-md opacity-0 transition-opacity data-[visible]:opacity-100 object-cover"
+                src={`${HLS_PROXY}${data.image}`}
+                alt={`${data.title} Poster`}
+              />
+            </MediaProvider>
             <DefaultAudioLayout icons={defaultLayoutIcons} />
-            <DefaultVideoLayout icons={defaultLayoutIcons} />
+            <DefaultVideoLayout
+              icons={defaultLayoutIcons}
+              slots={{
+                beforeSettingsMenu: (
+                  <button
+                    className="btn btn-sm btn-ghost"
+                    type="button"
+                    onClick={() => window.open(download, "_blank")}
+                  >
+                    <FaDownload color="white" size={20} />
+                  </button>
+                ),
+              }}
+            />
           </MediaPlayer>
         </div>
         <div className="2xl:w-1/4 w-full">

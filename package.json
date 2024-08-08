@@ -9,8 +9,8 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@vidstack/react": "^1.11.30",
-    "hls.js": "^1.5.13",
+    "@vidstack/react": "^1.12.5",
+    "hls.js": "^1.5.14",
     "next": "14.2.5",
     "nextjs-toploader": "^1.6.12",
     "react": "^18",
