@@ -7,10 +7,13 @@ import {
   MovieInfoType,
   TVCredits,
   TVImages,
+  FlixHQResults,
+  FlixHQMovieLinks,
 } from "../types";
 
 // Constants
 const BASE_URL = "https://api.themoviedb.org/3";
+const CONSUMET = process.env.CONSUMET_API_URL;
 const API_KEY = process.env.TMDB_API_KEY;
 const CACHE_DURATION = 21600; // Cache duration in seconds (6 hours)
 
@@ -110,3 +113,33 @@ export async function MovieCredits({
     return (await res.json()) as TVImages;
   }
 }
+
+export const FlixHQResultsHandler = async ({
+  movieId,
+}: {
+  movieId: string;
+}) => {
+  const url = `${CONSUMET}/meta/tmdb/info/${movieId}?type=movie`;
+  const res = await fetch(url, { cache: "force-cache" });
+  const data: FlixHQResults = await res.json();
+  const { id, episodeId, title, cover } = data;
+
+  const linksData: FlixHQMovieLinks = await fetch(
+    `${CONSUMET}/meta/tmdb/watch/${episodeId}?id=${id}`,
+    { cache: "force-cache" }
+  ).then((response) => response.json());
+
+  const movieLink = linksData.sources?.find(
+    (element) => element.quality === "auto"
+  );
+  const subtitle = linksData.subtitles?.find(
+    (element) => element.lang === "English"
+  );
+
+  return {
+    movieLink,
+    subtitle,
+    title,
+    cover,
+  };
+};

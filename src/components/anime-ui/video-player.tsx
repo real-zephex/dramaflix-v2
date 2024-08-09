@@ -7,7 +7,6 @@ import {
   MediaProviderAdapter,
   MediaProviderChangeEvent,
   type MediaPlayerInstance,
-  useMediaRemote,
   Poster,
 } from "@vidstack/react";
 import "@vidstack/react/player/styles/default/theme.css";
@@ -45,8 +44,6 @@ const AnimeVideoPage = ({ data }: { data: GogoanimeInfo }) => {
   const [backup, setBackup] = useState<string>("");
   const [autoplay, setAutoPlay] = useState<boolean>(false);
   const [episodeId, setEpisodeId] = useState<string>("");
-
-  const remote = useMediaRemote();
 
   const memoizedData = useMemo(() => data, [data]);
   const groups = createGroups(data.episodes!, 100);

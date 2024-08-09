@@ -679,3 +679,82 @@ export interface GogoEpisode {
   url?: string;
 }
 
+export interface FlixHQResults {
+  id?: string;
+  title?: string;
+  episodeId?: string;
+  translations?: FlixHQTranslation[];
+  image?: string;
+  cover?: string;
+  logos?: Logo[];
+  type?: FlixHQType;
+  rating?: number;
+  releaseDate?: Date;
+  description?: string;
+  genres?: string[];
+  duration?: number;
+  directors?: string[];
+  writers?: any[];
+  actors?: string[];
+  trailer?: FlixHQTrailer;
+  mappings?: Mappings;
+  similar?: FlixHQRecommendation[];
+  recommendations?: FlixHQRecommendation[];
+}
+
+interface Logo {
+  url?: string;
+  aspectRatio?: number;
+  width?: number;
+}
+
+interface Mappings {
+  imdb?: string;
+  tmdb?: number;
+}
+
+interface FlixHQRecommendation {
+  id?: number;
+  title?: string;
+  image?: string;
+  type?: FlixHQType;
+  rating?: number;
+  releaseDate?: Date;
+}
+
+enum FlixHQType {
+  Movie = "Movie",
+}
+
+interface FlixHQTrailer {
+  id?: string;
+  site?: string;
+  url?: string;
+}
+
+interface FlixHQTranslation {
+  description?: string;
+  language?: string;
+  title?: string;
+}
+
+export interface FlixHQMovieLinks {
+  headers?: FlixHQHeaders;
+  sources?: FlixHQSource[];
+  subtitles?: FlixHQSubtitle[];
+}
+
+interface FlixHQHeaders {
+  Referer?: string;
+}
+
+interface FlixHQSource {
+  url?: string;
+  quality?: string;
+  isM3U8?: boolean;
+}
+
+interface FlixHQSubtitle {
+  url?: string;
+  lang?: string;
+}

@@ -1,15 +1,23 @@
 import React from "react";
+import { FlixHQResultsHandler } from "@/utils/movie-requests/request";
+import CustomVideoPlayer from "./custom-video-player";
+import { title } from "process";
 
 const MoviePlayer = async ({ id }: { id: string }) => {
+  const data = await FlixHQResultsHandler({ movieId: id });
+
   const vidLinksArray = [
     // { title: "vidsrc.to", link: `https://vidsrc.to/embed/movie/${id}` },
     { title: "vidsrc.pro", link: `https://vidsrc.pro/embed/movie/${id}` },
-    {
-      title: "multiembed",
-      link: `https://multiembed.mov/directstream.php?video_id=${id}&tmdb=1`,
-    },
+    // {
+    //   title: "multiembed",
+    //   link: `https://multiembed.mov/directstream.php?video_id=${id}&tmdb=1`,
+    // },
     // { title: "vidsrc.net", link: `https://vidsrc.in/embed/movie?tmdb=${id}` },
-    { title: "vidsrc.vip", link: `https://vidsrc.vip/embed/movie/${id}` },
+    {
+      title: "vidsrc.vip",
+      link: `https://vidsrc.vip/embed/movie/${id}?autoplay=false`,
+    },
     // {
     //   title: "autoembed",
     //   link: `https://sup-proxy.zephex0-f6c.workers.dev/api-content?url=https://stable-one.autoembed.cc/movie/${id}`,
@@ -30,7 +38,9 @@ const MoviePlayer = async ({ id }: { id: string }) => {
             id={`tab${index}`}
             className="tab"
             aria-label={items.title}
-            defaultChecked={items.title === "vidsrc.pro"}
+            defaultChecked={
+              data ? false : items.title === "vidsrc.pro" ? true : false
+            }
           />
           <div
             role="tabpanel"
@@ -55,6 +65,26 @@ const MoviePlayer = async ({ id }: { id: string }) => {
           </div>
         </React.Fragment>
       ))}
+      <input
+        type="radio"
+        name="my_tabs_2"
+        role="tab"
+        id="custom"
+        className="tab"
+        aria-label="Custom"
+        defaultChecked={data ? true : false}
+      />
+      <div
+        role="tabpanel"
+        className="tab-content bg-base-100 border-base-300 rounded-box p-2 "
+      >
+        <CustomVideoPlayer
+          movieTitle={data.title!}
+          source={data.movieLink?.url!}
+          subtitle={data.subtitle?.url!}
+          cover={data.cover ? data.cover : "/placeholder.svg"}
+        />
+      </div>
     </div>
   );
 };
