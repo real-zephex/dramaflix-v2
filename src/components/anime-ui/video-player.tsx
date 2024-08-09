@@ -8,6 +8,8 @@ import {
   MediaProviderChangeEvent,
   type MediaPlayerInstance,
   Poster,
+  Menu,
+  RadioGroup,
 } from "@vidstack/react";
 import "@vidstack/react/player/styles/default/theme.css";
 import "@vidstack/react/player/styles/default/layouts/video.css";
@@ -17,13 +19,14 @@ import {
   DefaultVideoLayout,
 } from "@vidstack/react/player/layouts/default";
 import { useState, useEffect, useMemo, useCallback, useRef } from "react";
-import { FaDownload } from "react-icons/fa";
+import { FaDownload, FaCheck } from "react-icons/fa";
 
 import { AnimeLinks, Episode, GogoanimeInfo } from "@/utils/types";
 import {
   AnimeRequestHandler,
   animeLinksCacher,
 } from "@/utils/anime-requests/request";
+import { CheckIcon, SettingsMenuIcon } from "@vidstack/react/icons";
 
 const HLS_PROXY = "https://m3u8.justchill.workers.dev/?url=";
 
@@ -38,12 +41,14 @@ const AnimeVideoPage = ({ data }: { data: GogoanimeInfo }) => {
     <></>
   );
   const [src, setSrc] = useState<string>("");
+  const [ogSoruce, setOgSource] = useState<string>("");
   const [episodeTitle, setEpisodeTitle] = useState<string>("");
   const [download, setDownload] = useState<string>("");
   const [loading, setLoading] = useState<JSX.Element>(<></>);
   const [backup, setBackup] = useState<string>("");
   const [autoplay, setAutoPlay] = useState<boolean>(false);
   const [episodeId, setEpisodeId] = useState<string>("");
+  const [isBackup, setIsBackup] = useState<boolean>(false);
 
   const memoizedData = useMemo(() => data, [data]);
   const groups = createGroups(data.episodes!, 100);
@@ -158,6 +163,9 @@ const AnimeVideoPage = ({ data }: { data: GogoanimeInfo }) => {
     if (defaultUrl) {
       setBackup(`${HLS_PROXY}${defaultUrl.url!}`);
     }
+    if (temp) {
+      setOgSource(`${HLS_PROXY}${temp.url}`);
+    }
     const tempRes = await fetch(`${HLS_PROXY}${temp?.url}`, {
       cache: "no-cache",
     });
@@ -262,7 +270,7 @@ const AnimeVideoPage = ({ data }: { data: GogoanimeInfo }) => {
           {loading}
           <MediaPlayer
             title={`${data.title} - Episode ${episodeTitle}`}
-            src={src}
+            src={isBackup ? backup : src}
             aspectRatio="16/9"
             load="eager"
             playsInline
@@ -281,16 +289,6 @@ const AnimeVideoPage = ({ data }: { data: GogoanimeInfo }) => {
               preferredQuality!.selected = true;
 
               setPlayerTime();
-            }}
-            onHlsError={() => {
-              if (src === backup) {
-                console.log("video source changed to backup");
-                setSrc(src);
-              } else {
-                console.log("video source changed to default");
-                setSrc(backup);
-              }
-              setAutoPlay(true);
             }}
           >
             <MediaProvider>
@@ -312,6 +310,33 @@ const AnimeVideoPage = ({ data }: { data: GogoanimeInfo }) => {
                   >
                     <FaDownload color="white" size={20} />
                   </button>
+                ),
+                afterPlaybackMenuItemsEnd: (
+                  <RadioGroup.Root
+                    className="vds-radio-group mt-2"
+                    aria-label="Custom Options"
+                  >
+                    <RadioGroup.Item
+                      className="vds-radio"
+                      value="check"
+                      key="check"
+                      onClick={() => setSrc(ogSoruce)}
+                    >
+                      <CheckIcon className="vds-icon" />
+                      <span className="vds-radio-label">Default</span>
+                    </RadioGroup.Item>
+                    <RadioGroup.Item
+                      className="vds-radio"
+                      value="check 2"
+                      key="check 2"
+                      onClick={() => {
+                        setSrc(backup);
+                      }}
+                    >
+                      <CheckIcon className="vds-icon" />
+                      <span className="vds-radio-label">Backup</span>
+                    </RadioGroup.Item>
+                  </RadioGroup.Root>
                 ),
               }}
             />
