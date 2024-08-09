@@ -32,7 +32,6 @@ export default function CustomVideoPlayer({
   return (
     <MediaPlayer
       title={movieTitle}
-      className="h-[240px] md:h-[480px] lg:h-[720px]"
       src={`https://m3u8.justchill.workers.dev/?url=${source}`}
       load="eager"
       aspectRatio="16/9"
