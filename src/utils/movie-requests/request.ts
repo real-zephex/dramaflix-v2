@@ -129,16 +129,15 @@ export const FlixHQResultsHandler = async ({
     { cache: "force-cache" }
   ).then((response) => response.json());
 
+  const subtitles = linksData.subtitles;
+
   const movieLink = linksData.sources?.find(
     (element) => element.quality === "auto"
-  );
-  const subtitle = linksData.subtitles?.find(
-    (element) => element.lang === "English"
   );
 
   return {
     movieLink,
-    subtitle,
+    subtitles,
     title,
     cover,
   };

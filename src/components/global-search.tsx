@@ -65,7 +65,7 @@ const Search = () => {
         setFormat(search_formatter);
       }
     },
-    [title]
+    [title, provider]
   );
 
   useHotkeys("ctrl+k", (event) => {

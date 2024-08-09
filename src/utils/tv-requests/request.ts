@@ -1,5 +1,6 @@
 "use server";
 
+import { FlixHQSeriesInfo, FlixHQSeriesLinks } from "../more-types";
 import {
   TrendingPopularTopAiringTV,
   TVSearch,
@@ -8,10 +9,12 @@ import {
   TVInfo,
   TVSeasonInfo,
   TVEpisodeInfo,
+  FlixHQMovieLinks,
 } from "../types";
 
 const api_key = process.env.TMDB_API_KEY;
 const parent_url = `https://api.themoviedb.org/3`;
+const CONSUMET = process.env.CONSUMET_API_URL;
 const NEXT_CACHE_DURATION = 21600;
 
 const requestHandler = async (url: string) => {
@@ -98,4 +101,50 @@ export const EpisodeInfo = async ({
 }) => {
   const url = `${parent_url}/tv/${id}/season/${season}/episode/${episode}?api_key=${api_key}`;
   return (await requestHandler(url)) as TVEpisodeInfo;
+};
+
+export const FlixHQEpisodeInfo = async ({
+  seriesId,
+  season,
+  episode,
+}: {
+  seriesId: string;
+  season: string;
+  episode: string;
+}) => {
+  const infoUrl = `${CONSUMET}/meta/tmdb/info/${seriesId}?type=tv`;
+  const infoData: FlixHQSeriesInfo = await fetch(infoUrl, {
+    cache: "force-cache",
+  }).then((response) => response.json());
+
+  // important
+  const { title, id } = infoData;
+
+  const seasonSection = infoData.seasons?.find(
+    (element) => element.season?.toString() == season
+  );
+  const episodeId = seasonSection?.episodes?.find(
+    (element) => element.episode?.toString() == episode
+  );
+
+  const cover = episodeId?.img?.hd;
+
+  const seriesVideoLink = `${CONSUMET}/meta/tmdb/watch/${episodeId?.id}?id=${id}`;
+  const videoData: FlixHQSeriesLinks = await fetch(seriesVideoLink, {
+    cache: "force-cache",
+  }).then((response) => response.json());
+
+  // important
+  const videoURL = videoData.sources?.find(
+    (element) => element.quality === "auto"
+  );
+
+  const subs = videoData.subtitles;
+
+  return {
+    title,
+    cover,
+    videoURL,
+    subs,
+  };
 };

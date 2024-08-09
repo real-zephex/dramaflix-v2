@@ -81,7 +81,7 @@ const MoviePlayer = async ({ id }: { id: string }) => {
         <CustomVideoPlayer
           movieTitle={data.title!}
           source={data.movieLink?.url!}
-          subtitle={data.subtitle?.url!}
+          subtitle={data.subtitles}
           cover={data.cover ? data.cover : "/placeholder.svg"}
         />
       </div>

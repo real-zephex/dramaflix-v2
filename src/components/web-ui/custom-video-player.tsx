@@ -16,28 +16,43 @@ import {
   DefaultVideoLayout,
 } from "@vidstack/react/player/layouts/default";
 
-interface Subtitle {
+interface VideoData {
+  title?: string;
+  cover?: string;
+  videoURL?: vidUrls;
+  subs?: subs[];
+}
+
+interface vidUrls {
+  url?: string;
+  isM3U8?: boolean;
+  quality?: string;
+}
+
+interface subs {
   url?: string;
   lang?: string;
 }
 
-export default function CustomVideoPlayer({
-  movieTitle,
-  subtitle,
-  source,
-  cover,
+const SeriesCustomVideoPlayer = ({
+  data,
+  season,
+  episode,
 }: {
-  movieTitle: string;
-  subtitle: Subtitle[] | undefined;
-  source: string;
-  cover: string;
-}) {
+  data: VideoData;
+  season: string;
+  episode: string;
+}) => {
   const player = useRef<MediaPlayerInstance>(null);
 
   return (
     <MediaPlayer
-      title={movieTitle}
-      src={`https://m3u8.justchill.workers.dev/?url=${source}`}
+      title={`${data.title} - S${season} E${episode}`}
+      src={
+        data.videoURL?.url
+          ? `https://m3u8.justchill.workers.dev/?url=${data.videoURL!.url}`
+          : "/not_found.mp4"
+      }
       load="eager"
       aspectRatio="16/9"
       playsInline
@@ -48,40 +63,34 @@ export default function CustomVideoPlayer({
       ref={player}
       onCanPlay={() => {
         const qualities = player.current?.qualities!;
-        if (qualities) {
+        if (qualities && data.videoURL?.url) {
           const preferredQuality = qualities[qualities?.length! - 1];
           preferredQuality!.selected = true;
         }
       }}
     >
       <MediaProvider>
-        {subtitle &&
-          subtitle.map((item) => (
+        {data.subs &&
+          data.subs.map((item) => (
             <Track
-              key={item.lang}
               src={item.url}
               kind="subtitles"
               label={item.lang}
               // lang="en-US"
               type="vtt"
-              default
+              key={item.lang}
             />
           ))}
-        {/* <Track
-          src={subtitle}
-          kind="subtitles"
-          label="English"
-          lang="en-US"
-          type="vtt"
-          default
-        /> */}
+
         <Poster
           className="absolute inset-0 block h-full w-full rounded-md opacity-0 transition-opacity data-[visible]:opacity-100 object-cover"
-          src={cover}
+          src={data.cover}
           alt="Movie poster"
         />
       </MediaProvider>
       <DefaultVideoLayout icons={defaultLayoutIcons} />
     </MediaPlayer>
   );
-}
+};
+
+export default SeriesCustomVideoPlayer;

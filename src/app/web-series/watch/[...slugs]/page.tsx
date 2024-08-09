@@ -1,13 +1,23 @@
-import { EpisodeInfo } from "@/utils/tv-requests/request";
-import Image from "next/image";
-import { FaStar } from "react-icons/fa";
 import Link from "next/link";
+import Image from "next/image";
+
+import { FaStar } from "react-icons/fa";
 import { FiDownload } from "react-icons/fi";
+
+import { EpisodeInfo } from "@/utils/tv-requests/request";
+import { FlixHQEpisodeInfo } from "@/utils/tv-requests/request";
+import SeriesCustomVideoPlayer from "@/components/web-ui/custom-video-player";
 
 const SeriesPlayer = async ({ params }: { params: { slugs: string[] } }) => {
   const series_id = params.slugs[2];
   const season_number = params.slugs[0];
   const episode_number = params.slugs[1];
+
+  const data = await FlixHQEpisodeInfo({
+    seriesId: series_id,
+    season: season_number,
+    episode: episode_number,
+  });
 
   const epData = await EpisodeInfo({
     id: series_id,
@@ -25,6 +35,7 @@ const SeriesPlayer = async ({ params }: { params: { slugs: string[] } }) => {
             role="tab"
             className="tab"
             aria-label="vidsrc"
+            defaultChecked={data.videoURL?.url ? false : true}
           />
           <div role="tabpanel" className="tab-content p-2">
             <iframe
@@ -42,18 +53,17 @@ const SeriesPlayer = async ({ params }: { params: { slugs: string[] } }) => {
             role="tab"
             className="tab"
             aria-label="vidsrc.vip"
-            defaultChecked
           />
           <div role="tabpanel" className="tab-content p-2">
             <iframe
-              src={`https://vidsrc.vip/embed/tv/${series_id}/${season_number}/${episode_number}`}
+              src={`https://vidsrc.vip/embed/tv/${series_id}/${season_number}/${episode_number}?autoplay=false`}
               allowFullScreen
               height={720}
               className="w-full h-[240px] md:h-[480px] lg:h-[720px] rounded-lg"
             ></iframe>
           </div>
 
-          <input
+          {/* <input
             type="radio"
             name="my_tabs_1"
             role="tab"
@@ -67,23 +77,23 @@ const SeriesPlayer = async ({ params }: { params: { slugs: string[] } }) => {
               height={720}
               className="w-full h-[240px] md:h-[480px] lg:h-[720px] rounded-lg"
             ></iframe>
-          </div>
+          </div> */}
 
-          {/* <input
+          <input
             type="radio"
             name="my_tabs_1"
             role="tab"
             className="tab"
-            aria-label="vidsrc 2"
+            aria-label="custom"
+            defaultChecked={data.videoURL?.url ? true : false}
           />
           <div role="tabpanel" className="tab-content p-2">
-            <iframe
-              src={`https://vidsrc.in/embed/tv?tmdb=${series_id}&season=${season_number}&episode=${episode_number}`}
-              referrerPolicy="origin"
-              allowFullScreen
-              className="w-full h-[240px] md:h-[480px] lg:h-[720px] rounded-lg"
-            ></iframe>
-          </div> */}
+            <SeriesCustomVideoPlayer
+              data={data}
+              season={season_number}
+              episode={episode_number}
+            />
+          </div>
         </div>
 
         <section className="mt-2 flex flex-col md:flex-row items-center bg-base-200 rounded-xl p-2">
