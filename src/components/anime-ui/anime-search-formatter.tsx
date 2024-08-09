@@ -5,7 +5,6 @@ import Link from "next/link";
 
 import { GogoanimeSearch } from "@/utils/types";
 const AnimesSearchFormatter = async ({ data }: { data: GogoanimeSearch }) => {
-  console.log(data);
   return (
     <div className="flex flex-col mt-4">
       {data.results &&

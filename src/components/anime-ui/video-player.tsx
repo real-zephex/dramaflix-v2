@@ -159,7 +159,7 @@ const AnimeVideoPage = ({ data }: { data: GogoanimeInfo }) => {
       setDownload(download);
     }
     if (defaultUrl) {
-      setBackup(defaultUrl.url!);
+      setBackup(`${HLS_PROXY}${defaultUrl.url!}`);
     }
     const tempRes = await fetch(`${HLS_PROXY}${temp?.url}`, {
       cache: "no-cache",
