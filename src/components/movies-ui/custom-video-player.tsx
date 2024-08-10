@@ -67,17 +67,10 @@ export default function CustomVideoPlayer({
               default
             />
           ))}
-        {/* <Track
-          src={subtitle}
-          kind="subtitles"
-          label="English"
-          lang="en-US"
-          type="vtt"
-          default
-        /> */}
+
         <Poster
           className="absolute inset-0 block h-full w-full rounded-md opacity-0 transition-opacity data-[visible]:opacity-100 object-cover"
-          src={cover}
+          src={cover ? cover : "/placeholder.svg"}
           alt="Movie poster"
         />
       </MediaProvider>

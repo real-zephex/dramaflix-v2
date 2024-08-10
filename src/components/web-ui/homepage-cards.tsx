@@ -17,17 +17,17 @@ const WebHomepageCards = async ({
             key={item.id}
             className="bg-background rounded-lg shadow-lg overflow-hidden group"
           >
-            <Link href={`/web-series/${item.id}`} className="block">
+            <Link href={`/web-series/${item.id}`} className="">
               <Image
                 src={
-                  item.poster_path 
+                  item.backdrop_path
                     ? `https://image.tmdb.org/t/p/original${item.backdrop_path}`
                     : "/placeholder.svg"
                 }
                 alt={item.name!}
                 width={300}
                 height={168}
-                className="w-full transition-opacity group-hover:opacity-50"
+                className="w-full object-cover max-h-52 transition-opacity group-hover:opacity-50"
                 placeholder="blur"
                 blurDataURL="/placeholder.svg"
                 quality={100}

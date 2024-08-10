@@ -47,8 +47,10 @@ const generateCards = (
         src={image}
         width={400}
         height={300}
-        alt="Web Series"
+        alt={`${title} poster`}
         className="h-80 rounded-t-xl object-cover"
+        priority
+        quality={100}
       />
       <h3 className="text-2xl font-bold mt-4">{title}</h3>
       <p className="text-muted-foreground mt-2">{message}</p>

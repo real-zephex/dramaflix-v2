@@ -23,6 +23,7 @@ export default async function Home() {
                 height={300}
                 alt="Hero Image"
                 className="rounded-xl object-cover"
+                priority
               ></Image>
             </div>
           </div>

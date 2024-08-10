@@ -1,7 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { MdOutlineStar } from "react-icons/md";
-
+import { FaStar } from "react-icons/fa";
 import { MoviesDiscover } from "@/utils/movie-requests/request";
 
 const MoviesGridConstructor = async ({ type }: { type: string }) => {
@@ -26,7 +25,7 @@ const MoviesGridConstructor = async ({ type }: { type: string }) => {
               className="w-full h-auto"
             />
             <div className="p-4 bg-background">
-              <h3 className="text-xl font-bold">{item.title}</h3>
+              <h3 className="text-xl font-bold line-clamp-1">{item.title}</h3>
               <p className="text-sm text-muted-foreground line-clamp-2">
                 {item.overview}
               </p>
@@ -34,7 +33,17 @@ const MoviesGridConstructor = async ({ type }: { type: string }) => {
                 <div className="flex items-center space-x-2">
                   {/* <StarIcon className="h-5 w-5 fill-primary" /> */}
                   <span className="text-base flex items-center">
-                    <MdOutlineStar size={20} />
+                    <FaStar
+                      size={16}
+                      className="mr-1"
+                      color={
+                        item.vote_average > 8
+                          ? "#02EBF4"
+                          : item.vote_average < 8 && item.vote_average > 5
+                          ? "#59FE17"
+                          : "#FF0103"
+                      }
+                    />
                     {item.vote_average.toString()}
                   </span>
                 </div>
