@@ -165,7 +165,7 @@ const MoreMovieInfo = async ({
         className="tab-content bg-base-100 border-base-300 rounded-box p-2 overflow-hidden"
       >
         <p className="text-xl md:text-2xl p-1 font-semibold">Backdrops</p>
-        <div className="carousel rounded-box">
+        <div className="carousel rounded-box w-full">
           {images_data.backdrops && images_data.backdrops.length > 0 ? (
             images_data.backdrops.map((item, index) => (
               <div className="carousel-item" key={index}>
@@ -193,7 +193,7 @@ const MoreMovieInfo = async ({
         </div>
 
         <p className="text-xl md:text-2xl p-1 font-semibold">Posters</p>
-        <div className="carousel rounded-box">
+        <div className="carousel rounded-box w-full">
           {images_data.posters && images_data.posters.length > 0 ? (
             images_data.posters.map((item, index) => (
               <div className="carousel-item" key={index}>
@@ -221,7 +221,7 @@ const MoreMovieInfo = async ({
         </div>
 
         <p className="text-xl md:text-2xl p-1 font-semibold">Logos</p>
-        <div className="carousel rounded-box">
+        <div className="carousel rounded-box w-full">
           {images_data.logos && images_data.logos.length > 0 ? (
             images_data.logos.map((item, index) => (
               <div className="carousel-item" key={index}>

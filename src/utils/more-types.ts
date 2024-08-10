@@ -102,3 +102,35 @@ interface Subtitle {
   url?: string;
   lang?: string;
 }
+
+export interface VidSrcCCLinks {
+  source1?: Source1;
+  source2?: Source2;
+}
+
+ interface Source1 {
+  data?: Source1Data;
+  success?: boolean;
+}
+
+interface Source1Data {
+  source?: string;
+  subtitles?: VidSrcCCSubtitle[];
+  format?: string;
+}
+
+interface VidSrcCCSubtitle {
+  label?: string;
+  file?: string;
+}
+
+interface Source2 {
+  data?: Source2Data;
+  success?: boolean;
+}
+
+ interface Source2Data {
+  source?: string;
+  subtitles?: VidSrcCCSubtitle[];
+  format: string;
+}

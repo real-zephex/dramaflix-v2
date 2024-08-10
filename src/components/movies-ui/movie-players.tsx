@@ -1,23 +1,22 @@
 import React from "react";
 import { FlixHQResultsHandler } from "@/utils/movie-requests/request";
 import CustomVideoPlayer from "./custom-video-player";
-import { title } from "process";
 
 const MoviePlayer = async ({ id }: { id: string }) => {
   const data = await FlixHQResultsHandler({ movieId: id });
 
   const vidLinksArray = [
     // { title: "vidsrc.to", link: `https://vidsrc.to/embed/movie/${id}` },
-    { title: "vidsrc.pro", link: `https://vidsrc.pro/embed/movie/${id}` },
+    { title: "embedded", link: `https://vidsrc.pro/embed/movie/${id}` },
     // {
     //   title: "multiembed",
     //   link: `https://multiembed.mov/directstream.php?video_id=${id}&tmdb=1`,
     // },
     // { title: "vidsrc.net", link: `https://vidsrc.in/embed/movie?tmdb=${id}` },
-    {
-      title: "vidsrc.vip",
-      link: `https://vidsrc.vip/embed/movie/${id}?autoplay=false`,
-    },
+    // {
+    //   title: "vidsrc.vip",
+    //   link: `https://vidsrc.vip/embed/movie/${id}?autoplay=false`,
+    // },
     // {
     //   title: "autoembed",
     //   link: `https://sup-proxy.zephex0-f6c.workers.dev/api-content?url=https://stable-one.autoembed.cc/movie/${id}`,
@@ -83,6 +82,8 @@ const MoviePlayer = async ({ id }: { id: string }) => {
           source={data.movieLink?.url!}
           subtitle={data.subtitles}
           cover={data.cover ? data.cover : "/placeholder.svg"}
+          otherLinks={[data.link2!, data.link3!]}
+          id={id}
         />
       </div>
     </div>

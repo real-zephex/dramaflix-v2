@@ -285,8 +285,10 @@ const AnimeVideoPage = ({ data }: { data: GogoanimeInfo }) => {
             onCanPlay={() => {
               setAutoPlay(false);
               const qualities = player.current?.qualities!;
-              const preferredQuality = qualities[qualities?.length! - 1];
-              preferredQuality!.selected = true;
+              if (qualities) {
+                const preferredQuality = qualities[qualities?.length! - 1];
+                preferredQuality!.selected = true;
+              }
 
               setPlayerTime();
             }}

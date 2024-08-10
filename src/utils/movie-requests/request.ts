@@ -1,5 +1,6 @@
 "use server";
 
+import { VidSrcCCLinks } from "../more-types";
 // Movies Related Request
 
 import {
@@ -135,10 +136,27 @@ export const FlixHQResultsHandler = async ({
     (element) => element.quality === "auto"
   );
 
+  const vidccLinks: VidSrcCCLinks = await fetch(
+    `https://temp-res.vercel.app/vidsrc/${movieId}`,
+    { cache: "force-cache" }
+  ).then((response) => response.json());
+
+  let link2, link3;
+  if (vidccLinks.source2?.data) {
+    link2 = vidccLinks.source2.data.source;
+  }
+  if (vidccLinks.source1?.data) {
+    const tempLink = vidccLinks.source1.data.source;
+    if (tempLink != movieLink) {
+      link3 = tempLink;
+    }
+  }
   return {
     movieLink,
     subtitles,
     title,
     cover,
+    link2,
+    link3,
   };
 };

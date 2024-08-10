@@ -73,7 +73,7 @@ const WebSeriesInfoPage = async ({ params }: { params: { id: number } }) => {
   const SeasonInfo = tempSeasonInfo;
 
   return (
-    <main className="overflow-hidden">
+    <main className="">
       <div
         style={{
           backgroundImage: `url(https://image.tmdb.org/t/p/original${series_info.backdrop_path})`,
@@ -82,7 +82,7 @@ const WebSeriesInfoPage = async ({ params }: { params: { id: number } }) => {
           backgroundPosition: "center", // Centers the image
         }}
       >
-        <div className="py-10 sm:py-14 md:py-16 lg:py-20 xl:py-24 2xl:py-26 px-4 bg-gradient-to-b from-base-300 to-base-100/50 flex flex-row items-center">
+        <div className="py-10 sm:py-14 md:py-16 lg:py-20 xl:py-24 2xl:py-26 px-4 bg-gradient-to-b from-base-300 via-base-100/50 to-base-200 flex flex-row items-center">
           <Image
             src={
               series_info.poster_path

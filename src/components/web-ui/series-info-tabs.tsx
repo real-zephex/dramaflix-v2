@@ -14,7 +14,7 @@ const SeriesInfoTabs = async ({
 }) => {
   return (
     <main>
-      <div role="tablist" className="tabs tabs-boxed rounded-none">
+      <div role="tablist" className="tabs tabs-boxed rounded-none ">
         <input
           type="radio"
           name="my_tabs_2"
@@ -117,10 +117,10 @@ const SeriesInfoTabs = async ({
         />
         <div
           role="tabpanel"
-          className="tab-content bg-base-100 border-base-300 rounded-box p-2"
+          className="tab-content bg-base-100 border-base-300 rounded-box p-2 overflow-hidden"
         >
           <p className="text-xl md:text-2xl p-1 font-semibold">Backdrops</p>
-          <div className="carousel rounded-box">
+          <div className="carousel rounded-box w-full">
             {artwork.backdrops ? (
               artwork.backdrops.map((item, index) => (
                 <div className="carousel-item" key={index}>
@@ -148,7 +148,7 @@ const SeriesInfoTabs = async ({
           </div>
 
           <p className="text-xl md:text-2xl p-1 font-semibold">Posters</p>
-          <div className="carousel rounded-box">
+          <div className="carousel rounded-box w-full">
             {artwork.posters ? (
               artwork.posters.map((item, index) => (
                 <div className="carousel-item" key={index}>
@@ -176,7 +176,7 @@ const SeriesInfoTabs = async ({
           </div>
 
           <p className="text-xl md:text-2xl p-1 font-semibold">Logos</p>
-          <div className="carousel rounded-box">
+          <div className="carousel rounded-box w-full">
             {artwork.logos ? (
               artwork.logos.map((item, index) => (
                 <div className="carousel-item" key={index}>

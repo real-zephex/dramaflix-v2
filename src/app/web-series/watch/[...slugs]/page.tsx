@@ -47,7 +47,7 @@ const SeriesPlayer = async ({ params }: { params: { slugs: string[] } }) => {
             ></iframe>
           </div>
 
-          <input
+          {/* <input
             type="radio"
             name="my_tabs_1"
             role="tab"
@@ -61,7 +61,7 @@ const SeriesPlayer = async ({ params }: { params: { slugs: string[] } }) => {
               height={720}
               className="w-full h-[240px] md:h-[480px] lg:h-[720px] rounded-lg"
             ></iframe>
-          </div>
+          </div> */}
 
           {/* <input
             type="radio"

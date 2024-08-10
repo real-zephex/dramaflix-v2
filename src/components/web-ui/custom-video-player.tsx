@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState } from "react";
 
 import "@vidstack/react/player/styles/default/theme.css";
 import "@vidstack/react/player/styles/default/layouts/video.css";
@@ -9,18 +9,22 @@ import {
   MediaPlayerInstance,
   MediaProvider,
   Poster,
+  RadioGroup,
   Track,
 } from "@vidstack/react";
 import {
   defaultLayoutIcons,
   DefaultVideoLayout,
 } from "@vidstack/react/player/layouts/default";
+import { CheckIcon } from "@vidstack/react/icons";
 
 interface VideoData {
   title?: string;
   cover?: string;
   videoURL?: vidUrls;
   subs?: subs[];
+  link2?: string;
+  link3?: string;
 }
 
 interface vidUrls {
@@ -44,15 +48,18 @@ const SeriesCustomVideoPlayer = ({
   episode: string;
 }) => {
   const player = useRef<MediaPlayerInstance>(null);
-
+  const [src, setSrc] = useState<string>(
+    data.videoURL
+      ? `https://m3u8.justchill.workers.dev/?url=${data.videoURL.url!}`
+      : "/not_found.mp4"
+  );
   return (
     <MediaPlayer
       title={`${data.title} - S${season} E${episode}`}
-      src={
-        data.videoURL?.url
-          ? `https://m3u8.justchill.workers.dev/?url=${data.videoURL!.url}`
-          : "/not_found.mp4"
-      }
+      src={{
+        src: src,
+        type: "application/x-mpegurl",
+      }}
       load="eager"
       aspectRatio="16/9"
       playsInline
@@ -88,7 +95,60 @@ const SeriesCustomVideoPlayer = ({
           alt="Movie poster"
         />
       </MediaProvider>
-      <DefaultVideoLayout icons={defaultLayoutIcons} />
+      <DefaultVideoLayout
+        icons={defaultLayoutIcons}
+        slots={{
+          afterPlaybackMenuItemsEnd: (
+            <RadioGroup.Root
+              className="vds-radio-group mt-2"
+              aria-label="Custom Options"
+            >
+              <RadioGroup.Item
+                className="vds-radio"
+                value="check 1"
+                key="check 1"
+                onClick={() =>
+                  setSrc(
+                    `https://m3u8.justchill.workers.dev/?url=${data.videoURL?.url}`
+                  )
+                }
+              >
+                {src ===
+                  `https://m3u8.justchill.workers.dev/?url=${data.videoURL?.url}` && (
+                  <CheckIcon className="vds-icon" />
+                )}
+                <span className="vds-radio-label">Default</span>
+              </RadioGroup.Item>
+              {data.link2 && (
+                <RadioGroup.Item
+                  className="vds-radio"
+                  value="check 2"
+                  key="check 2"
+                  onClick={() => {
+                    setSrc(data.link2!);
+                  }}
+                >
+                  {src === data.link2 && <CheckIcon className="vds-icon" />}
+                  <span className="vds-radio-label">Source 2</span>
+                </RadioGroup.Item>
+              )}
+              {data.link3 && (
+                <RadioGroup.Item
+                  className="vds-radio"
+                  value="check 3"
+                  key="check 3"
+                  onClick={() => {
+                    setSrc(data.link3!);
+                  }}
+                >
+                  {src === data.link3 && <CheckIcon className="vds-icon" />}
+                  <span className="vds-radio-label">Source 3</span>
+                </RadioGroup.Item>
+              )}
+            </RadioGroup.Root>
+          ),
+        }}
+      />
     </MediaPlayer>
   );
 };

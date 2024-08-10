@@ -1,6 +1,10 @@
 "use server";
 
-import { FlixHQSeriesInfo, FlixHQSeriesLinks } from "../more-types";
+import {
+  FlixHQSeriesInfo,
+  FlixHQSeriesLinks,
+  VidSrcCCLinks,
+} from "../more-types";
 import {
   TrendingPopularTopAiringTV,
   TVSearch,
@@ -141,10 +145,27 @@ export const FlixHQEpisodeInfo = async ({
 
   const subs = videoData.subtitles;
 
+  const vidsrcData: VidSrcCCLinks = await fetch(
+    `https://temp-res.vercel.app/vidsrc/${seriesId}?s=${season}&e=${episode}`
+  ).then((response) => response.json());
+
+  let link2, link3;
+  if (vidsrcData.source2?.data) {
+    link2 = vidsrcData.source2.data.source;
+  }
+  if (vidsrcData.source1?.data) {
+    const tempLink = vidsrcData.source1.data.source;
+    if (tempLink != videoURL?.url) {
+      link3 = tempLink;
+    }
+  }
+
   return {
     title,
     cover,
     videoURL,
     subs,
+    link2,
+    link3,
   };
 };
