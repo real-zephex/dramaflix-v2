@@ -15,7 +15,7 @@ const KdramaHomecard = async ({
           <Link
             href={`/kdramas/${item.id?.split("/drama-detail/")[1]}`}
             key={index}
-            className="rounded-md group bg-base-200 shadow-xl"
+            className="rounded-lg group bg-base-200 shadow-xl"
           >
             <Image
               src={
@@ -26,12 +26,14 @@ const KdramaHomecard = async ({
               width={200}
               height={300}
               alt={`${item.title} poster`}
-              className="w-full h-72 xl:h-80 2xl:h-[25rem] group-hover:opacity-80 transition-opacity rounded-t-md"
+              className="w-full h-72 xl:h-80 2xl:h-[25rem] group-hover:opacity-80 transition-opacity rounded-t-lg"
               placeholder="blur"
               blurDataURL="/placeholder.svg"
               quality={100}
             />
-            <h3 className="mt-2 text-lg pb-2 px-2">{item.title}</h3>
+            <h3 className="mt-2 text-lg font-semibold pb-2 px-3">
+              {item.title}
+            </h3>
           </Link>
         ))}
     </div>

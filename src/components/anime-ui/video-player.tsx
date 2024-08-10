@@ -341,6 +341,11 @@ const AnimeVideoPage = ({ data }: { data: GogoanimeInfo }) => {
               }}
             />
           </MediaPlayer>
+          <p className="text-xs text-center pb-1 text-gray-500 hidden 2xl:block">
+            If you experience any issues during video playback then, try
+            changing the video source to backup. Click the settings icon in the
+            video player, go to playback and then click on backup.
+          </p>
         </div>
         <div className="2xl:w-1/4 w-full">
           <div

@@ -8,6 +8,7 @@ import {
   MediaProviderAdapter,
   MediaProviderChangeEvent,
   Poster,
+  RadioGroup,
 } from "@vidstack/react";
 import "@vidstack/react/player/styles/default/theme.css";
 import "@vidstack/react/player/styles/default/layouts/video.css";
@@ -20,6 +21,7 @@ import { useState, useEffect, useMemo, useCallback, memo, useRef } from "react";
 
 import { DramaInfo, DramaLinks, DramaEpisode } from "@/utils/types";
 import { DramaLinksFetcher } from "@/utils/kdrama-requests/request";
+import { CheckIcon } from "@vidstack/react/icons";
 
 const HLS_PROXY = "https://m3u8.justchill.workers.dev/?url=";
 
@@ -34,8 +36,10 @@ const DramaVideoPage = ({ data }: { data: DramaInfo }) => {
   );
   const [episodeTitle, setEpisodeTitle] = useState<string>("");
   const [loading, setLoading] = useState<JSX.Element>(<></>);
-  const memoizedData = useMemo(() => data, [data]);
+  const [ogSource, setOgSource] = useState<string>("");
+  const [backupSource, setBackupSource] = useState<string>("");
 
+  const memoizedData = useMemo(() => data, [data]);
   const first_entry: DramaEpisode | any = useMemo(
     () => (data.episodes?.length! > 0 ? data.episodes![0] : []),
     [data]
@@ -67,6 +71,10 @@ const DramaVideoPage = ({ data }: { data: DramaInfo }) => {
 
     setLoading(<></>);
     const sourcesArray = Array.from(res.sources!, (item) => item.url);
+    if (sourcesArray && sourcesArray.length > 1) {
+      setOgSource(`${HLS_PROXY}${sourcesArray[0]!}`);
+      setBackupSource(`${HLS_PROXY}${sourcesArray[1]!}`);
+    }
 
     const tempRes = await fetch(`${HLS_PROXY}${sourcesArray[0]}`, {
       cache: "no-cache",
@@ -140,7 +148,6 @@ const DramaVideoPage = ({ data }: { data: DramaInfo }) => {
             keyTarget="player"
             onProviderChange={onProviderChange}
             streamType="on-demand"
-            className="py-2 "
             onCanPlay={() => {
               if (src === "/not_found.mp4") {
                 return;
@@ -158,7 +165,38 @@ const DramaVideoPage = ({ data }: { data: DramaInfo }) => {
               />
             </MediaProvider>
             <DefaultAudioLayout icons={defaultLayoutIcons} />
-            <DefaultVideoLayout icons={defaultLayoutIcons} />
+            <DefaultVideoLayout
+              icons={defaultLayoutIcons}
+              slots={{
+                afterPlaybackMenuItemsEnd: (
+                  <RadioGroup.Root
+                    className="vds-radio-group mt-2"
+                    aria-label="Custom Options"
+                  >
+                    <RadioGroup.Item
+                      className="vds-radio"
+                      value="check"
+                      key="check"
+                      onClick={() => setSrc(ogSource)}
+                    >
+                      <CheckIcon className="vds-icon" />
+                      <span className="vds-radio-label">Default</span>
+                    </RadioGroup.Item>
+                    <RadioGroup.Item
+                      className="vds-radio"
+                      value="check 2"
+                      key="check 2"
+                      onClick={() => {
+                        setSrc(backupSource);
+                      }}
+                    >
+                      <CheckIcon className="vds-icon" />
+                      <span className="vds-radio-label">Backup</span>
+                    </RadioGroup.Item>
+                  </RadioGroup.Root>
+                ),
+              }}
+            />
           </MediaPlayer>
         </div>
         <div className="2xl:w-1/4 w-full 2xl:mt-0">
