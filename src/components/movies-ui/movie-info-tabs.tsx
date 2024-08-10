@@ -130,7 +130,7 @@ const MoreMovieInfo = async ({
                 <Image
                   src={
                     item.profile_path
-                      ? `https://image.tmdb.org/t/p/original${item.profile_path}`
+                      ? `${process.env.NEXT_PUBLIC_PROXY}https://image.tmdb.org/t/p/original${item.profile_path}`
                       : "/placeholder.svg"
                   }
                   width={150}
@@ -172,7 +172,7 @@ const MoreMovieInfo = async ({
                 <Image
                   src={
                     item.file_path
-                      ? `https://image.tmdb.org/t/p/original${item.file_path}`
+                      ? `${process.env.NEXT_PUBLIC_PROXY}https://image.tmdb.org/t/p/original${item.file_path}`
                       : "/placeholder.svg"
                   }
                   width={500}
@@ -200,7 +200,7 @@ const MoreMovieInfo = async ({
                 <Image
                   src={
                     item.file_path
-                      ? `https://image.tmdb.org/t/p/original${item.file_path}`
+                      ? `${process.env.NEXT_PUBLIC_PROXY}https://image.tmdb.org/t/p/original${item.file_path}`
                       : "/placeholder.svg"
                   }
                   width={500}
@@ -228,7 +228,7 @@ const MoreMovieInfo = async ({
                 <Image
                   src={
                     item.file_path
-                      ? `https://image.tmdb.org/t/p/original${item.file_path}`
+                      ? `${process.env.NEXT_PUBLIC_PROXY}https://image.tmdb.org/t/p/original${item.file_path}`
                       : "/placeholder.svg"
                   }
                   width={500}

@@ -8,7 +8,6 @@ import {
   MediaProviderChangeEvent,
   type MediaPlayerInstance,
   Poster,
-  Menu,
   RadioGroup,
 } from "@vidstack/react";
 import "@vidstack/react/player/styles/default/theme.css";
@@ -19,16 +18,14 @@ import {
   DefaultVideoLayout,
 } from "@vidstack/react/player/layouts/default";
 import { useState, useEffect, useMemo, useCallback, useRef } from "react";
-import { FaDownload, FaCheck } from "react-icons/fa";
+import { FaDownload } from "react-icons/fa";
 
 import { AnimeLinks, Episode, GogoanimeInfo } from "@/utils/types";
 import {
   AnimeRequestHandler,
   animeLinksCacher,
 } from "@/utils/anime-requests/request";
-import { CheckIcon, SettingsMenuIcon } from "@vidstack/react/icons";
-
-const HLS_PROXY = "https://m3u8.justchill.workers.dev/?url=";
+import { CheckIcon } from "@vidstack/react/icons";
 
 const AnimeVideoPage = ({ data }: { data: GogoanimeInfo }) => {
   const [currentPlaying, setCurrentPlaying] = useState<string>("");
@@ -161,20 +158,27 @@ const AnimeVideoPage = ({ data }: { data: GogoanimeInfo }) => {
       setDownload(download);
     }
     if (defaultUrl) {
-      setBackup(`${HLS_PROXY}${defaultUrl.url!}`);
+      setBackup(
+        `${process.env.NEXT_PUBLIC_M3U8_PROXY as string}${defaultUrl.url!}`
+      );
     }
     if (temp) {
-      setOgSource(`${HLS_PROXY}${temp.url}`);
+      setOgSource(`${process.env.NEXT_PUBLIC_M3U8_PROXY as string}${temp.url}`);
     }
-    const tempRes = await fetch(`${HLS_PROXY}${temp?.url}`, {
-      cache: "no-cache",
-    });
+    const tempRes = await fetch(
+      `${process.env.NEXT_PUBLIC_M3U8_PROXY as string}${temp?.url}`,
+      {
+        cache: "no-cache",
+      }
+    );
     setLoading(<></>);
 
     if (!tempRes.ok) {
-      return `${HLS_PROXY}${defaultUrl?.url}`;
+      return `${process.env.NEXT_PUBLIC_M3U8_PROXY as string}${
+        defaultUrl?.url
+      }`;
     } else {
-      return `${HLS_PROXY}${temp?.url}`;
+      return `${process.env.NEXT_PUBLIC_M3U8_PROXY as string}${temp?.url}`;
     }
   };
 
@@ -296,7 +300,9 @@ const AnimeVideoPage = ({ data }: { data: GogoanimeInfo }) => {
             <MediaProvider>
               <Poster
                 className="absolute inset-0 block h-full w-full rounded-md opacity-0 transition-opacity data-[visible]:opacity-100 object-cover"
-                src={`${HLS_PROXY}${data.image}`}
+                src={`${process.env.NEXT_PUBLIC_PROXY_2 as string}${
+                  data.image
+                }`}
                 alt={`${data.title} Poster`}
               />
             </MediaProvider>

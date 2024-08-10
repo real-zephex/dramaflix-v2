@@ -1,9 +1,9 @@
-import { GogoanimeSearch } from "@/utils/types";
+import React from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { FaPlay } from "react-icons/fa";
 
-import { FaPlay, FaStar } from "react-icons/fa";
-import React from "react";
+import { GogoanimeSearch } from "@/utils/types";
 
 const AnimeHomepageCards = async ({ data }: { data: GogoanimeSearch }) => {
   return (
@@ -16,7 +16,11 @@ const AnimeHomepageCards = async ({ data }: { data: GogoanimeSearch }) => {
             className="relative bg-muted rounded-lg  group bg-base-300 shadow-md"
           >
             <Image
-              src={item.image ? item.image : "/placeholder.svg"}
+              src={
+                item.image
+                  ? `${process.env.NEXT_PUBLIC_PROXY_2 as string}${item.image}`
+                  : "/placeholder.svg"
+              }
               alt={`Anime ${item.id}`}
               width={500}
               height={700}

@@ -20,7 +20,7 @@ const KdramaHomecard = async ({
             <Image
               src={
                 item.image
-                  ? `${process.env.PROXY}${item.image}`
+                  ? `${process.env.NEXT_PUBLIC_PROXY_2 as string}${item.image}`
                   : "/placeholder.svg"
               }
               width={200}

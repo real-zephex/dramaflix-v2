@@ -146,7 +146,8 @@ export const FlixHQEpisodeInfo = async ({
   const subs = videoData.subtitles;
 
   const vidsrcData: VidSrcCCLinks = await fetch(
-    `https://temp-res.vercel.app/vidsrc/${seriesId}?s=${season}&e=${episode}`
+    `https://temp-res.vercel.app/vidsrc/${seriesId}?s=${season}&e=${episode}`,
+    { next: { revalidate: 1800 } }
   ).then((response) => response.json());
 
   let link2, link3;

@@ -23,8 +23,6 @@ import { DramaInfo, DramaLinks, DramaEpisode } from "@/utils/types";
 import { DramaLinksFetcher } from "@/utils/kdrama-requests/request";
 import { CheckIcon } from "@vidstack/react/icons";
 
-const HLS_PROXY = "https://m3u8.justchill.workers.dev/?url=";
-
 const DramaVideoPage = ({ data }: { data: DramaInfo }) => {
   const mediaId: string = data.id!;
 
@@ -72,17 +70,28 @@ const DramaVideoPage = ({ data }: { data: DramaInfo }) => {
     setLoading(<></>);
     const sourcesArray = Array.from(res.sources!, (item) => item.url);
     if (sourcesArray && sourcesArray.length > 1) {
-      setOgSource(`${HLS_PROXY}${sourcesArray[0]!}`);
-      setBackupSource(`${HLS_PROXY}${sourcesArray[1]!}`);
+      setOgSource(
+        `${process.env.NEXT_PUBLIC_M3U8_PROXY as string}${sourcesArray[0]!}`
+      );
+      setBackupSource(
+        `${process.env.NEXT_PUBLIC_M3U8_PROXY as string}${sourcesArray[1]!}`
+      );
     }
 
-    const tempRes = await fetch(`${HLS_PROXY}${sourcesArray[0]}`, {
-      cache: "no-cache",
-    });
+    const tempRes = await fetch(
+      `${process.env.NEXT_PUBLIC_M3U8_PROXY as string}${sourcesArray[0]}`,
+      {
+        cache: "no-cache",
+      }
+    );
     if (!tempRes.ok) {
-      return `${HLS_PROXY}${sourcesArray[1]}`;
+      return `${process.env.NEXT_PUBLIC_M3U8_PROXY as string}${
+        sourcesArray[1]
+      }`;
     } else {
-      return `${HLS_PROXY}${sourcesArray[0]}`;
+      return `${process.env.NEXT_PUBLIC_M3U8_PROXY as string}${
+        sourcesArray[0]
+      }`;
     }
   };
 
@@ -160,7 +169,9 @@ const DramaVideoPage = ({ data }: { data: DramaInfo }) => {
             <MediaProvider>
               <Poster
                 className="absolute inset-0 block h-full w-full rounded-md opacity-0 transition-opacity data-[visible]:opacity-100 object-cover"
-                src={`${HLS_PROXY}${data.image}`}
+                src={`${process.env.NEXT_PUBLIC_PROXY_2 as string}${
+                  data.image
+                }`}
                 alt={`${data.title} Poster`}
               />
             </MediaProvider>

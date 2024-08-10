@@ -50,7 +50,7 @@ const SeriesCustomVideoPlayer = ({
   const player = useRef<MediaPlayerInstance>(null);
   const [src, setSrc] = useState<string>(
     data.videoURL
-      ? `https://m3u8.justchill.workers.dev/?url=${data.videoURL.url!}`
+      ? `${process.env.NEXT_PUBLIC_M3U8_PROXY as string}${data.videoURL.url!}`
       : "/not_found.mp4"
   );
   return (
@@ -85,13 +85,13 @@ const SeriesCustomVideoPlayer = ({
               label={item.lang}
               // lang="en-US"
               type="vtt"
-              key={item.lang}
+              key={item.url}
             />
           ))}
 
         <Poster
           className="absolute inset-0 block h-full w-full rounded-md opacity-0 transition-opacity data-[visible]:opacity-100 object-cover"
-          src={data.cover}
+          src={data.cover ? `${process.env.NEXT_PUBLIC_PROXY_2 as string}${data.cover}` : "/placeholder.svg"}
           alt="Movie poster"
         />
       </MediaProvider>
@@ -109,14 +109,16 @@ const SeriesCustomVideoPlayer = ({
                 key="check 1"
                 onClick={() =>
                   setSrc(
-                    `https://m3u8.justchill.workers.dev/?url=${data.videoURL?.url}`
+                    `${process.env.NEXT_PUBLIC_M3U8_PROXY as string}${
+                      data.videoURL?.url
+                    }`
                   )
                 }
               >
                 {src ===
-                  `https://m3u8.justchill.workers.dev/?url=${data.videoURL?.url}` && (
-                  <CheckIcon className="vds-icon" />
-                )}
+                  `${process.env.NEXT_PUBLIC_M3U8_PROXY as string}${
+                    data.videoURL?.url
+                  }` && <CheckIcon className="vds-icon" />}
                 <span className="vds-radio-label">Default</span>
               </RadioGroup.Item>
               {data.link2 && (

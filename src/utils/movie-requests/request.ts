@@ -131,6 +131,7 @@ export const FlixHQResultsHandler = async ({
   ).then((response) => response.json());
 
   const subtitles = linksData.subtitles;
+  const headers = linksData.headers;
 
   const movieLink = linksData.sources?.find(
     (element) => element.quality === "auto"
@@ -138,7 +139,7 @@ export const FlixHQResultsHandler = async ({
 
   const vidccLinks: VidSrcCCLinks = await fetch(
     `https://temp-res.vercel.app/vidsrc/${movieId}`,
-    { cache: "force-cache" }
+    { next: { revalidate: 1800 } }
   ).then((response) => response.json());
 
   let link2, link3;
@@ -151,6 +152,7 @@ export const FlixHQResultsHandler = async ({
       link3 = tempLink;
     }
   }
+
   return {
     movieLink,
     subtitles,
@@ -158,5 +160,6 @@ export const FlixHQResultsHandler = async ({
     cover,
     link2,
     link3,
+    headers,
   };
 };

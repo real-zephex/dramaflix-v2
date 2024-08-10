@@ -18,7 +18,13 @@ const MoviesGridConstructor = async ({ type }: { type: string }) => {
               <span className="sr-only">View {item.title}</span>
             </Link>
             <Image
-              src={`https://image.tmdb.org/t/p/original${item.poster_path}`}
+              src={
+                item.poster_path
+                  ? `${
+                      process.env.NEXT_PUBLIC_PROXY_2 as string
+                    }https://image.tmdb.org/t/p/original${item.poster_path}`
+                  : "/placeholder.svg"
+              }
               alt={item.title}
               width={500}
               height={750}

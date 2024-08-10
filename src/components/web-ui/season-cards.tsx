@@ -26,7 +26,7 @@ const TVSeriesSeasonCardGen = async ({
               <Image
                 src={
                   item.still_path
-                    ? `https://image.tmdb.org/t/p/original${item.still_path}`
+                    ? `${process.env.NEXT_PUBLIC_PROXY}https://image.tmdb.org/t/p/original${item.still_path}`
                     : "/placeholder.svg"
                 }
                 width={300}

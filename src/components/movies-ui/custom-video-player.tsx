@@ -30,6 +30,7 @@ export default function CustomVideoPlayer({
   cover,
   otherLinks,
   id,
+  headers,
 }: {
   movieTitle: string;
   subtitle: Subtitle[] | undefined;
@@ -37,11 +38,12 @@ export default function CustomVideoPlayer({
   cover: string;
   otherLinks: string[] | undefined;
   id: string;
+  headers: string;
 }) {
   const player = useRef<MediaPlayerInstance>(null);
 
   const [src, setSrc] = useState(
-    `https://m3u8.justchill.workers.dev/?url=${source}`
+    `${process.env.NEXT_PUBLIC_M3U8_PROXY as string}${source}`
   );
 
   function onTimeUpdate() {
@@ -102,7 +104,6 @@ export default function CustomVideoPlayer({
           }
           setPlayerTime();
         }}
-        autoPlay
       >
         <MediaProvider>
           {subtitle &&
@@ -119,7 +120,11 @@ export default function CustomVideoPlayer({
             ))}
           <Poster
             className="absolute inset-0 block h-full w-full rounded-md opacity-0 transition-opacity data-[visible]:opacity-100 object-cover"
-            src={cover ? cover : "/placeholder.svg"}
+            src={
+              cover
+                ? `${process.env.NEXT_PUBLIC_PROXY_2 as string}${cover}`
+                : "/placeholder.svg"
+            }
             alt="Movie poster"
           />
         </MediaProvider>
@@ -136,30 +141,36 @@ export default function CustomVideoPlayer({
                   value="check 1"
                   key="check 1"
                   onClick={() =>
-                    setSrc(`https://m3u8.justchill.workers.dev/?url=${source}`)
+                    setSrc(
+                      `${process.env.NEXT_PUBLIC_M3U8_PROXY as string}${source}`
+                    )
                   }
                 >
                   {src ===
-                    `https://m3u8.justchill.workers.dev/?url=${source}` && (
-                    <CheckIcon className="vds-icon" />
-                  )}
+                    `${
+                      process.env.NEXT_PUBLIC_M3U8_PROXY as string
+                    }${source}` && <CheckIcon className="vds-icon" />}
                   <span className="vds-radio-label">Default</span>
                 </RadioGroup.Item>
-                {otherLinks![0] && (
-                  <RadioGroup.Item
-                    className="vds-radio"
-                    value="check 2"
-                    key="check 2"
-                    onClick={() => {
-                      setSrc(otherLinks![0]);
-                    }}
-                  >
-                    {src === otherLinks![0] && (
-                      <CheckIcon className="vds-icon" />
-                    )}
-                    <span className="vds-radio-label">Source 2</span>
-                  </RadioGroup.Item>
-                )}
+                {otherLinks &&
+                  otherLinks[0] &&
+                  !otherLinks[0].match(
+                    /^https:\/\/vidsrc\.cc\/api\/proxy\/playlist\?code=.*$/
+                  ) && (
+                    <RadioGroup.Item
+                      className="vds-radio"
+                      value="check 2"
+                      key="check 2"
+                      onClick={() => {
+                        setSrc(otherLinks![0]);
+                      }}
+                    >
+                      {src === otherLinks![0] && (
+                        <CheckIcon className="vds-icon" />
+                      )}
+                      <span className="vds-radio-label">Source 2</span>
+                    </RadioGroup.Item>
+                  )}
                 {otherLinks![1] && (
                   <RadioGroup.Item
                     className="vds-radio"
@@ -182,8 +193,8 @@ export default function CustomVideoPlayer({
       </MediaPlayer>
       <p className="text-xs text-center pb-1 text-gray-500 hidden 2xl:block">
         If you experience any issues during video playback then, try changing
-        the video source. Click the settings icon in the video player,
-        go to playback and change source.
+        the video source. Click the settings icon in the video player, go to
+        playback and change source.
       </p>
     </div>
   );

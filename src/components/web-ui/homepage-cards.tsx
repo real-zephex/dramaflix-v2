@@ -21,7 +21,9 @@ const WebHomepageCards = async ({
               <Image
                 src={
                   item.backdrop_path
-                    ? `https://image.tmdb.org/t/p/original${item.backdrop_path}`
+                    ? `${
+                        process.env.NEXT_PUBLIC_PROXY_2 as string
+                      }https://image.tmdb.org/t/p/original${item.backdrop_path}`
                     : "/placeholder.svg"
                 }
                 alt={item.name!}
@@ -37,7 +39,17 @@ const WebHomepageCards = async ({
                   {item.name || item.original_name}
                 </h3>
                 <div className="flex items-center mb-2">
-                  <FaStar className="text-yellow-500 mr-1" size={14} />
+                  <FaStar
+                    className=" mr-1"
+                    size={14}
+                    color={
+                      item.vote_average! > 8
+                        ? "#02EBF4"
+                        : item.vote_average! < 8 && item.vote_average! > 5
+                        ? "#59FE17"
+                        : "#FF0103"
+                    }
+                  />
                   <span className="text-sm font-medium">
                     {item.vote_average}
                   </span>
