@@ -158,6 +158,7 @@ const AnimeVideoPage = ({
 
   const aniwatchVideoLinksFetcher = async (episodeNumber: number) => {
     var tempPart;
+    setAniSources([]);
     if (aniwatchData && aniwatchData.episodes) {
       tempPart = aniwatchData.episodes.find(
         (element) => element.number === episodeNumber
