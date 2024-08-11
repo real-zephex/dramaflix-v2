@@ -108,7 +108,7 @@ export interface VidSrcCCLinks {
   source2?: Source2;
 }
 
- interface Source1 {
+interface Source1 {
   data?: Source1Data;
   success?: boolean;
 }
@@ -129,8 +129,53 @@ interface Source2 {
   success?: boolean;
 }
 
- interface Source2Data {
+interface Source2Data {
   source?: string;
   subtitles?: VidSrcCCSubtitle[];
   format: string;
+}
+
+// Aniwatch
+export interface AniwatchLinks {
+  totalEpisodes?: number;
+  episodes?: AniwatchEpisode[];
+}
+
+interface AniwatchEpisode {
+  title?: string;
+  episodeId?: string;
+  number?: number;
+  isFiller?: boolean;
+}
+
+// aniwatch video links
+export interface AniwatchVideoLinks {
+  tracks?: Track[];
+  intro?: Tro;
+  outro?: Tro;
+  sources?: AniwatchSource[];
+  anilistID?: number;
+  malID?: number;
+}
+
+interface Tro {
+  start?: number;
+  end?: number;
+}
+
+interface AniwatchSource {
+  url?: string;
+  type?: string;
+}
+
+export interface Track {
+  file?: string;
+  label?: string;
+  kind?: Kind;
+  default?: boolean;
+}
+
+enum Kind {
+  Captions = "captions",
+  Thumbnails = "thumbnails",
 }

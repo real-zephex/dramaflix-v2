@@ -9,6 +9,7 @@ import {
   type MediaPlayerInstance,
   Poster,
   RadioGroup,
+  Track,
 } from "@vidstack/react";
 import "@vidstack/react/player/styles/default/theme.css";
 import "@vidstack/react/player/styles/default/layouts/video.css";
@@ -17,17 +18,32 @@ import {
   defaultLayoutIcons,
   DefaultVideoLayout,
 } from "@vidstack/react/player/layouts/default";
-import { useState, useEffect, useMemo, useCallback, useRef } from "react";
-import { FaDownload } from "react-icons/fa";
+import { useState, useEffect, useMemo, useCallback, useRef, use } from "react";
+import { FaCheck, FaDownload } from "react-icons/fa";
 
 import { AnimeLinks, Episode, GogoanimeInfo } from "@/utils/types";
 import {
   AnimeRequestHandler,
   animeLinksCacher,
+  AniwatchResults,
+  AniwatchVideoLinksHandler,
 } from "@/utils/anime-requests/request";
-import { CheckIcon } from "@vidstack/react/icons";
+import { AniwatchLinks, Track as BooTrack } from "@/utils/more-types";
 
-const AnimeVideoPage = ({ data }: { data: GogoanimeInfo }) => {
+interface VideoSources {
+  title: string;
+  url: string;
+}
+
+const PROXY = process.env.NEXT_PUBLIC_M3U8_PROXY as string;
+
+const AnimeVideoPage = ({
+  data,
+  aniwatchData,
+}: {
+  data: GogoanimeInfo;
+  aniwatchData: AniwatchLinks | null;
+}) => {
   const [currentPlaying, setCurrentPlaying] = useState<string>("");
   const [buttonGroups, setButtonGroups] = useState<JSX.Element>(<></>);
   const [accordionStatus, setAccordionStatus] = useState<"shrink" | "expand">(
@@ -38,14 +54,16 @@ const AnimeVideoPage = ({ data }: { data: GogoanimeInfo }) => {
     <></>
   );
   const [src, setSrc] = useState<string>("");
-  const [ogSoruce, setOgSource] = useState<string>("");
   const [episodeTitle, setEpisodeTitle] = useState<string>("");
   const [download, setDownload] = useState<string>("");
   const [loading, setLoading] = useState<JSX.Element>(<></>);
-  const [backup, setBackup] = useState<string>("");
   const [autoplay, setAutoPlay] = useState<boolean>(false);
   const [episodeId, setEpisodeId] = useState<string>("");
-  const [isBackup, setIsBackup] = useState<boolean>(false);
+  const [sources, setSources] = useState<VideoSources[]>([]);
+  const [aniSources, setAniSources] = useState<VideoSources[]>([]);
+
+  const [thumbnails, setThumbnails] = useState<string>();
+  const [subtitles, setSubtitles] = useState<BooTrack[]>();
 
   const memoizedData = useMemo(() => data, [data]);
   const groups = createGroups(data.episodes!, 100);
@@ -62,8 +80,10 @@ const AnimeVideoPage = ({ data }: { data: GogoanimeInfo }) => {
 
   useEffect(() => {
     const init = async () => {
-      await videoFormatter(first_id.id);
-
+      videoFormatter(first_id.id);
+      if (aniwatchData) {
+        aniwatchVideoLinksFetcher(first_id.number);
+      }
       setCurrentPlaying(first_id.number.toString()!);
     };
 
@@ -125,6 +145,7 @@ const AnimeVideoPage = ({ data }: { data: GogoanimeInfo }) => {
                 }
                 event.currentTarget.style.backgroundColor = "gray";
                 videoFormatter(item.id!);
+                aniwatchVideoLinksFetcher(item.number!);
                 setCurrentPlaying(item.number?.toString()!);
               }}
             >
@@ -133,6 +154,57 @@ const AnimeVideoPage = ({ data }: { data: GogoanimeInfo }) => {
           ))}
       </div>
     );
+  };
+
+  const aniwatchVideoLinksFetcher = async (episodeNumber: number) => {
+    var tempPart;
+    if (aniwatchData && aniwatchData.episodes) {
+      tempPart = aniwatchData.episodes.find(
+        (element) => element.number === episodeNumber
+      );
+    }
+
+    if (tempPart) {
+      const subbedData = await AniwatchVideoLinksHandler({
+        id: tempPart.episodeId!,
+        type: "sub",
+      });
+      if (subbedData) {
+        setThumbnails(subbedData.thumnails);
+        if (subbedData.sources) {
+          setAniSources((prevSources) => {
+            // Deduplicate sources by using a Set to ensure unique entries
+            const existingUrls = new Set(
+              prevSources.map((source) => source.url)
+            );
+            const newSources = subbedData.sources.filter(
+              (source) => !existingUrls.has(source.url)
+            );
+            return [...prevSources, ...newSources];
+          });
+          setSubtitles(subbedData.subtitles);
+        }
+      }
+
+      const dubbedData = await AniwatchVideoLinksHandler({
+        id: tempPart.episodeId!,
+        type: "dub",
+      });
+      if (dubbedData) {
+        if (dubbedData.sources) {
+          setAniSources((prevSources) => {
+            // Deduplicate sources by using a Set to ensure unique entries
+            const existingUrls = new Set(
+              prevSources.map((source) => source.url)
+            );
+            const newSources = dubbedData.sources.filter(
+              (source) => !existingUrls.has(source.url)
+            );
+            return [...prevSources, ...newSources];
+          });
+        }
+      }
+    }
   };
 
   const vidLinksFetcher = async (id: string) => {
@@ -151,20 +223,14 @@ const AnimeVideoPage = ({ data }: { data: GogoanimeInfo }) => {
     const defaultUrl = res.sources?.find(
       (source) => source.quality === "default"
     );
+
     const download = res.download;
     // Backup source will be used first
 
     if (download) {
       setDownload(download);
     }
-    if (defaultUrl) {
-      setBackup(
-        `${process.env.NEXT_PUBLIC_M3U8_PROXY as string}${defaultUrl.url!}`
-      );
-    }
-    if (temp) {
-      setOgSource(`${process.env.NEXT_PUBLIC_M3U8_PROXY as string}${temp.url}`);
-    }
+
     const tempRes = await fetch(
       `${process.env.NEXT_PUBLIC_M3U8_PROXY as string}${temp?.url}`,
       {
@@ -173,13 +239,26 @@ const AnimeVideoPage = ({ data }: { data: GogoanimeInfo }) => {
     );
     setLoading(<></>);
 
-    if (!tempRes.ok) {
-      return `${process.env.NEXT_PUBLIC_M3U8_PROXY as string}${
-        defaultUrl?.url
-      }`;
-    } else {
-      return `${process.env.NEXT_PUBLIC_M3U8_PROXY as string}${temp?.url}`;
+    if (temp?.url && defaultUrl?.url) {
+      let tempData = [
+        {
+          title: "Backup",
+          url: `${PROXY}${defaultUrl.url}`,
+        },
+        {
+          title: "Default",
+          url: `${PROXY}${temp.url}`,
+        },
+      ];
+
+      setSources([...sources, ...tempData]);
     }
+
+    if (!tempRes.ok) {
+      return `${PROXY}${defaultUrl?.url}`;
+    }
+
+    return `${PROXY}${temp?.url}`;
   };
 
   function onProviderChange(
@@ -274,7 +353,7 @@ const AnimeVideoPage = ({ data }: { data: GogoanimeInfo }) => {
           {loading}
           <MediaPlayer
             title={`${data.title} - Episode ${episodeTitle}`}
-            src={isBackup ? backup : src}
+            src={src}
             aspectRatio="16/9"
             load="eager"
             playsInline
@@ -298,6 +377,18 @@ const AnimeVideoPage = ({ data }: { data: GogoanimeInfo }) => {
             }}
           >
             <MediaProvider>
+              {subtitles &&
+                subtitles.map((item, _) => (
+                  <Track
+                    src={item.file}
+                    kind="subtitles"
+                    label={item.label}
+                    // lang="en-US"
+                    type="vtt"
+                    key={item.file}
+                  />
+                ))}
+
               <Poster
                 className="absolute inset-0 block h-full w-full rounded-md opacity-0 transition-opacity data-[visible]:opacity-100 object-cover"
                 src={`${process.env.NEXT_PUBLIC_PROXY_2 as string}${
@@ -308,6 +399,7 @@ const AnimeVideoPage = ({ data }: { data: GogoanimeInfo }) => {
             </MediaProvider>
             <DefaultAudioLayout icons={defaultLayoutIcons} />
             <DefaultVideoLayout
+              thumbnails={thumbnails ? thumbnails : ""}
               icons={defaultLayoutIcons}
               slots={{
                 beforeSettingsMenu: (
@@ -320,39 +412,60 @@ const AnimeVideoPage = ({ data }: { data: GogoanimeInfo }) => {
                   </button>
                 ),
                 afterPlaybackMenuItemsEnd: (
-                  <RadioGroup.Root
-                    className="vds-radio-group mt-2"
-                    aria-label="Custom Options"
-                  >
-                    <RadioGroup.Item
-                      className="vds-radio"
-                      value="check"
-                      key="check"
-                      onClick={() => setSrc(ogSoruce)}
-                    >
-                      <CheckIcon className="vds-icon" />
-                      <span className="vds-radio-label">Default</span>
-                    </RadioGroup.Item>
-                    <RadioGroup.Item
-                      className="vds-radio"
-                      value="check 2"
-                      key="check 2"
-                      onClick={() => {
-                        setSrc(backup);
-                      }}
-                    >
-                      <CheckIcon className="vds-icon" />
-                      <span className="vds-radio-label">Backup</span>
-                    </RadioGroup.Item>
-                  </RadioGroup.Root>
+                  <div className="flex flex-col items-center w-full mx-0 mt-2 bg-neutral-800/50">
+                    {sources.map((item, _) => (
+                      <RadioGroup.Root
+                        className="vds-radio-group"
+                        aria-label="Custom Options"
+                        key={_}
+                      >
+                        <RadioGroup.Item
+                          className="vds-radio"
+                          value="check"
+                          key="check"
+                          onClick={() => setSrc(item.url)}
+                        >
+                          <FaCheck
+                            className="mr-2"
+                            color={src === item.url ? "green" : "white"}
+                          />
+                          <span className="vds-radio-label ml-2">
+                            {item.title}
+                          </span>
+                        </RadioGroup.Item>
+                      </RadioGroup.Root>
+                    ))}
+                    {aniSources.map((item, _) => (
+                      <RadioGroup.Root
+                        className="vds-radio-group"
+                        aria-label="Custom Options"
+                        key={_}
+                      >
+                        <RadioGroup.Item
+                          className="vds-radio"
+                          value="check"
+                          key="check"
+                          onClick={() => setSrc(item.url)}
+                        >
+                          <FaCheck
+                            className="mr-2"
+                            color={src === item.url ? "green" : "white"}
+                          />
+                          <span className="vds-radio-label ml-2">
+                            {item.title}
+                          </span>
+                        </RadioGroup.Item>
+                      </RadioGroup.Root>
+                    ))}
+                  </div>
                 ),
               }}
             />
           </MediaPlayer>
           <p className="text-xs text-center pb-1 text-gray-500 hidden 2xl:block">
-            If you experience any issues during video playback then, try
-            changing the video source to backup. Click the settings icon in the
-            video player, go to playback and then click on backup.
+            If you encounter any issues with video playback, try switching to a
+            different source. Click the settings icon in the video player, go to
+            the playback section, and select one of the available sources.
           </p>
         </div>
         <div className="2xl:w-1/4 w-full">
