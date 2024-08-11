@@ -2,6 +2,7 @@
 
 const parent_url = process.env.CONSUMET_API_URL;
 
+import { AniwatchLinks, AniwatchVideoLinks } from "../more-types";
 import {
   AnimeInfo,
   AnimeSearch,
@@ -10,6 +11,9 @@ import {
   GogoanimeInfo,
   GogoEpisode,
 } from "../types";
+
+const ANIWATCH = process.env.ANIWATCH_URL as string;
+const HLS_PROXY = process.env.NEXT_PUBLIC_M3U8_PROXY as string;
 
 export const AnimeRequestHandler = async ({
   search = false,
@@ -86,5 +90,80 @@ export async function animeLinksCacher(
   } catch (error) {
     console.error("Error: ", error);
     return false;
+  }
+}
+
+export async function AniwatchResults(id: string) {
+  try {
+    const aniwatchData: AniwatchLinks = await fetch(
+      `${process.env.ANIWATCH_GOGO_MAPPER}/${id}`,
+      {
+        next: { revalidate: 1800 },
+      }
+    ).then((response) => response.json());
+    return aniwatchData;
+  } catch (error) {
+    return null;
+  }
+}
+
+interface VideoSources {
+  title: string;
+  url: string;
+}
+export async function AniwatchVideoLinksHandler({
+  id,
+  type,
+}: {
+  id: string;
+  type: "dub" | "sub";
+}) {
+  const hd_1_url = `${ANIWATCH}/episode-srcs?id=${id}&server=hd-1&category=${type}`;
+  const hd_2_url = `${ANIWATCH}/episode-srcs?id=${id}&server=hd-2&category=${type}`;
+
+  try {
+    const [responseHd1, responseHd2] = await Promise.all([
+      fetch(hd_1_url, { next: { revalidate: 11800 } }),
+      fetch(hd_2_url, { next: { revalidate: 11800 } }),
+    ]);
+
+    if (!responseHd1.ok || !responseHd2.ok) {
+      throw new Error("Failed to fetch data from one or more URLs"); // ig it's better to ditch the whole process if one of the urls fail to fetch the data
+    }
+
+    // Parse responses as JSON
+    const dataHd1: AniwatchVideoLinks = await responseHd1.json();
+    const dataHd2: AniwatchVideoLinks = await responseHd2.json();
+
+    const thumnails = dataHd1.tracks
+      ? dataHd1.tracks?.find((element) => element.kind === "thumbnails")?.file
+      : "";
+
+    const subtitles = dataHd1.tracks?.filter(
+      (element) => element.kind === "captions"
+    );
+
+    let sources: VideoSources[] = [];
+    if (dataHd1.sources) {
+      sources.push({
+        title: `HD-1 ${type}`,
+        url: `${HLS_PROXY}${dataHd1.sources[0].url!}`,
+      });
+    }
+    if (dataHd2.sources) {
+      sources.push({
+        title: `HD-2 ${type}`,
+        url: `${HLS_PROXY}${dataHd2.sources[0].url!}`,
+      });
+    }
+
+    return {
+      thumnails,
+      subtitles,
+      sources,
+    };
+  } catch (error) {
+    console.error(`Function failed with the following error: ${error}`);
+    return null;
   }
 }
