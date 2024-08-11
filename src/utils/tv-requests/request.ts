@@ -26,7 +26,8 @@ const requestHandler = async (url: string) => {
     const res = await fetch(url, { next: { revalidate: NEXT_CACHE_DURATION } });
     return await res.json();
   } catch (error) {
-    console.error("An error occured", error);
+    console.error("An error occured (logged)", error);
+    return {};
   }
 };
 
@@ -153,7 +154,7 @@ export const FlixHQEpisodeInfo = async ({
   try {
     const vidsrcData: VidSrcCCLinks = await fetch(
       `https://temp-res.vercel.app/vidsrc/${seriesId}?s=${season}&e=${episode}`,
-      { next: { revalidate: 1800 } }
+      { next: { revalidate: NEXT_CACHE_DURATION } }
     ).then((response) => response.json());
 
     if (vidsrcData.source2?.data) {
@@ -166,7 +167,7 @@ export const FlixHQEpisodeInfo = async ({
       }
     }
   } catch (error) {
-    console.error("Error: ", error);
+    console.error("Logged Error: ", error);
   }
 
   return {

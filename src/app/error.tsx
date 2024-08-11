@@ -15,9 +15,24 @@ export default function Error({
   }, [error]);
 
   return (
-    <div>
-      <h2>Something went wrong!</h2>
+    <div className="container mx-auto h-screen flex items-center justify-center">
+      {/* <h2>Something went wrong!</h2>
       <button
+        onClick={
+          // Attempt to recover by trying to re-render the segment
+          () => reset()
+        }
+      >
+        Try again
+      </button> */}
+      <h1 className="text-3xl text-emerald-400 ">Oopsie Doopsie!</h1>
+      <p>
+        Looks like we ran into some error. Sorry for the inconvienence but
+        please let me know about this error. Let me know about your experience
+        <a href="mailto:zephex@duck.com?subject=Degraded_Experience"> email</a>
+      </p>
+      <button
+        className="btn btn-wide btn-accent "
         onClick={
           // Attempt to recover by trying to re-render the segment
           () => reset()
