@@ -1,6 +1,7 @@
-import type { Metadata } from "next";
 import "./globals.css";
+import type { Metadata } from "next";
 import NextTopLoader from "nextjs-toploader";
+import { GoogleAnalytics } from "@next/third-parties/google";
 
 import Navbar from "@/components/ui/navbar";
 import { font_lexend } from "@/components/fonts";
@@ -67,22 +68,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" data-theme="dark">
-      <head>
-        <script
-          async
-          src="https://www.googletagmanager.com/gtag/js?id=G-64S37Q7YY4"
-        ></script>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-					window.dataLayer = window.dataLayer || [];
-					function gtag(){dataLayer.push(arguments);}
-					gtag('js', new Date());
-					gtag('config', 'G-64S37Q7YY4');
-					`,
-          }}
-        ></script>
-      </head>
+      <GoogleAnalytics gaId="G-64S37Q7YY4" />
       <body className={font_lexend.className} data-theme="dark">
         <NextTopLoader showSpinner={false} />
         <Navbar />

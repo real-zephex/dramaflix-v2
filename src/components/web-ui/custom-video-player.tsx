@@ -42,10 +42,12 @@ const SeriesCustomVideoPlayer = ({
   data,
   season,
   episode,
+  id,
 }: {
   data: VideoData;
   season: string;
   episode: string;
+  id: string;
 }) => {
   const player = useRef<MediaPlayerInstance>(null);
   const [src, setSrc] = useState<string>(
@@ -53,6 +55,43 @@ const SeriesCustomVideoPlayer = ({
       ? `${process.env.NEXT_PUBLIC_M3U8_PROXY as string}${data.videoURL.url!}`
       : "/not_found.mp4"
   );
+
+  function setPlayerTime() {
+    const localData: any =
+      JSON.parse(localStorage.getItem("all_episode_times")!) || "{}";
+
+    if (!localData[id]) {
+      return;
+    }
+    const current = localData[id]["currentTime"];
+    if (player.current) {
+      player.current.currentTime = current;
+    }
+  }
+
+  function onTimeUpdate() {
+    if (player.current) {
+      if (player.current.currentTime === 0) {
+        return;
+      }
+      const currentTime = player.current.currentTime;
+      const duration = player.current.duration || 1;
+      const playbackPercentage = (currentTime / duration) * 100;
+      const playbackInfo = {
+        currentTime,
+        playbackPercentage,
+      };
+      const allPlaybackInfo = JSON.parse(
+        localStorage.getItem("all_episode_times") || "{}"
+      );
+      allPlaybackInfo[id] = playbackInfo;
+      localStorage.setItem(
+        "all_episode_times",
+        JSON.stringify(allPlaybackInfo)
+      );
+    }
+  }
+
   return (
     <MediaPlayer
       title={`${data.title} - S${season} E${episode}`}
@@ -67,6 +106,7 @@ const SeriesCustomVideoPlayer = ({
       crossOrigin
       keyTarget="player"
       streamType="on-demand"
+      onTimeUpdate={onTimeUpdate}
       ref={player}
       onCanPlay={() => {
         const qualities = player.current?.qualities!;
@@ -74,24 +114,29 @@ const SeriesCustomVideoPlayer = ({
           const preferredQuality = qualities[qualities?.length! - 1];
           preferredQuality!.selected = true;
         }
+        setPlayerTime();
       }}
     >
       <MediaProvider>
         {data.subs &&
-          data.subs.map((item) => (
+          data.subs.map((item, _) => (
             <Track
               src={item.url}
               kind="subtitles"
               label={item.lang}
               // lang="en-US"
               type="vtt"
-              key={item.url}
+              key={_.toString()}
             />
           ))}
 
         <Poster
           className="absolute inset-0 block h-full w-full rounded-md opacity-0 transition-opacity data-[visible]:opacity-100 object-cover"
-          src={data.cover ? `${process.env.NEXT_PUBLIC_PROXY_2 as string}${data.cover}` : "/placeholder.svg"}
+          src={
+            data.cover
+              ? `${process.env.NEXT_PUBLIC_PROXY_2 as string}${data.cover}`
+              : "/placeholder.svg"
+          }
           alt="Movie poster"
         />
       </MediaProvider>

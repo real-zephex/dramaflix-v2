@@ -4,8 +4,6 @@ const parent_url = process.env.CONSUMET_API_URL;
 
 import { AniwatchLinks, AniwatchVideoLinks } from "../more-types";
 import {
-  AnimeInfo,
-  AnimeSearch,
   AnimeLinks,
   GogoanimeSearch,
   GogoanimeInfo,
@@ -37,7 +35,7 @@ export const AnimeRequestHandler = async ({
   popular?: boolean;
   recent?: boolean;
   cacheDuration?: number;
-}): Promise<AnimeSearch | AnimeInfo | AnimeLinks | any> => {
+}): Promise<GogoanimeSearch | GogoanimeInfo | AnimeLinks | any> => {
   const url =
     search && searchQuery
       ? `${parent_url}/anime/gogoanime/${encodeURIComponent(searchQuery)}`
@@ -135,6 +133,9 @@ export async function AniwatchVideoLinksHandler({
     const dataHd1: AniwatchVideoLinks = await responseHd1.json();
     const dataHd2: AniwatchVideoLinks = await responseHd2.json();
 
+    const intro = dataHd1.intro || null;
+    const outro = dataHd1.outro || null;
+
     const thumnails = dataHd1.tracks
       ? dataHd1.tracks?.find((element) => element.kind === "thumbnails")?.file
       : "";
@@ -161,6 +162,8 @@ export async function AniwatchVideoLinksHandler({
       thumnails,
       subtitles,
       sources,
+      intro,
+      outro,
     };
   } catch (error) {
     console.error(`Function failed with the following error: ${error}`);

@@ -92,6 +92,7 @@ const SeriesPlayer = async ({ params }: { params: { slugs: string[] } }) => {
               data={data}
               season={season_number}
               episode={episode_number}
+              id={`${series_id}-S${season_number}E${episode_number}`}
             />
           </div>
         </div>

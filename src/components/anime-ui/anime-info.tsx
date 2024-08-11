@@ -1,6 +1,5 @@
-import { AnimeInfo, GogoanimeInfo } from "@/utils/types";
+import { GogoanimeInfo } from "@/utils/types";
 import Image from "next/image";
-import Link from "next/link";
 import React from "react";
 
 const AnimeInfoComponent = async ({

@@ -158,9 +158,9 @@ export interface AniwatchVideoLinks {
   malID?: number;
 }
 
-interface Tro {
-  start?: number;
-  end?: number;
+export interface Tro {
+  start: number;
+  end: number;
 }
 
 interface AniwatchSource {

@@ -25,10 +25,9 @@ import { AnimeLinks, Episode, GogoanimeInfo } from "@/utils/types";
 import {
   AnimeRequestHandler,
   animeLinksCacher,
-  AniwatchResults,
   AniwatchVideoLinksHandler,
 } from "@/utils/anime-requests/request";
-import { AniwatchLinks, Track as BooTrack } from "@/utils/more-types";
+import { AniwatchLinks, Track as BooTrack, Tro } from "@/utils/more-types";
 
 interface VideoSources {
   title: string;
@@ -61,6 +60,7 @@ const AnimeVideoPage = ({
   const [episodeId, setEpisodeId] = useState<string>("");
   const [sources, setSources] = useState<VideoSources[]>([]);
   const [aniSources, setAniSources] = useState<VideoSources[]>([]);
+  const [chapter, setChapters] = useState<string>("");
 
   const [thumbnails, setThumbnails] = useState<string>();
   const [subtitles, setSubtitles] = useState<BooTrack[]>();
@@ -80,20 +80,20 @@ const AnimeVideoPage = ({
 
   useEffect(() => {
     const init = async () => {
+      setCurrentPlaying(first_id.number.toString()!);
       videoFormatter(first_id.id);
       if (aniwatchData) {
         aniwatchVideoLinksFetcher(first_id.number);
       }
-      setCurrentPlaying(first_id.number.toString()!);
     };
 
     init();
-  }, []);
+  }, [first_id]);
 
   useEffect(() => {
     setButtonGroups(createButtonGroups(0, 100));
     cacheInit(0, data.episodes?.length! < 100 ? data.episodes?.length! : 100);
-  }, []);
+  }, [data.episodes]);
 
   const cacheInit = async (start: number, end: number) => {
     const cacheConfirmation = await animeLinksCacher(
@@ -171,6 +171,15 @@ const AnimeVideoPage = ({
         type: "sub",
       });
       if (subbedData) {
+        if (subbedData.intro && subbedData.outro) {
+          let skipTimesConfig = {
+            start: subbedData.intro,
+            end: subbedData.outro,
+          };
+          generateVTT(skipTimesConfig);
+        }
+
+        // let vtt = generateVTT(subbedData.)
         setThumbnails(
           `https://vtt.blasphemy8473.workers.dev/${subbedData.thumnails}`
         );
@@ -209,6 +218,64 @@ const AnimeVideoPage = ({
       }
     }
   };
+
+  interface skipTimes {
+    start: Tro | null;
+    end: Tro | null;
+  }
+  const generateVTT = useCallback(
+    ({ start, end }: skipTimes) => {
+      let vttString = "WEBVTT\n\n";
+      let previousEndTime = 0;
+
+      const { start: openingStart, end: openingEnd } = start!;
+      const { start: closingStart, end: closingEnd } = end!;
+
+      // if there's a gap between beginning of the video and opening music
+      if (previousEndTime < openingStart) {
+        vttString += `${formatTime(previousEndTime)} --> ${formatTime(
+          openingStart
+        )}\n`;
+        vttString += `${data.title} - Episode ${currentPlaying}\n\n`;
+      }
+
+      vttString += `${formatTime(openingStart)} --> ${formatTime(
+        openingEnd
+      )}\n`;
+      vttString += `Opening\n\n`;
+      previousEndTime = openingEnd;
+
+      // if there's a gap between the end of the opening and the start of the closing
+      if (previousEndTime < closingStart) {
+        vttString += `${formatTime(previousEndTime)} --> ${formatTime(
+          closingStart
+        )}\n`;
+        vttString += `${data.title} - Episode ${currentPlaying}\n\n`;
+      }
+
+      // Add closing skip times
+      vttString += `${formatTime(closingStart)} --> ${formatTime(
+        closingEnd
+      )}\n`;
+      vttString += `Closing\n\n`;
+      previousEndTime = closingEnd;
+
+      console.log(vttString);
+      const blob = new Blob([vttString], { type: "text/vtt" });
+      const vttBlobUrl = URL.createObjectURL(blob);
+
+      setChapters(vttBlobUrl);
+    },
+    [data.title, currentPlaying, setChapters]
+  );
+
+  function formatTime(seconds: number): string {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = Math.floor(seconds % 60);
+    return `${minutes.toString().padStart(2, "0")}:${remainingSeconds
+      .toString()
+      .padStart(2, "0")}`;
+  }
 
   const vidLinksFetcher = async (id: string) => {
     setLoading(vidLoadingIndicator);
@@ -368,6 +435,7 @@ const AnimeVideoPage = ({
             onProviderChange={onProviderChange}
             streamType="on-demand"
             onTimeUpdate={onTimeUpdate}
+            posterLoad="eager"
             onCanPlay={() => {
               setAutoPlay(false);
               const qualities = player.current?.qualities!;
@@ -391,6 +459,15 @@ const AnimeVideoPage = ({
                     key={item.file}
                   />
                 ))}
+
+              {chapter && (
+                <Track
+                  src={chapter}
+                  kind="chapters"
+                  label="Skip Times"
+                  default
+                />
+              )}
 
               <Poster
                 className="absolute inset-0 block h-full w-full rounded-md opacity-0 transition-opacity data-[visible]:opacity-100 object-cover"
