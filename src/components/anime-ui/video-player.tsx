@@ -170,7 +170,9 @@ const AnimeVideoPage = ({
         type: "sub",
       });
       if (subbedData) {
-        setThumbnails(subbedData.thumnails);
+        setThumbnails(
+          `https://vtt.blasphemy8473.workers.dev/${subbedData.thumnails}`
+        );
         if (subbedData.sources) {
           setAniSources((prevSources) => {
             // Deduplicate sources by using a Set to ensure unique entries
