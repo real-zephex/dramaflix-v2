@@ -19,11 +19,15 @@ import {
 const api_key = process.env.TMDB_API_KEY;
 const parent_url = `https://api.themoviedb.org/3`;
 const CONSUMET = process.env.CONSUMET_API_URL;
-const NEXT_CACHE_DURATION = 21600;
+const NEXT_CACHE_DURATION = 21600 * 2;
 
 const requestHandler = async (url: string) => {
-  const res = await fetch(url, { next: { revalidate: NEXT_CACHE_DURATION } });
-  return await res.json();
+  try {
+    const res = await fetch(url, { next: { revalidate: NEXT_CACHE_DURATION } });
+    return await res.json();
+  } catch (error) {
+    console.error("An error occured", error);
+  }
 };
 
 export const TopPopularAiringTV = async ({

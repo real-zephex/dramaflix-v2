@@ -98,32 +98,40 @@ const SeriesPlayer = async ({ params }: { params: { slugs: string[] } }) => {
         </div>
 
         <section className="mt-2 flex flex-col md:flex-row items-center bg-base-200 rounded-xl p-2">
-          <div className="bg-base-300 rounded-xl cursor-pointer w-full md:w-auto">
-            <Image
-              src={`https://image.tmdb.org/t/p/original${epData.still_path}`}
-              width={300}
-              height={150}
-              alt="Episode Poster"
-              className="w-full rounded-t-xl md:rounded-tl-xl"
-            />
-            <div className="p-2">
-              <p className="text-sm">Episode {episode_number}</p>
-              <h1 className="text-xl font-semibold mt-1">{epData.name}</h1>
-              <section className="flex flex-row items-center">
-                <FaStar className="text-yellow-300" />
-                <span className="ml-1">{epData.vote_average}</span>
-              </section>
+          {epData && (
+            <div className="bg-base-300 rounded-xl cursor-pointer w-full md:w-auto">
+              <Image
+                src={
+                  epData.still_path
+                    ? `https://image.tmdb.org/t/p/original${epData.still_path}`
+                    : "/placeholder.svg"
+                }
+                width={300}
+                height={150}
+                alt="Episode Poster"
+                className="w-full rounded-t-xl md:rounded-tl-xl max-w-72 h-auto"
+              />
+              <div className="p-2">
+                <p className="text-sm">Episode {episode_number}</p>
+                <h1 className="text-xl font-semibold mt-1">{epData.name}</h1>
+                <section className="flex flex-row items-center">
+                  <FaStar className="text-yellow-300" />
+                  <span className="ml-1">{epData.vote_average}</span>
+                </section>
+              </div>
             </div>
-          </div>
+          )}
 
           <div className="mt-2 md:ml-2">
             <p className="text-sm bg-base-300 md:w-fit w-full px-2 py-1 rounded-xl text-center">
               Watching Episode {episode_number} - Season {season_number}
             </p>
-            <p className="text-lg">
-              <strong>Overview</strong>:{" "}
-              <span className="font-normal">{epData.overview}</span>
-            </p>
+            {epData && epData.overview && (
+              <p className="text-lg">
+                <strong>Overview</strong>:{" "}
+                <span className="font-normal">{epData.overview}</span>
+              </p>
+            )}
             <div className="my-1">
               <Link
                 href={`https://dl.vidsrc.vip/tv/${series_id}/${season_number}/${episode_number}`}

@@ -5,10 +5,10 @@ import Link from "next/link";
 
 import { TVSearch } from "@/utils/types";
 
-const SeriesSearchFormatter = async ({ data }: { data: TVSearch }) => {
+const SeriesSearchFormatter = async ({ data }: { data: TVSearch | null }) => {
   return (
     <div className="flex flex-col mt-4">
-      {data.results &&
+      {data?.results &&
         data.results.map((item) => (
           <Link href={`/web-series/${item.id}`} key={item.id}>
             <span className="sr-only">View {item.name}</span>

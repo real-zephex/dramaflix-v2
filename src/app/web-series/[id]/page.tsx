@@ -63,12 +63,14 @@ const WebSeriesInfoPage = async ({ params }: { params: { id: number } }) => {
   });
 
   let tempSeasonInfo = [];
-  for (let i = 0; i < series_info.number_of_seasons!; i++) {
-    let tempData = {
-      seasonNumber: i + 1,
-      seasonTitle: `Season ${i + 1}`,
-    };
-    tempSeasonInfo.push(tempData);
+  if (series_info && series_info.number_of_seasons) {
+    for (let i = 0; i < series_info.number_of_seasons; i++) {
+      let tempData = {
+        seasonNumber: i + 1,
+        seasonTitle: `Season ${i + 1}`,
+      };
+      tempSeasonInfo.push(tempData);
+    }
   }
   const SeasonInfo = tempSeasonInfo;
 

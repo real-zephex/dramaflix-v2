@@ -14,7 +14,7 @@ const TVSeriesSeasonCardGen = async ({
 
   return (
     <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
-      {data.episodes && data.episodes!.length > 0 ? (
+      {data && data.episodes && data.episodes!.length > 0 ? (
         data.episodes?.map((item, index) => (
           <div
             className="group relative flex h-full w-full flex-col overflow-hidden rounded-lg bg-base-300/50 cursor-pointer"
