@@ -8,7 +8,7 @@ import { TVSearch } from "@/utils/types";
 const SeriesSearchFormatter = async ({ data }: { data: TVSearch | null }) => {
   return (
     <div className="flex flex-col mt-4">
-      {data?.results &&
+      {data?.results && data.results.length > 0 ? (
         data.results.map((item) => (
           <Link href={`/web-series/${item.id}`} key={item.id}>
             <span className="sr-only">View {item.name}</span>
@@ -33,7 +33,10 @@ const SeriesSearchFormatter = async ({ data }: { data: TVSearch | null }) => {
               </div>
             </section>
           </Link>
-        ))}
+        ))
+      ) : (
+        <p className="py-1 text-center">No results found</p>
+      )}
     </div>
   );
 };

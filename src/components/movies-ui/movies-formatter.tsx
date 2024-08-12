@@ -8,7 +8,7 @@ const MoviesGridConstructor = async ({ type }: { type: string }) => {
 
   return (
     <main className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-      {data.results &&
+      {data?.results &&
         data.results.map((item) => (
           <div
             key={item.id}

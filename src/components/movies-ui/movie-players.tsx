@@ -84,7 +84,7 @@ const MoviePlayer = async ({ id }: { id: string }) => {
           cover={data.cover ? data.cover : "/placeholder.svg"}
           otherLinks={[data.link2!, data.link3!]}
           id={id}
-          headers={data.headers?.Referer!}
+          headers={data?.headers || ""}
         />
       </div>
     </div>

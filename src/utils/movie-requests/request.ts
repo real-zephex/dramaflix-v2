@@ -11,16 +11,13 @@ import {
   FlixHQResults,
   FlixHQMovieLinks,
 } from "../types";
+import { getRandomApiKey } from "../api-key-randomizer";
 
 // Constants
+
 const BASE_URL = "https://api.themoviedb.org/3";
 const CONSUMET = process.env.CONSUMET_API_URL;
-const API_KEY = process.env.TMDB_API_KEY;
-const CACHE_DURATION = 21600; // Cache duration in seconds (6 hours)
-
-if (!API_KEY) {
-  throw new Error("TMDB_API_KEY is not defined.");
-}
+const CACHE_DURATION = 21600 * 2; // Cache duration in seconds (6 hours)
 
 // Utility function to construct URL
 function constructUrl(
@@ -28,7 +25,7 @@ function constructUrl(
   queryParams: Record<string, string> = {}
 ) {
   const url = new URL(`${BASE_URL}/${endpoint}`);
-  url.searchParams.set("api_key", API_KEY!);
+  url.searchParams.set("api_key", getRandomApiKey());
   Object.keys(queryParams).forEach((key) =>
     url.searchParams.set(key, queryParams[key])
   );
@@ -52,8 +49,7 @@ export async function MoviesDiscover(
     const data: MoviesHomepageResults = await response.json();
     return data;
   } catch (error) {
-    console.error("Error fetching movies:", error);
-    throw error;
+    console.error(`Error fetching ${type} movies:`, error);
   }
 }
 
@@ -69,7 +65,6 @@ export async function MoviesSearchRequest(query: string) {
     return data;
   } catch (error) {
     console.error("Error fetching search results:", error);
-    throw error;
   }
 }
 
@@ -77,7 +72,7 @@ export async function MoviesSearchRequest(query: string) {
 export async function MovieInfo(
   id: string,
   recommendations: boolean = false
-): Promise<MovieInfoType> {
+): Promise<MovieInfoType | undefined> {
   const endpoint = recommendations
     ? `movie/${id}/recommendations`
     : `movie/${id}`;
@@ -86,7 +81,7 @@ export async function MovieInfo(
 
   try {
     const response = await fetch(url, {
-      next: { revalidate: CACHE_DURATION * 4 },
+      next: { revalidate: CACHE_DURATION },
     });
     if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
 
@@ -94,7 +89,6 @@ export async function MovieInfo(
     return data;
   } catch (error) {
     console.error("Error fetching movie info:", error);
-    throw error;
   }
 }
 
@@ -105,8 +99,8 @@ export async function MovieCredits({
   id: string;
   type: "credits" | "images";
 }) {
-  const url = `${BASE_URL}/movie/${id}/${type}?api_key=${API_KEY}`;
-  const res = await fetch(url, { cache: "force-cache" });
+  const url = `${BASE_URL}/movie/${id}/${type}?api_key=${getRandomApiKey()}`;
+  const res = await fetch(url, { next: { revalidate: CACHE_DURATION } });
   // return (await res.json()) as TVCredits;
   if (type === "credits") {
     return (await res.json()) as TVCredits;
@@ -121,38 +115,51 @@ export const FlixHQResultsHandler = async ({
   movieId: string;
 }) => {
   const url = `${CONSUMET}/meta/tmdb/info/${movieId}?type=movie`;
-  const res = await fetch(url, { cache: "force-cache" });
+  const res = await fetch(url, { next: { revalidate: CACHE_DURATION } });
   const data: FlixHQResults = await res.json();
-  const { id, episodeId, title, cover } = data;
+  let { id, episodeId, title, cover } = data;
 
-  const linksData: FlixHQMovieLinks = await fetch(
-    `${CONSUMET}/meta/tmdb/watch/${episodeId}?id=${id}`,
-    { cache: "force-cache" }
-  ).then((response) => response.json());
+  let subtitles, headers, movieLink;
+  try {
+    const linksData: FlixHQMovieLinks = await fetch(
+      `${CONSUMET}/meta/tmdb/watch/${episodeId}?id=${id}`,
+      { next: { revalidate: CACHE_DURATION } }
+    ).then((response) => response.json());
 
-  const subtitles = linksData.subtitles;
-  const headers = linksData.headers;
+    subtitles = linksData.subtitles || [];
+    headers = linksData.headers?.Referer || "";
 
-  const movieLink = linksData.sources?.find(
-    (element) => element.quality === "auto"
-  );
-
-  const vidccLinks: VidSrcCCLinks = await fetch(
-    `https://temp-res.vercel.app/vidsrc/${movieId}`,
-    { next: { revalidate: 1800 } }
-  ).then((response) => response.json());
+    movieLink = linksData.sources?.find(
+      (element) => element.quality === "auto"
+    );
+  } catch (error) {
+    console.error(
+      "Error fetching link from consumet's tmdb endpoint. Request failed with following error",
+      error
+    );
+  }
 
   let link2, link3;
-  if (vidccLinks.source2?.data) {
-    link2 = vidccLinks.source2.data.source;
-  }
-  if (vidccLinks.source1?.data) {
-    const tempLink = vidccLinks.source1.data.source;
-    if (tempLink != movieLink) {
-      link3 = tempLink;
-    }
-  }
+  try {
+    const vidccLinks: VidSrcCCLinks = await fetch(
+      `https://temp-res.vercel.app/vidsrc/${movieId}`,
+      { next: { revalidate: CACHE_DURATION } }
+    ).then((response) => response.json());
 
+    if (vidccLinks.source2?.data) {
+      link2 = vidccLinks.source2.data.source;
+    }
+    if (vidccLinks.source1?.data) {
+      const tempLink = vidccLinks.source1.data.source;
+      if (tempLink != movieLink) {
+        link3 = tempLink;
+      }
+    }
+  } catch (error) {
+    console.error(
+      `Error fetching links from vidsrc api (temp-res.vercel.app), request failed with following error ${error}`
+    );
+  }
   return {
     movieLink,
     subtitles,

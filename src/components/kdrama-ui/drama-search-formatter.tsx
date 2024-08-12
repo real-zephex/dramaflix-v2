@@ -12,7 +12,7 @@ const DramaSearchFormatter = async ({
 }) => {
   return (
     <div className="flex flex-col mt-4">
-      {data.results &&
+      {data.results && data.results.length > 0 ? (
         data.results.map((item) => (
           <Link
             href={`/kdramas/${item.id?.split("drama-detail/")[1]}`}
@@ -36,7 +36,10 @@ const DramaSearchFormatter = async ({
               </div>
             </section>
           </Link>
-        ))}
+        ))
+      ) : (
+        <p className="py-1 text-center">No results found</p>
+      )}
     </div>
   );
 };

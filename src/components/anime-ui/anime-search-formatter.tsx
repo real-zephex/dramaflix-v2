@@ -7,7 +7,7 @@ import { GogoanimeSearch } from "@/utils/types";
 const AnimesSearchFormatter = async ({ data }: { data: GogoanimeSearch }) => {
   return (
     <div className="flex flex-col mt-4">
-      {data.results &&
+      {data.results && data.results.length > 0 ? (
         data.results.map((item) => (
           <Link href={`/animes/${item.id}`} key={item.id}>
             <span className="sr-only">View {item.title}</span>
@@ -35,7 +35,10 @@ const AnimesSearchFormatter = async ({ data }: { data: GogoanimeSearch }) => {
               </div>
             </section>
           </Link>
-        ))}
+        ))
+      ) : (
+        <p className="py-1 text-center">No results found</p>
+      )}
     </div>
   );
 };

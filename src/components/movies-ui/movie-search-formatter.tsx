@@ -5,10 +5,10 @@ import Link from "next/link";
 
 import { MoviesHomepageResults } from "@/utils/types";
 
-const MoviesSearch = async (data: MoviesHomepageResults) => {
+const MoviesSearch = async (data: MoviesHomepageResults | undefined) => {
   return (
     <div className="flex flex-col mt-4">
-      {data &&
+      {data && data.results.length > 0 ? (
         data.results.map((item) => (
           <Link href={`/movies/${item.id}`} key={item.id}>
             <span className="sr-only">View {item.title}</span>
@@ -38,7 +38,10 @@ const MoviesSearch = async (data: MoviesHomepageResults) => {
               </div>
             </section>
           </Link>
-        ))}
+        ))
+      ) : (
+        <p className="py-1 text-center">No results found</p>
+      )}
     </div>
   );
 };

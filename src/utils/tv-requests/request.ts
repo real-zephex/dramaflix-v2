@@ -15,8 +15,9 @@ import {
   TVEpisodeInfo,
   FlixHQMovieLinks,
 } from "../types";
+import { getRandomApiKey } from "../api-key-randomizer";
 
-const api_key = process.env.TMDB_API_KEY;
+const api_key = getRandomApiKey();
 const parent_url = `https://api.themoviedb.org/3`;
 const CONSUMET = process.env.CONSUMET_API_URL;
 const NEXT_CACHE_DURATION = 21600 * 2;
@@ -26,7 +27,7 @@ const requestHandler = async (url: string) => {
     const res = await fetch(url, { next: { revalidate: NEXT_CACHE_DURATION } });
     return await res.json();
   } catch (error) {
-    console.error("An error occured (logged)", error);
+    console.error("An error occured (logged)", url, error);
     return {};
   }
 };
@@ -123,7 +124,7 @@ export const FlixHQEpisodeInfo = async ({
 }) => {
   const infoUrl = `${CONSUMET}/meta/tmdb/info/${seriesId}?type=tv`;
   const infoData: FlixHQSeriesInfo = await fetch(infoUrl, {
-    cache: "force-cache",
+    next: { revalidate: NEXT_CACHE_DURATION },
   }).then((response) => response.json());
 
   // important
@@ -140,7 +141,7 @@ export const FlixHQEpisodeInfo = async ({
 
   const seriesVideoLink = `${CONSUMET}/meta/tmdb/watch/${episodeId?.id}?id=${id}`;
   const videoData: FlixHQSeriesLinks = await fetch(seriesVideoLink, {
-    cache: "force-cache",
+    next: { revalidate: NEXT_CACHE_DURATION },
   }).then((response) => response.json());
 
   // important

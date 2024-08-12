@@ -174,6 +174,7 @@ const Search = () => {
               if (modal) {
                 modal.close();
               }
+              setTitle("");
             }}
           >
             {format}

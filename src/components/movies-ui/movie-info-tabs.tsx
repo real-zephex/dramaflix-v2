@@ -16,13 +16,13 @@ const MoreMovieInfo = async ({
   cast_data,
   images_data,
 }: {
-  data: MovieInfoType;
-  recommendation_data: MoviesHomepageResults;
+  data: MovieInfoType | null;
+  recommendation_data: MoviesHomepageResults | null;
   cast_data: TVCredits;
   images_data: TVImages;
 }) => {
   return (
-    <div role="tablist" className="tabs tabs-lifted mt-2 ">
+    <div role="tablist" className="tabs tabs-lifted mt-2">
       <input
         type="radio"
         name="my_tabs_3"
@@ -31,43 +31,48 @@ const MoreMovieInfo = async ({
         aria-label="Info"
         defaultChecked
       />
-      <div
-        role="tabpanel"
-        className="tab-content bg-base-100 border-base-300 rounded-box p-2"
-      >
-        <p className="md:hidden">
-          <b>Description</b>: {data.overview}
-        </p>
-        <p>
-          <b>Genres</b>:{" "}
-          {data.genres.map((item, index) => (
-            <React.Fragment key={item.id}>
-              <span>{item.name}</span>
-              {index < data.genres.length - 1 && ", "}
-            </React.Fragment>
-          ))}
-        </p>
-        <p>
-          <b>Homepage</b>:{" "}
-          <Link href={data.homepage} target="_blank" className="text-warning">
-            {data.homepage}
-          </Link>
-        </p>
-        <p>
-          <b>Budget</b>: ${data.budget.toLocaleString()} | <b>Revenue</b> : $
-          {data.revenue.toLocaleString()}
-        </p>
-        <p>
-          <b>Runtime</b>: {data.runtime} minutes
-        </p>
-        <div className="my-1">
-          <Link href={`https://dl.vidsrc.vip/movie/${data.id}`} target="_blank">
-            <button className="btn btn-success btn-sm btn-outline">
-              Download <FiDownload />
-            </button>
-          </Link>
+      {data && (
+        <div
+          role="tabpanel"
+          className="tab-content bg-base-100 border-base-300 rounded-box p-2"
+        >
+          <p className="md:hidden">
+            <b>Description</b>: {data.overview}
+          </p>
+          <p>
+            <b>Genres</b>:{" "}
+            {data.genres.map((item, index) => (
+              <React.Fragment key={item.id}>
+                <span>{item.name}</span>
+                {index < data.genres.length - 1 && ", "}
+              </React.Fragment>
+            ))}
+          </p>
+          <p>
+            <b>Homepage</b>:{" "}
+            <Link href={data.homepage} target="_blank" className="text-warning">
+              {data.homepage}
+            </Link>
+          </p>
+          <p>
+            <b>Budget</b>: ${data.budget.toLocaleString()} | <b>Revenue</b> : $
+            {data.revenue.toLocaleString()}
+          </p>
+          <p>
+            <b>Runtime</b>: {data.runtime} minutes
+          </p>
+          <div className="my-1">
+            <Link
+              href={`https://dl.vidsrc.vip/movie/${data.id}`}
+              target="_blank"
+            >
+              <button className="btn btn-success btn-sm btn-outline">
+                Download <FiDownload />
+              </button>
+            </Link>
+          </div>
         </div>
-      </div>
+      )}
 
       <input
         type="radio"

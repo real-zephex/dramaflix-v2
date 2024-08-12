@@ -16,36 +16,38 @@ const MovieInfoPage = async ({ params }: { params: { id: string } }) => {
         <div className="py-2">
           <MoviePlayer id={params.id} />
         </div>
-        <div className="flex flex-row items-center bg-base-200/50 rounded-xl">
-          <Image
-            src={
-              data.poster_path
-                ? `https://image.tmdb.org/t/p/original${data.poster_path}`
-                : "/placeholder.svg"
-            }
-            width={150}
-            height={200}
-            alt={`${data.title} poster`}
-            className="rounded-l-xl"
-          />
-          <div className="ml-2">
-            <p className="font-semibold text-xl md:text-2xl">
-              {data.title}{" "}
-              {data.title === data.original_title
-                ? ""
-                : `| ${data.original_title}`}
-            </p>
-            {data.tagline && (
-              <span className="bg-zinc-700 rounded-xl px-2">
-                {data.tagline}
-              </span>
-            )}
-            <p className="hidden md:flex">{data.overview}</p>
+        {data && (
+          <div className="flex flex-row items-center bg-base-200/50 rounded-xl">
+            <Image
+              src={
+                data.poster_path
+                  ? `https://image.tmdb.org/t/p/original${data.poster_path}`
+                  : "/placeholder.svg"
+              }
+              width={150}
+              height={200}
+              alt={`${data.title} poster`}
+              className="rounded-l-xl"
+            />
+            <div className="ml-2">
+              <p className="font-semibold text-xl md:text-2xl">
+                {data.title}{" "}
+                {data.title === data.original_title
+                  ? ""
+                  : `| ${data.original_title}`}
+              </p>
+              {data.tagline && (
+                <span className="bg-zinc-700 rounded-xl px-2">
+                  {data.tagline}
+                </span>
+              )}
+              <p className="hidden md:flex">{data.overview}</p>
+            </div>
           </div>
-        </div>
+        )}
         <MoreMovieInfo
-          data={data}
-          recommendation_data={recommendations}
+          data={data ? data : null}
+          recommendation_data={recommendations ? recommendations : null}
           cast_data={movieCast}
           images_data={imagesData}
         />
