@@ -260,7 +260,6 @@ const AnimeVideoPage = ({
       vttString += `Closing\n\n`;
       previousEndTime = closingEnd;
 
-      console.log(vttString);
       const blob = new Blob([vttString], { type: "text/vtt" });
       const vttBlobUrl = URL.createObjectURL(blob);
 
@@ -301,12 +300,9 @@ const AnimeVideoPage = ({
       setDownload(download);
     }
 
-    const tempRes = await fetch(
-      `${process.env.NEXT_PUBLIC_M3U8_PROXY as string}${temp?.url}`,
-      {
-        cache: "no-cache",
-      }
-    );
+    const tempRes = await fetch(`${PROXY}${temp?.url}`, {
+      cache: "no-cache",
+    });
     setLoading(<></>);
 
     if (temp?.url && defaultUrl?.url) {
@@ -471,9 +467,7 @@ const AnimeVideoPage = ({
 
               <Poster
                 className="absolute inset-0 block h-full w-full rounded-md opacity-0 transition-opacity data-[visible]:opacity-100 object-cover"
-                src={`${process.env.NEXT_PUBLIC_PROXY_2 as string}${
-                  data.image
-                }`}
+                src={`${PROXY}${data.image}`}
                 alt={`${data.title} Poster`}
               />
             </MediaProvider>

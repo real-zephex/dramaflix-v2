@@ -23,6 +23,8 @@ interface Subtitle {
   lang?: string;
 }
 
+const PROXY = process.env.NEXT_PUBLIC_M3U8_PROXY as string;
+
 export default function CustomVideoPlayer({
   movieTitle,
   subtitle,
@@ -42,9 +44,7 @@ export default function CustomVideoPlayer({
 }) {
   const player = useRef<MediaPlayerInstance>(null);
 
-  const [src, setSrc] = useState(
-    `${process.env.NEXT_PUBLIC_M3U8_PROXY as string}${source}`
-  );
+  const [src, setSrc] = useState(`${PROXY}${source}`);
 
   function onTimeUpdate() {
     if (player.current) {
@@ -120,11 +120,7 @@ export default function CustomVideoPlayer({
             ))}
           <Poster
             className="absolute inset-0 block h-full w-full rounded-md opacity-0 transition-opacity data-[visible]:opacity-100 object-cover"
-            src={
-              cover
-                ? `${process.env.NEXT_PUBLIC_PROXY_2 as string}${cover}`
-                : "/placeholder.svg"
-            }
+            src={cover ? `${PROXY}${cover}` : "/placeholder.svg"}
             alt="Movie poster"
           />
         </MediaProvider>
@@ -140,16 +136,11 @@ export default function CustomVideoPlayer({
                   className="vds-radio"
                   value="check 1"
                   key="check 1"
-                  onClick={() =>
-                    setSrc(
-                      `${process.env.NEXT_PUBLIC_M3U8_PROXY as string}${source}`
-                    )
-                  }
+                  onClick={() => setSrc(`${PROXY}${source}`)}
                 >
-                  {src ===
-                    `${
-                      process.env.NEXT_PUBLIC_M3U8_PROXY as string
-                    }${source}` && <CheckIcon className="vds-icon" />}
+                  {src === `${PROXY}${source}` && (
+                    <CheckIcon className="vds-icon" />
+                  )}
                   <span className="vds-radio-label">Default</span>
                 </RadioGroup.Item>
                 {otherLinks &&

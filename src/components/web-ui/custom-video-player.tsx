@@ -38,6 +38,8 @@ interface subs {
   lang?: string;
 }
 
+const PROXY = process.env.NEXT_PUBLIC_M3U8_PROXY as string;
+
 const SeriesCustomVideoPlayer = ({
   data,
   season,
@@ -51,9 +53,7 @@ const SeriesCustomVideoPlayer = ({
 }) => {
   const player = useRef<MediaPlayerInstance>(null);
   const [src, setSrc] = useState<string>(
-    data.videoURL
-      ? `${process.env.NEXT_PUBLIC_M3U8_PROXY as string}${data.videoURL.url!}`
-      : "/not_found.mp4"
+    data.videoURL ? `${PROXY}${data.videoURL.url!}` : "/not_found.mp4"
   );
 
   function setPlayerTime() {
@@ -132,11 +132,7 @@ const SeriesCustomVideoPlayer = ({
 
         <Poster
           className="absolute inset-0 block h-full w-full rounded-md opacity-0 transition-opacity data-[visible]:opacity-100 object-cover"
-          src={
-            data.cover
-              ? `${process.env.NEXT_PUBLIC_PROXY_2 as string}${data.cover}`
-              : "/placeholder.svg"
-          }
+          src={data.cover ? `${PROXY}${data.cover}` : "/placeholder.svg"}
           alt="Movie poster"
         />
       </MediaProvider>
@@ -152,18 +148,11 @@ const SeriesCustomVideoPlayer = ({
                 className="vds-radio"
                 value="check 1"
                 key="check 1"
-                onClick={() =>
-                  setSrc(
-                    `${process.env.NEXT_PUBLIC_M3U8_PROXY as string}${
-                      data.videoURL?.url
-                    }`
-                  )
-                }
+                onClick={() => setSrc(`${PROXY}${data.videoURL?.url}`)}
               >
-                {src ===
-                  `${process.env.NEXT_PUBLIC_M3U8_PROXY as string}${
-                    data.videoURL?.url
-                  }` && <CheckIcon className="vds-icon" />}
+                {src === `${PROXY}${data.videoURL?.url}` && (
+                  <CheckIcon className="vds-icon" />
+                )}
                 <span className="vds-radio-label">Default</span>
               </RadioGroup.Item>
               {data.link2 && (
