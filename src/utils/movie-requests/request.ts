@@ -16,7 +16,7 @@ import { getRandomApiKey } from "../api-key-randomizer";
 // Constants
 
 const BASE_URL = "https://api.themoviedb.org/3";
-const VIDSRC_CC = "https://dramaflix-movielinks.vercel.app"
+const VIDSRC_CC = "https://dramaflix-movielinks.vercel.app";
 const CONSUMET = process.env.CONSUMET_API_URL;
 const CACHE_DURATION = 21600 * 2; // Cache duration in seconds (6 hours)
 
