@@ -21,6 +21,7 @@ const api_key = getRandomApiKey();
 const parent_url = `https://api.themoviedb.org/3`;
 const CONSUMET = process.env.CONSUMET_API_URL;
 const NEXT_CACHE_DURATION = 21600 * 2;
+const VIDSRC_CC = "https://dramaflix-movielinks.vercel.app";
 
 const requestHandler = async (url: string) => {
   try {
@@ -154,7 +155,7 @@ export const FlixHQEpisodeInfo = async ({
   let link2, link3;
   try {
     const vidsrcData: VidSrcCCLinks = await fetch(
-      `https://temp-res.vercel.app/vidsrc/${seriesId}?s=${season}&e=${episode}`,
+      `{VIDSRC_CC}/vidsrc/${seriesId}?s=${season}&e=${episode}`,
       { next: { revalidate: NEXT_CACHE_DURATION } }
     ).then((response) => response.json());
 
