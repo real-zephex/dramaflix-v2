@@ -12,6 +12,7 @@ const remotePatterns = [
   "sup-proxy.zephex0-f6c.workers.dev",
   "gogocdn.net",
   "m3u8proxy.zephex0-f6c.workers.dev",
+  "m3u8proxy.goodproxy.workers.dev"
 ];
 
 const nextConfig = {
@@ -19,7 +20,6 @@ const nextConfig = {
     remotePatterns: remotePatterns.map((hostname) => ({
       hostname,
     })),
-    unoptimized: true,
   },
   logging: {
     fetches: {

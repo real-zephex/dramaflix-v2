@@ -118,7 +118,7 @@ export async function AniwatchVideoLinksHandler({
 }) {
   const hd_1_url = `${ANIWATCH}/episode-srcs?id=${id}&server=hd-1&category=${type}`;
   const hd_2_url = `${ANIWATCH}/episode-srcs?id=${id}&server=hd-2&category=${type}`;
-
+  console.log(hd_1_url)
   try {
     const [responseHd1, responseHd2] = await Promise.all([
       fetch(hd_1_url, { next: { revalidate: 11800 } }),

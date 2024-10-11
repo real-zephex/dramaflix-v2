@@ -19,6 +19,7 @@ const BASE_URL = "https://api.themoviedb.org/3";
 const VIDSRC_CC = "https://dramaflix-movielinks.vercel.app";
 const CONSUMET = process.env.CONSUMET_API_URL;
 const CACHE_DURATION = 21600 * 2; // Cache duration in seconds (6 hours)
+const TMDB_ID = process.env.TMDB_API_KEY
 
 // Utility function to construct URL
 function constructUrl(
@@ -100,7 +101,7 @@ export async function MovieCredits({
   id: string;
   type: "credits" | "images";
 }) {
-  const url = `${BASE_URL}/movie/${id}/${type}?api_key=${getRandomApiKey()}`;
+  const url = `${BASE_URL}/movie/${id}/${type}?api_key=${TMDB_ID}`;
   const res = await fetch(url, { next: { revalidate: CACHE_DURATION } });
   // return (await res.json()) as TVCredits;
   if (type === "credits") {

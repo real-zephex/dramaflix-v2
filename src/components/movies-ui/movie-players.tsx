@@ -3,28 +3,28 @@ import { FlixHQResultsHandler } from "@/utils/movie-requests/request";
 import CustomVideoPlayer from "./custom-video-player";
 
 const MoviePlayer = async ({ id }: { id: string }) => {
-  const data = await FlixHQResultsHandler({ movieId: id });
+  // const data = await FlixHQResultsHandler({ movieId: id });
 
   const vidLinksArray = [
     // { title: "vidsrc.to", link: `https://vidsrc.to/embed/movie/${id}` },
-    { title: "embedded", link: `https://vidsrc.icu/embed/movie/${id}` },
+    { title: "player-1", link: `https://vidsrc.pro/embed/movie/${id}` },
+    { title: "player-2", link: `https://vidsrc.icu/embed/movie/${id}` },
     // {
-    //   title: "multiembed",
+    //   title: "player-3",
     //   link: `https://multiembed.mov/directstream.php?video_id=${id}&tmdb=1`,
     // },
-    // { title: "vidsrc.net", link: `https://vidsrc.in/embed/movie?tmdb=${id}` },
     // {
     //   title: "vidsrc.vip",
     //   link: `https://vidsrc.vip/embed/movie/${id}?autoplay=false`,
     // },
     // {
-    //   title: "autoembed",
+    //   title: "player-3",
     //   link: `https://sup-proxy.zephex0-f6c.workers.dev/api-content?url=https://stable-one.autoembed.cc/movie/${id}`,
     // },
-    // {
-    //   title: "playsrc",
-    //   link: `https://playsrc.streamscripts.xyz/embed/movie/${id}`,
-    // },
+    {
+      title: "player-3",
+      link: `https://playsrc.streamscripts.xyz/embed/movie/${id}`,
+    },
   ];
   return (
     <div role="tablist" className="tabs tabs-boxed">
@@ -38,33 +38,23 @@ const MoviePlayer = async ({ id }: { id: string }) => {
             className="tab"
             aria-label={items.title}
             defaultChecked={
-              data ? false : items.title === "vidsrc.pro" ? true : false
+              items.title === "player-1" ? true : false
             }
           />
           <div
             role="tabpanel"
             className="tab-content bg-base-100 border-base-300 rounded-box p-2 "
           >
-            {items.title === "multiembed" || items.title === "vidsrc.vip" ? (
-              <iframe
+            <iframe
                 src={items.link}
                 allowFullScreen
                 height={720}
                 className="w-full h-[240px] md:h-[480px] lg:h-[720px] rounded-lg"
-              ></iframe>
-            ) : (
-              <iframe
-                src={items.link}
-                allowFullScreen
-                height={720}
-                className="w-full h-[240px] md:h-[480px] lg:h-[720px] rounded-lg"
-                sandbox="allow-forms allow-pointer-lock allow-same-origin allow-scripts allow-top-navigation"
-              ></iframe>
-            )}
+            ></iframe>
           </div>
         </React.Fragment>
       ))}
-      <input
+      {/* <input
         type="radio"
         name="my_tabs_2"
         role="tab"
@@ -72,8 +62,8 @@ const MoviePlayer = async ({ id }: { id: string }) => {
         className="tab"
         aria-label="Custom"
         defaultChecked={data ? true : false}
-      />
-      <div
+      /> */}
+      {/* <div
         role="tabpanel"
         className="tab-content bg-base-100 border-base-300 rounded-box p-2 "
       >
@@ -86,7 +76,7 @@ const MoviePlayer = async ({ id }: { id: string }) => {
           id={id}
           headers={data?.headers || ""}
         />
-      </div>
+      </div> */}
     </div>
   );
 };
