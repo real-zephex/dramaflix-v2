@@ -34,7 +34,7 @@ const SeriesPlayer = async ({ params }: { params: { slugs: string[] } }) => {
             name="my_tabs_1"
             role="tab"
             className="tab"
-            aria-label="vidsrc"
+            aria-label="embedded"
             defaultChecked={data.videoURL?.url ? false : true}
           />
           <div role="tabpanel" className="tab-content p-2">
@@ -43,7 +43,6 @@ const SeriesPlayer = async ({ params }: { params: { slugs: string[] } }) => {
               allowFullScreen
               height={720}
               className="w-full h-[240px] md:h-[480px] lg:h-[720px] rounded-lg"
-              sandbox="allow-forms allow-pointer-lock allow-same-origin allow-scripts allow-top-navigation"
             ></iframe>
           </div>
 
