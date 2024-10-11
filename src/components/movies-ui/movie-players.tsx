@@ -54,29 +54,6 @@ const MoviePlayer = async ({ id }: { id: string }) => {
           </div>
         </React.Fragment>
       ))}
-      {/* <input
-        type="radio"
-        name="my_tabs_2"
-        role="tab"
-        id="custom"
-        className="tab"
-        aria-label="Custom"
-        defaultChecked={data ? true : false}
-      /> */}
-      {/* <div
-        role="tabpanel"
-        className="tab-content bg-base-100 border-base-300 rounded-box p-2 "
-      >
-        <CustomVideoPlayer
-          movieTitle={data.title!}
-          source={data.movieLink?.url!}
-          subtitle={data.subtitles}
-          cover={data.cover ? data.cover : "/placeholder.svg"}
-          otherLinks={[data.link2!, data.link3!]}
-          id={id}
-          headers={data?.headers || ""}
-        />
-      </div> */}
     </div>
   );
 };
