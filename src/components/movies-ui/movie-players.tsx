@@ -64,7 +64,7 @@ const MoviePlayer = async ({ id }: { id: string }) => {
           </div>
         </React.Fragment>
       ))}
-      <input
+{/*       <input
         type="radio"
         name="my_tabs_2"
         role="tab"
@@ -86,7 +86,7 @@ const MoviePlayer = async ({ id }: { id: string }) => {
           id={id}
           headers={data?.headers || ""}
         />
-      </div>
+      </div> */}
     </div>
   );
 };
