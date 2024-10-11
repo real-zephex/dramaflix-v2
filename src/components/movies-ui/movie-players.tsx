@@ -45,7 +45,7 @@ const MoviePlayer = async ({ id }: { id: string }) => {
             role="tabpanel"
             className="tab-content bg-base-100 border-base-300 rounded-box p-2 "
           >
-            {items.title === "multiembed" || items.title === "vidsrc.vip" ? (
+            {items.title === "embedded" || items.title === "vidsrc.vip" ? (
               <iframe
                 src={items.link}
                 allowFullScreen
