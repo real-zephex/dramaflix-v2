@@ -78,7 +78,7 @@ const SeriesPlayer = async ({ params }: { params: { slugs: string[] } }) => {
             ></iframe>
           </div> */}
 
-          <input
+{/*           <input
             type="radio"
             name="my_tabs_1"
             role="tab"
@@ -93,7 +93,7 @@ const SeriesPlayer = async ({ params }: { params: { slugs: string[] } }) => {
               episode={episode_number}
               id={`${series_id}-S${season_number}E${episode_number}`}
             />
-          </div>
+          </div> */}
         </div>
 
         <section className="mt-2 flex flex-col md:flex-row items-center bg-base-200 rounded-xl p-2">
