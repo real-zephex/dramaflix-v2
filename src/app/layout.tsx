@@ -5,6 +5,7 @@ import { GoogleAnalytics } from "@next/third-parties/google";
 
 import Navbar from "@/components/ui/navbar";
 import { font_lexend } from "@/components/fonts";
+import Donate from "@/components/ui/donate";
 
 const APP_NAME = "Dramaflix";
 const APP_DEFAULT_TITLE = "Dramaflix";
@@ -72,7 +73,12 @@ export default function RootLayout({
       <body className={font_lexend.className} data-theme="dark">
         <NextTopLoader showSpinner={false} />
         <Navbar />
-        <section data-theme="dark">{children}</section>
+        <section data-theme="dark">
+          {children}
+          <div className="fixed bottom-0 left-0 z-[99] p-4">
+            <Donate />
+          </div>
+        </section>
       </body>
     </html>
   );
