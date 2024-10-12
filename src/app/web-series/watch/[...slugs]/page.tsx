@@ -33,11 +33,11 @@ const SeriesPlayer = async ({ params }: { params: { slugs: string[] } }) => {
     },
     {
       title: "player-2",
-      link: `https://vidsrc.icu/embed/tv/${series_id}/${season_number}/${episode_number}`,
+      link: `https://playsrc.streamscripts.xyz/embed/tv/${series_id}/${season_number}/${episode_number}`,
     },
     {
       title: "player-3",
-      link: `https://vidsrc.in/embed/tv/${series_id}/${season_number}/${episode_number}`,
+      link: `https://vidsrc.dev/embed/tv/${series_id}/${season_number}/${episode_number}`,
     },
   ];
 
@@ -96,7 +96,7 @@ const SeriesPlayer = async ({ params }: { params: { slugs: string[] } }) => {
             </div>
           )}
 
-          <div className="mt-2 md:ml-2 w-2/3">
+          <div className="mt-2 md:ml-2 md:w-2/3 w-full">
             <p className="text-sm bg-base-300 md:w-fit w-full px-2 py-1 rounded-xl text-center">
               Watching Episode {episode_number} - Season {season_number}
             </p>
