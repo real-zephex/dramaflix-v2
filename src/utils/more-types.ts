@@ -150,32 +150,38 @@ interface AniwatchEpisode {
 
 // aniwatch video links
 export interface AniwatchVideoLinks {
-  tracks?: Track[];
-  intro?: Tro;
-  outro?: Tro;
-  sources?: AniwatchSource[];
-  anilistID?: number;
-  malID?: number;
+    success: boolean;
+    data:    Data;
+}
+
+export interface Data {
+    tracks:    Track[];
+    intro:     Tro;
+    outro:     Tro;
+    sources:   Source[];
+    anilistID: number;
+    malID:     number;
 }
 
 export interface Tro {
-  start: number;
-  end: number;
+    start: number;
+    end:   number;
 }
 
-interface AniwatchSource {
-  url?: string;
-  type?: string;
+export interface AniwatchSource {
+    url:  string;
+    type: string;
 }
 
 export interface Track {
-  file?: string;
-  label?: string;
-  kind?: Kind;
-  default?: boolean;
+    file:     string;
+    label?:   string;
+    kind:     Kind;
+    default?: boolean;
 }
 
-enum Kind {
-  Captions = "captions",
-  Thumbnails = "thumbnails",
+export enum Kind {
+    Captions = "captions",
+    Thumbnails = "thumbnails",
 }
+
