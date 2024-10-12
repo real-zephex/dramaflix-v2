@@ -116,9 +116,9 @@ export async function AniwatchVideoLinksHandler({
   id: string;
   type: "dub" | "sub";
 }) {
-  const hd_1_url = `${ANIWATCH}/episode-srcs?id=${id}&server=hd-1&category=${type}`;
-  const hd_2_url = `${ANIWATCH}/episode-srcs?id=${id}&server=hd-2&category=${type}`;
-  console.log(hd_1_url)
+  const hd_1_url = `${ANIWATCH}/api/v2/hianime/episode/sources?animeEpisodeId=${id}&server=hd-1&category=${type}`;
+  const hd_2_url = `${ANIWATCH}/api/v2/hianime/episode/sources?animeEpisodeId=${id}&server=hd-2&category=${type}`;
+
   try {
     const [responseHd1, responseHd2] = await Promise.all([
       fetch(hd_1_url, { next: { revalidate: 11800 } }),
@@ -130,8 +130,8 @@ export async function AniwatchVideoLinksHandler({
     }
 
     // Parse responses as JSON
-    const dataHd1: AniwatchVideoLinks = await responseHd1.json();
-    const dataHd2: AniwatchVideoLinks = await responseHd2.json();
+    const dataHd1: AniwatchVideoLinks = await responseHd1.json().data;
+    const dataHd2: AniwatchVideoLinks = await responseHd2.json().data;
 
     const intro = dataHd1.intro || null;
     const outro = dataHd1.outro || null;
