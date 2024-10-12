@@ -117,22 +117,19 @@ export async function AniwatchVideoLinksHandler({
   type: "dub" | "sub";
 }) {
   const hd_1_url = `${ANIWATCH}/api/v2/hianime/episode/sources?animeEpisodeId=${id}&server=hd-1&category=${type}`;
-  const hd_2_url = `${ANIWATCH}/api/v2/hianime/episode/sources?animeEpisodeId=${id}&server=hd-2&category=${type}`;
 
   try {
-    const [responseHd1, responseHd2] = await Promise.all([
-      fetch(hd_1_url, { next: { revalidate: 11800 } }),
-      fetch(hd_2_url, { next: { revalidate: 11800 } }),
+    const [responseHd1] = await Promise.all([
+      fetch(hd_1_url, { next: { revalidate: 11800 } })
     ]);
 
-    if (!responseHd1.ok || !responseHd2.ok) {
-      throw new Error("Failed to fetch data from one or more URLs"); // ig it's better to ditch the whole process if one of the urls fail to fetch the data
+    if (!responseHd1.ok) {
+      throw new Error("Failed to fetch data from one or more URLs");
     }
 
     // Parse responses as JSON
     
     const dataHd1: AniwatchVideoLinks = await responseHd1.json();
-    const dataHd2: AniwatchVideoLinks = await responseHd2.json();
 
     const intro = dataHd1.data.intro || null;
     const outro = dataHd1.data.outro || null;
@@ -150,12 +147,6 @@ export async function AniwatchVideoLinksHandler({
       sources.push({
         title: `HD-1 ${type}`,
         url: `${HLS_PROXY}${dataHd1.data.sources[0].url!}`,
-      });
-    }
-    if (dataHd2.data.sources) {
-      sources.push({
-        title: `HD-2 ${type}`,
-        url: `${HLS_PROXY}${dataHd2.data.sources[0].url!}`,
       });
     }
 
