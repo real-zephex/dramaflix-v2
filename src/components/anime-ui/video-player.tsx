@@ -223,6 +223,7 @@ const AnimeVideoPage = ({
     start: Tro | null;
     end: Tro | null;
   }
+  
   const generateVTT = useCallback(
     ({ start, end }: skipTimes) => {
       let vttString = "WEBVTT\n\n";

@@ -130,31 +130,32 @@ export async function AniwatchVideoLinksHandler({
     }
 
     // Parse responses as JSON
-    const dataHd1: AniwatchVideoLinks = await responseHd1.json().data;
-    const dataHd2: AniwatchVideoLinks = await responseHd2.json().data;
+    
+    const dataHd1: AniwatchVideoLinks = await responseHd1.json();
+    const dataHd2: AniwatchVideoLinks = await responseHd2.json();
 
-    const intro = dataHd1.intro || null;
-    const outro = dataHd1.outro || null;
+    const intro = dataHd1.data.intro || null;
+    const outro = dataHd1.data.outro || null;
 
-    const thumnails = dataHd1.tracks
-      ? dataHd1.tracks?.find((element) => element.kind === "thumbnails")?.file
+    const thumnails = dataHd1.data.tracks
+      ? dataHd1.data.tracks?.find((element) => element.kind === "thumbnails")?.file
       : "";
 
-    const subtitles = dataHd1.tracks?.filter(
+    const subtitles = dataHd1.data.tracks?.filter(
       (element) => element.kind === "captions"
     );
 
     let sources: VideoSources[] = [];
-    if (dataHd1.sources) {
+    if (dataHd1.data.sources) {
       sources.push({
         title: `HD-1 ${type}`,
-        url: `${HLS_PROXY}${dataHd1.sources[0].url!}`,
+        url: `${HLS_PROXY}${dataHd1.data.sources[0].url!}`,
       });
     }
-    if (dataHd2.sources) {
+    if (dataHd2.data.sources) {
       sources.push({
         title: `HD-2 ${type}`,
-        url: `${HLS_PROXY}${dataHd2.sources[0].url!}`,
+        url: `${HLS_PROXY}${dataHd2.data.sources[0].url!}`,
       });
     }
 
