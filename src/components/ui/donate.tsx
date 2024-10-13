@@ -35,7 +35,7 @@ const Donate = () => {
           <p className="py-4">
             Zephex here, developer of this site.
             <br />
-            Sites like these require regular maintainenance and some capital to
+            Sites like these require regular maintenance and some capital to
             be hosted. In the past, I had to take down the site due to the same
             reason. If possible consider donating some amount to keep the site
             running.
