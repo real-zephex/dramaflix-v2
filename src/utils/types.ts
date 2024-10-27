@@ -145,7 +145,7 @@ export interface DramaInfo {
 
 interface DramaCharacter {
   url?: string;
-  imageUrl?: string;
+  image?: string;
   name?: string;
 }
 

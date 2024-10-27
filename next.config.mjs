@@ -12,7 +12,8 @@ const remotePatterns = [
   "sup-proxy.zephex0-f6c.workers.dev",
   "gogocdn.net",
   "m3u8proxy.zephex0-f6c.workers.dev",
-  "m3u8proxy.goodproxy.workers.dev"
+  "m3u8proxy.goodproxy.workers.dev",
+  "goodproxy.goodproxy.workers.dev",
 ];
 
 const nextConfig = {

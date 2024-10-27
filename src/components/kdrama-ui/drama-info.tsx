@@ -77,7 +77,7 @@ const DramaInfoComponent = async ({ data }: { data: DramaInfo }) => {
                   key={index}
                 >
                   <Image
-                    src={item.imageUrl ? item.imageUrl : "/placeholder.svg"}
+                    src={item.image ? item.image : "/placeholder.svg"}
                     width={200}
                     height={700}
                     className="w-auto h-32 mx-1 rounded-l-md "
