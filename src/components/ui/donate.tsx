@@ -3,8 +3,7 @@
 import { usePathname } from "next/navigation";
 
 const Donate = () => {
-
-  const pathname = usePathname().split("/")
+  const pathname = usePathname().split("/");
 
   if (pathname.length > 2) {
     return;
@@ -32,25 +31,24 @@ const Donate = () => {
       <dialog id="donationBox" className="modal">
         <div className="modal-box max-w-5xl">
           <h3 className="font-bold text-lg">Hello!</h3>
-          <p className="py-4">
-            Zephex here, developer of this site.
-            <br />
-            Sites like these require regular maintenance and some capital to
-            be hosted. In the past, I had to take down the site due to the same
-            reason. If possible consider donating some amount to keep the site
-            running.
-            <br />
-            Regards
-            <br />
-            Zephex
-          </p>
-          <br />
+          <div className="py-4">
+            <p>
+              Zephex here, developer of this site. <br />
+              Sites like these require regular maintenance and some capital to
+              stay hosted. In the past, I had to take down the site due to the
+              same reason. If possible, consider donating some amount to keep
+              the site running. <br />
+              Regards,
+              <br />
+              Zephex
+            </p>
+          </div>
           <p>
-            For transactions from India, use these UPI IDs:
-            <br /> <span className="text-amber-200">zephyr@pingpay</span>
-            <br />
+            For transactions from India, use these UPI IDs: <br />
+            <span className="text-amber-200">zephyr@pingpay</span> <br />
             <span className="text-amber-200">zephex0@okaxis</span>
           </p>
+
           <div className="modal-action">
             <form method="dialog">
               {/* if there is a button in form, it will close the modal */}
