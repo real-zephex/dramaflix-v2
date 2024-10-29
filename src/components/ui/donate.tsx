@@ -1,6 +1,8 @@
 "use client";
 
+import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { CiMail } from "react-icons/ci";
 
 const Donate = () => {
   const pathname = usePathname().split("/");
@@ -43,12 +45,26 @@ const Donate = () => {
               Zephex
             </p>
           </div>
-          <p>
-            For transactions from India, use these UPI IDs: <br />
-            <span className="text-amber-200">zephyr@pingpay</span> <br />
-            <span className="text-amber-200">zephex0@okaxis</span>
+          <p className="text-sky-400 font-bold">
+            UPI ID:{" "}
+            <span className="text-white italic font-normal">
+              zephyr@pingpay
+            </span>
           </p>
-
+          <p>
+            <span className="text-sky-400 font-bold">Bitcoin wallet: </span>
+            <i className="text-white">
+              0x6d60f7602ace960de79143010a1fc657b44698a7
+            </i>
+          </p>
+          <p className="flex items-center">
+            Contact me:{" "}
+            <Link href="mailto:zephex@duck.com" className="text-lime-200 ml-2">
+              <button className="btn p-2">
+                <CiMail size={24} />
+              </button>
+            </Link>
+          </p>
           <div className="modal-action">
             <form method="dialog">
               {/* if there is a button in form, it will close the modal */}
