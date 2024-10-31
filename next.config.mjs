@@ -14,6 +14,8 @@ const remotePatterns = [
   "m3u8proxy.zephex0-f6c.workers.dev",
   "m3u8proxy.goodproxy.workers.dev",
   "goodproxy.goodproxy.workers.dev",
+  "goodproxy.dramaflix.workers.dev",
+  "m3u8proxy.dramaflix.workers.dev",
 ];
 
 const nextConfig = {
