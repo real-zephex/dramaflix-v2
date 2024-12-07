@@ -28,15 +28,15 @@ const SeriesPlayer = async ({ params }: { params: { slugs: string[] } }) => {
 
   const seriesLinksArray = [
     {
-      title: "player-1",
+      title: "p-1",
       link: `https://vidsrc.pro/embed/tv/${series_id}/${season_number}/${episode_number}`,
     },
     {
-      title: "player-2",
-      link: `https://playsrc.streamscripts.xyz/embed/tv/${series_id}/${season_number}/${episode_number}`,
+      title: "p-2",
+      link: `https://vidsrc.vip/embed/tv/${series_id}/${season_number}/${episode_number}`,
     },
     {
-      title: "player-3",
+      title: "p-3",
       link: `https://vidsrc.dev/embed/tv/${series_id}/${season_number}/${episode_number}`,
     },
   ];
@@ -54,7 +54,7 @@ const SeriesPlayer = async ({ params }: { params: { slugs: string[] } }) => {
                 id={`tab${index}`}
                 className="tab"
                 aria-label={items.title}
-                defaultChecked={items.title === "player-1" ? true : false}
+                defaultChecked={items.title === "p-3" ? true : false}
               />
               <div
                 role="tabpanel"
