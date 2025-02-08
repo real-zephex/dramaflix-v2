@@ -69,7 +69,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" data-theme="dark">
-      <GoogleAnalytics gaId="G-64S37Q7YY4" />
+      <head>
+        <GoogleAnalytics gaId="G-64S37Q7YY4" />
+        <script
+          type="text/javascript"
+          src="//pl25806056.effectiveratecpm.com/07/e6/31/07e6311772411d8ec4ded0982962182c.js"
+        ></script>
+      </head>
       <body className={font_lexend.className} data-theme="dark">
         <NextTopLoader showSpinner={false} />
         <Navbar />
