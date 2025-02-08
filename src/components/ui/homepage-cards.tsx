@@ -5,15 +5,15 @@ const HomepageCards = async () => {
   return (
     <div className="p-2 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
       {generateCards(
-        "Anime",
+        "Anime : Depreceated",
         "Dive into the captivating world of anime, from classic masterpieces to the latest hits.",
-        "animes",
+        "javascript:void(0)",
         "/anime.png"
       )}
       {generateCards(
-        "K-Dramas",
+        "K-Dramas : Depreceated",
         "Immerse yourself in the addictive and emotionally-charged stories of Korean dramas.",
-        "kdramas",
+        "javascript:void(0)",
         "/kdrama.png"
       )}
       {generateCards(
@@ -40,7 +40,7 @@ const generateCards = (
 ) => {
   return (
     <Link
-      href={`/${redirect}`}
+      href={`${redirect}`}
       className="transition duration-300 ease-in-out hover:bg-base-300/50 rounded-xl hover:-translate-y-1 hover:shadow-xl p-2 bg-base-300/75"
     >
       <Image
