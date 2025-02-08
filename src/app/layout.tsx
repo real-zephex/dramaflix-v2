@@ -6,6 +6,7 @@ import { GoogleAnalytics } from "@next/third-parties/google";
 import Navbar from "@/components/ui/navbar";
 import { font_lexend } from "@/components/fonts";
 import Donate from "@/components/ui/donate";
+import Script from "next/script";
 
 const APP_NAME = "Dramaflix";
 const APP_DEFAULT_TITLE = "Dramaflix";
@@ -71,10 +72,10 @@ export default function RootLayout({
     <html lang="en" data-theme="dark">
       <head>
         <GoogleAnalytics gaId="G-64S37Q7YY4" />
-        <script
+        <Script
           type="text/javascript"
           src="//pl25806056.effectiveratecpm.com/07/e6/31/07e6311772411d8ec4ded0982962182c.js"
-        ></script>
+        />
       </head>
       <body className={font_lexend.className} data-theme="dark">
         <NextTopLoader showSpinner={false} />
