@@ -29,7 +29,7 @@ const SeriesPlayer = async ({ params }: { params: { slugs: string[] } }) => {
   const seriesLinksArray = [
     {
       title: "p-1",
-      link: `https://vidsrc.pro/embed/tv/${series_id}/${season_number}/${episode_number}`,
+      link: `https://vidsrc.icu/embed/tv/${series_id}/${season_number}/${episode_number}`,
     },
     {
       title: "p-2",
