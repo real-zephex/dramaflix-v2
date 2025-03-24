@@ -48,7 +48,7 @@ const Donate = () => {
           <p className="text-sky-400 font-bold">
             UPI ID:{" "}
             <span className="text-white italic font-normal">
-              zephyr@pingpay
+              zephex@pingpay
             </span>
           </p>
           <p>

@@ -82,9 +82,9 @@ export default function RootLayout({
         <Navbar />
         <section data-theme="dark">
           {children}
-          <div className="fixed bottom-0 left-0 z-[99] p-4">
+          {/* <div className="fixed bottom-0 left-0 z-[99] p-4">
             <Donate />
-          </div>
+          </div> */}
         </section>
       </body>
     </html>
