@@ -26,15 +26,15 @@ const Navbar = async () => {
             tabIndex={0}
             className="menu menu-sm dropdown-content bg-base-300 rounded-box z-[1] mt-3 w-52 p-2 shadow"
           >
-            <li>
+            {/* <li>
               <Link href={"/animes"}> Animes</Link>
-            </li>
+            </li> */}
             <li>
               <Link href={"/movies"}> Movies</Link>
             </li>
-            <li>
+            {/* <li>
               <Link href={"/kdramas"}> Kdramas</Link>
-            </li>
+            </li> */}
             <li>
               <Link href={"/web-series"}> Web-Series</Link>
             </li>
@@ -61,15 +61,15 @@ const Navbar = async () => {
       </div>
       <div className="navbar-center hidden lg:flex">
         <ul className="menu menu-horizontal px-1">
-          <li>
+          {/* <li>
             <Link href={"/animes"}> Animes</Link>
-          </li>
+          </li> */}
           <li>
             <Link href={"/movies"}> Movies</Link>
           </li>
-          <li>
+          {/* <li>
             <Link href={"/kdramas"}> Kdramas</Link>
-          </li>
+          </li> */}
           <li>
             <Link href={"/web-series"}> Web-Series</Link>
           </li>

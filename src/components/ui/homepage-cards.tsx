@@ -4,7 +4,7 @@ import Link from "next/link";
 const HomepageCards = async () => {
   return (
     <div className="p-2 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-      {generateCards(
+      {/* {generateCards(
         "Anime : Depreceated",
         "Dive into the captivating world of anime, from classic masterpieces to the latest hits.",
         "javascript:void(0)",
@@ -15,7 +15,7 @@ const HomepageCards = async () => {
         "Immerse yourself in the addictive and emotionally-charged stories of Korean dramas.",
         "javascript:void(0)",
         "/kdrama.png"
-      )}
+      )} */}
       {generateCards(
         "Movies",
         "Discover a vast collection of captivating movies from around the world.",
