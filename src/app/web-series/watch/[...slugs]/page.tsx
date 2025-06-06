@@ -54,7 +54,7 @@ const SeriesPlayer = async ({ params }: { params: { slugs: string[] } }) => {
                 id={`tab${index}`}
                 className="tab"
                 aria-label={items.title}
-                defaultChecked={items.title === "p-3" ? true : false}
+                defaultChecked={items.title === "p-2" ? true : false}
               />
               <div
                 role="tabpanel"
