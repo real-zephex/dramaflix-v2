@@ -1,5 +1,25 @@
 import React from "react";
 import MoviesGridConstructor from "@/components/movies-ui/movies-formatter";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Movies | Dramaflix",
+  description:
+    "Watch the latest and greatest movies on Dramaflix. From trending blockbusters to timeless classics.",
+  openGraph: {
+    title: "Movies | Dramaflix",
+    description:
+      "Watch the latest and greatest movies on Dramaflix. From trending blockbusters to timeless classics.",
+    images: [
+      {
+        url: "/movie.jpg",
+        width: 800,
+        height: 600,
+        alt: "Dramaflix Movies",
+      },
+    ],
+  },
+};
 
 const MovieHomepage = async () => {
   const arrayType = [

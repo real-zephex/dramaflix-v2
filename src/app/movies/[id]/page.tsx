@@ -1,8 +1,50 @@
 import MoviePlayer from "@/components/movies-ui/movie-players";
 import { MovieInfo, MovieCredits } from "@/utils/movie-requests/request";
 import MoreMovieInfo from "@/components/movies-ui/movie-info-tabs";
-
+import { Metadata, ResolvingMetadata } from 'next';
 import Image from "next/image";
+
+type Props = {
+  params: { id: string }
+}
+
+export async function generateMetadata(
+  { params }: Props,
+  parent: ResolvingMetadata
+): Promise<Metadata> {
+  try {
+    const data = await MovieInfo(params.id);
+    
+    if (!data) {
+      return {
+        title: 'Movie Not Found',
+        description: 'The requested movie could not be found.'
+      };
+    }
+
+    return {
+      title: data.title,
+      description: data.overview || `Watch ${data.title} on Dramaflix`,
+      openGraph: {
+        title: data.title,
+        description: data.overview || `Watch ${data.title} on Dramaflix`,
+        images: [{
+          url: data.poster_path 
+            ? `https://image.tmdb.org/t/p/original${data.poster_path}`
+            : '/placeholder.svg',
+          width: 800,
+          height: 600,
+          alt: `${data.title} poster`
+        }]
+      }
+    };
+  } catch (error) {
+    return {
+      title: 'Error',
+      description: 'Failed to load movie information'
+    };
+  }
+}
 
 const MovieInfoPage = async ({ params }: { params: { id: string } }) => {
   const data = await MovieInfo(params.id);

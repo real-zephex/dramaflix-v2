@@ -1,8 +1,10 @@
+"use client";
+
 import React from "react";
 import { FlixHQResultsHandler } from "@/utils/movie-requests/request";
 import CustomVideoPlayer from "./custom-video-player";
 
-const MoviePlayer = async ({ id }: { id: string }) => {
+const MoviePlayer = ({ id }: { id: string }) => {
   // const data = await FlixHQResultsHandler({ movieId: id });
 
   const vidLinksArray = [
@@ -26,6 +28,11 @@ const MoviePlayer = async ({ id }: { id: string }) => {
       link: `https://vidsrc.dev/embed/movie/${id}`,
     },
   ];
+
+  function handleClick(event: React.MouseEvent<HTMLDivElement>) {
+    alert("Video player clicked.");
+  }
+
   return (
     <div role="tablist" className="tabs tabs-boxed">
       {vidLinksArray.map((items, index) => (
@@ -48,7 +55,8 @@ const MoviePlayer = async ({ id }: { id: string }) => {
               allowFullScreen
               height={720}
               className="w-full h-[240px] md:h-[480px] lg:h-[720px] rounded-lg"
-            ></iframe>
+              onClick={() => alert("Iframe clicked!")}
+            />
           </div>
         </React.Fragment>
       ))}
