@@ -70,7 +70,7 @@ export async function generateMetadata(
         type: "video.episode",
         images: [
           {
-            url: `${process.env.NEXT_PUBLIC_PROXY}${imageUrl}`,
+            url: imageUrl,
             width: 1920,
             height: 1080,
             alt: `${seriesInfo.name} Season ${season_number} Episode ${episode_number}`,
@@ -82,7 +82,7 @@ export async function generateMetadata(
         card: "summary_large_image",
         title,
         description,
-        images: [`${process.env.NEXT_PUBLIC_PROXY}${imageUrl}`],
+        images: [imageUrl],
       },
     };
   } catch (error) {
