@@ -5,9 +5,10 @@ import { FaStar } from "react-icons/fa";
 import { FiDownload } from "react-icons/fi";
 
 import { EpisodeInfo } from "@/utils/tv-requests/request";
-import { FlixHQEpisodeInfo } from "@/utils/tv-requests/request";
-import SeriesCustomVideoPlayer from "@/components/web-ui/custom-video-player";
+// import { FlixHQEpisodeInfo } from "@/utils/tv-requests/request";
+// import SeriesCustomVideoPlayer from "@/components/web-ui/custom-video-player";
 import React from "react";
+import WebSeriesWatchStatus from "@/components/web-ui/watch-status";
 
 const SeriesPlayer = async ({ params }: { params: { slugs: string[] } }) => {
   const series_id = params.slugs[2];
@@ -29,7 +30,7 @@ const SeriesPlayer = async ({ params }: { params: { slugs: string[] } }) => {
   const seriesLinksArray = [
     {
       title: "p-1",
-      link: `https://vidsrc.icu/embed/tv/${series_id}/${season_number}/${episode_number}`,
+      link: `https://vidsrc.pro/embed/tv/${series_id}/${season_number}/${episode_number}`,
     },
     {
       title: "p-2",
@@ -37,7 +38,7 @@ const SeriesPlayer = async ({ params }: { params: { slugs: string[] } }) => {
     },
     {
       title: "p-3",
-      link: `https://vidsrc.dev/embed/tv/${series_id}/${season_number}/${episode_number}`,
+      link: `https://vidsrc.icu/embed/tv/${series_id}/${season_number}/${episode_number}`,
     },
   ];
 
@@ -66,6 +67,19 @@ const SeriesPlayer = async ({ params }: { params: { slugs: string[] } }) => {
                   height={720}
                   className="w-full h-[240px] md:h-[480px] lg:h-[720px] rounded-lg"
                 ></iframe>
+                <WebSeriesWatchStatus
+                  id={series_id}
+                  season={season_number}
+                  episode={episode_number}
+                  title={
+                    epData && epData.name ? epData.name : "Unknown Episode"
+                  }
+                  posterPath={
+                    epData && epData.still_path
+                      ? epData.still_path
+                      : "/placeholder.svg"
+                  }
+                />
               </div>
             </React.Fragment>
           ))}
