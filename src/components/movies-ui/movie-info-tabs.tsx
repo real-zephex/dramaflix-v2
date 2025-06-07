@@ -61,6 +61,9 @@ const MoreMovieInfo = async ({
           <p>
             <b>Runtime</b>: {data.runtime} minutes
           </p>
+          <p>
+            <b>Release Date</b>: {data.release_date}
+          </p>
           <div className="my-1">
             <Link
               href={`https://dl.vidsrc.vip/movie/${data.id}`}
