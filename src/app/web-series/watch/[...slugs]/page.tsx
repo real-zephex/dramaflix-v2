@@ -4,11 +4,99 @@ import Image from "next/image";
 import { FaStar } from "react-icons/fa";
 import { FiDownload } from "react-icons/fi";
 
-import { EpisodeInfo } from "@/utils/tv-requests/request";
+import { EpisodeInfo, InfoImagesCreditsTV } from "@/utils/tv-requests/request";
+import { TVInfo, TVEpisodeInfo } from "@/utils/types";
+import { Metadata, ResolvingMetadata } from "next";
 // import { FlixHQEpisodeInfo } from "@/utils/tv-requests/request";
 // import SeriesCustomVideoPlayer from "@/components/web-ui/custom-video-player";
 import React from "react";
 import WebSeriesWatchStatus from "@/components/web-ui/watch-status";
+
+type Props = {
+  params: { slugs: string[] };
+};
+
+export async function generateMetadata(
+  { params }: Props,
+  parent: ResolvingMetadata
+): Promise<Metadata> {
+  try {
+    const series_id = params.slugs[2];
+    const season_number = params.slugs[0];
+    const episode_number = params.slugs[1]; // Fetch series information
+    const seriesInfo = (await InfoImagesCreditsTV({
+      type: "info",
+      id: parseInt(series_id),
+    })) as TVInfo;
+
+    // Fetch episode information
+    const episodeInfo = (await EpisodeInfo({
+      id: series_id,
+      season: season_number,
+      episode: episode_number,
+    })) as TVEpisodeInfo;
+
+    if (!seriesInfo) {
+      return {
+        title: "Series Not Found",
+        description: "The requested series could not be found.",
+      };
+    }
+
+    // Create dynamic title
+    const episodeName = episodeInfo?.name ? ` - ${episodeInfo.name}` : "";
+    const title = `${seriesInfo.name} - Season ${season_number}, Episode ${episode_number}${episodeName}`;
+
+    // Create description from episode overview or series overview
+    const description =
+      episodeInfo?.overview ||
+      seriesInfo.overview ||
+      `Watch ${seriesInfo.name} Season ${season_number}, Episode ${episode_number} on Dramaflix`;
+
+    // Determine the best image to use
+    const imageUrl = episodeInfo?.still_path
+      ? `${process.env.NEXT_PUBLIC_PROXY}https://image.tmdb.org/t/p/original${episodeInfo.still_path}`
+      : seriesInfo.backdrop_path
+      ? `${process.env.NEXT_PUBLIC_PROXY}https://image.tmdb.org/t/p/original${seriesInfo.backdrop_path}`
+      : seriesInfo.poster_path
+      ? `${process.env.NEXT_PUBLIC_PROXY}https://image.tmdb.org/t/p/original${seriesInfo.poster_path}`
+      : "/placeholder.svg";
+    const keywords =
+      seriesInfo.genres?.map((genre: any) => genre.name).join(", ") || "";
+
+    return {
+      title,
+      description,
+      keywords: `${seriesInfo.name}, TV series, Season ${season_number}, Episode ${episode_number}, ${keywords}`,
+      openGraph: {
+        title,
+        description,
+        type: "video.episode",
+        images: [
+          {
+            url: `${process.env.NEXT_PUBLIC_PROXY}${imageUrl}`,
+            width: 1920,
+            height: 1080,
+            alt: `${seriesInfo.name} Season ${season_number} Episode ${episode_number}`,
+          },
+        ],
+        siteName: "Dramaflix",
+      },
+      twitter: {
+        card: "summary_large_image",
+        title,
+        description,
+        images: [`${process.env.NEXT_PUBLIC_PROXY}${imageUrl}`],
+      },
+    };
+  } catch (error) {
+    console.error("Error generating metadata:", error);
+    return {
+      title: "Episode Not Found",
+      description: "The requested episode could not be found.",
+    };
+  }
+}
 
 const SeriesPlayer = async ({ params }: { params: { slugs: string[] } }) => {
   const series_id = params.slugs[2];
