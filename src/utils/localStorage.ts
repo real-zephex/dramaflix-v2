@@ -37,7 +37,7 @@ function storeIntoLocal({
   }
 }
 
-function watchStatusRetriever(id: number): string {
+function watchStatusRetriever(id: string): string {
   const items = localStorage.getItem("watchHistory") || "[]";
   const parsedItems = JSON.parse(items);
 
@@ -45,7 +45,7 @@ function watchStatusRetriever(id: number): string {
     return "Not found";
   }
 
-  const index = parsedItems.findIndex((item: { id: number }) => item.id === id);
+  const index = parsedItems.findIndex((item: { id: string }) => item.id === id);
   if (index !== -1) {
     return parsedItems[index].watch_status as string;
   } else {

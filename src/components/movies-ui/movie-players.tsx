@@ -40,7 +40,7 @@ const MoviePlayer = ({
   ];
 
   useEffect(() => {
-    const watchStatus = watchStatusRetriever(movieData.id);
+    const watchStatus = watchStatusRetriever(String(movieData.id));
     setWatchStatus(watchStatus);
   }, []);
 
