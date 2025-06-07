@@ -37,6 +37,14 @@ export const metadata: Metadata = {
       template: APP_TITLE_TEMPLATE,
     },
     description: APP_DESCRIPTION,
+    images: [
+      {
+        url: "/hero.png",
+        width: 1920,
+        height: 1080,
+        alt: `${APP_NAME} Logo`,
+      },
+    ],
   },
   twitter: {
     card: "summary",
