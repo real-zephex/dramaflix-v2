@@ -29,6 +29,7 @@ const WebSeriesWatchStatus: React.FC<WebSeriesWatchStatusProps> = ({
   function handleSelectChange(event: React.ChangeEvent<HTMLSelectElement>) {
     const value = event.target.value;
     const watchOperationStatus = storeIntoLocal({
+      type: "TV",
       movieData: {
         id,
         title,

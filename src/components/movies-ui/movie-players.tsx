@@ -47,6 +47,7 @@ const MoviePlayer = ({
   function detectSelectChange(event: React.ChangeEvent<HTMLSelectElement>) {
     const value = event.target.value;
     const watchOperationStatus = storeIntoLocal({
+      type: "MOVIE",
       movieData,
       status: value as "Completed" | "Plan to Watch" | "Watching",
     });
@@ -100,8 +101,8 @@ const MoviePlayer = ({
                 <option selected={watchStatus === "Completed"}>
                   Completed
                 </option>
-                <option selected={watchStatus === "Plan to watch"}>
-                  Plan to watch
+                <option selected={watchStatus === "Plan to Watch"}>
+                  Plan to Watch
                 </option>
                 <option selected={watchStatus === "Watching"}>Watching</option>
               </select>

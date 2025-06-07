@@ -38,9 +38,9 @@ const Navbar = async () => {
             <li>
               <Link href={"/web-series"}> Web-Series</Link>
             </li>
-            {/* <li>
-              <Link href={"/web-series"}> Continue Watching</Link>
-            </li> */}
+            <li>
+              <Link href={"/watch-history"}> Continue Watching</Link>
+            </li>
           </ul>
         </div>
         <svg
@@ -76,9 +76,9 @@ const Navbar = async () => {
           <li>
             <Link href={"/web-series"}> Web-Series</Link>
           </li>
-          {/* <li>
-            <Link href={"/web-series"}> Continue Watching</Link>
-          </li> */}
+          <li>
+            <Link href={"/watch-history"}> Continue Watching</Link>
+          </li>
         </ul>
       </div>
       <div className="navbar-end">

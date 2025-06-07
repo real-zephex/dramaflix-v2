@@ -3,9 +3,11 @@ import { MovieInfoType } from "./types";
 function storeIntoLocal({
   movieData,
   status,
+  type,
 }: {
   movieData: MovieInfoType;
   status: "Completed" | "Plan to Watch" | "Watching";
+  type: "MOVIE" | "TV";
 }) {
   try {
     const watchData = localStorage.getItem("watchHistory") || "[]";
@@ -24,6 +26,7 @@ function storeIntoLocal({
         poster: movieData.poster_path,
         description: movieData.overview,
         watch_status: status,
+        type,
       };
       parsed.push(items);
     }
@@ -40,12 +43,11 @@ function storeIntoLocal({
 function watchStatusRetriever(id: string): string {
   const items = localStorage.getItem("watchHistory") || "[]";
   const parsedItems = JSON.parse(items);
-
   if (parsedItems.length == 0) {
     return "Not found";
   }
 
-  const index = parsedItems.findIndex((item: { id: string }) => item.id === id);
+  const index = parsedItems.findIndex((item: { id: string }) => item.id == id);
   if (index !== -1) {
     return parsedItems[index].watch_status as string;
   } else {
