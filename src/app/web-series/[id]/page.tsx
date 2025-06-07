@@ -108,7 +108,8 @@ const WebSeriesInfoPage = async ({ params }: { params: { id: string } }) => {
         data={series_info}
         credits={credits_data}
         artwork={images}
-      />      <div className="join join-vertical w-full">
+      />{" "}
+      <div className="join join-vertical w-full">
         <SeasonAccordionFormatter data={SeasonInfo} id={parseInt(params.id)} />
       </div>
     </main>
@@ -148,23 +149,22 @@ export async function generateMetadata(
     // Use series overview as description
     const description =
       seriesInfo.overview ||
-      `Watch ${seriesInfo.name} TV series on Dramaflix. ${seriesInfo.tagline || ""
-        }`.trim();
+      `Watch ${seriesInfo.name} TV series on Dramaflix. ${
+        seriesInfo.tagline || ""
+      }`.trim();
 
     // Determine the best image to use with proxy
-    const imageUrl =
-      seriesInfo.backdrop_path
-        ? `${process.env.NEXT_PUBLIC_PROXY}https://image.tmdb.org/t/p/original${seriesInfo.backdrop_path}`
-        : seriesInfo.poster_path
-          ? `${process.env.NEXT_PUBLIC_PROXY}https://image.tmdb.org/t/p/original${seriesInfo.poster_path}`
-          : "/placeholder.svg";
+    const imageUrl = seriesInfo.backdrop_path
+      ? `${process.env.NEXT_PUBLIC_PROXY}https://image.tmdb.org/t/p/original${seriesInfo.backdrop_path}`
+      : seriesInfo.poster_path
+      ? `${process.env.NEXT_PUBLIC_PROXY}https://image.tmdb.org/t/p/original${seriesInfo.poster_path}`
+      : "/placeholder.svg";
 
     // Create keywords from genres and series info
     const genres =
       seriesInfo.genres?.map((genre: any) => genre.name).join(", ") || "";
     const networks =
-      seriesInfo.networks?.map((network: any) => network.name).join(", ") ||
-      "";
+      seriesInfo.networks?.map((network: any) => network.name).join(", ") || "";
     const keywords = `${seriesInfo.name}, TV series, ${genres}, ${networks}, streaming, watch online`;
 
     return {

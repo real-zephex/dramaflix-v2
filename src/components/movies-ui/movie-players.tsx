@@ -52,7 +52,6 @@ const MoviePlayer = ({
       status: value as "Completed" | "Plan to Watch" | "Watching",
     });
     if (watchOperationStatus) {
-      alert(`You have marked ${movieData.title} as ${value}.`);
     } else {
       alert(
         "An error occurred while trying to save your watch status. Please try again."

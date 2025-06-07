@@ -19,6 +19,11 @@ function storeIntoLocal({
 
     if (existingItemIndex !== -1) {
       parsed[existingItemIndex].watch_status = status;
+      if (type === "TV") {
+        parsed[existingItemIndex].description = movieData.overview;
+        parsed[existingItemIndex].poster = movieData.poster_path;
+        parsed[existingItemIndex].title = movieData.title;
+      }
     } else {
       const items = {
         id: movieData.id,

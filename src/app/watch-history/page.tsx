@@ -6,6 +6,7 @@ import Image from "next/image";
 import { MovieInfo } from "@/utils/movie-requests/request";
 import { InfoImagesCreditsTV } from "@/utils/tv-requests/request";
 import { MovieInfoType, TVInfo } from "@/utils/types";
+import Link from "next/link";
 
 interface WatchHistoryItem {
   id: string | number;
@@ -155,49 +156,58 @@ export default function WatchHistoryPage() {
                 onMouseLeave={handleMouseLeave}
                 onMouseMove={handleMouseMove}
               >
-                {item.poster && (
-                  <figure className="w-[120px] h-[180px] flex-shrink-0 relative overflow-hidden">
-                    <Image
-                      src={
-                        item.poster.startsWith("http")
-                          ? item.poster
-                          : `https://image.tmdb.org/t/p/w185${item.poster}`
-                      }
-                      alt={item.title}
-                      className="object-cover"
-                      fill
-                      sizes="120px"
-                      priority={false}
-                    />
-                  </figure>
-                )}
-                <div className="card-body flex-row justify-between items-center p-4">
-                  <div className="flex-1">
-                    <h2 className="card-title text-lg">{item.title}</h2>
-                    <div className="badge badge-primary my-2">
-                      {item.watch_status}
+                <Link
+                  href={`${
+                    item.type === "MOVIE"
+                      ? `/movies/${item.id}`
+                      : `/web-series/${item.id}`
+                  }`}
+                  className="flex w-full h-full"
+                >
+                  {item.poster && (
+                    <figure className="w-[120px] h-[180px] flex-shrink-0 relative overflow-hidden">
+                      <Image
+                        src={
+                          item.poster.startsWith("http")
+                            ? item.poster
+                            : `https://image.tmdb.org/t/p/w185${item.poster}`
+                        }
+                        alt={item.title}
+                        className="object-cover rounded-l-lg"
+                        fill
+                        sizes="120px"
+                        priority={false}
+                      />
+                    </figure>
+                  )}
+                  <div className="card-body flex-row justify-between items-center p-4">
+                    <div className="flex-1">
+                      <h2 className="card-title text-lg">{item.title}</h2>
+                      <div className="badge badge-primary my-2">
+                        {item.watch_status}
+                      </div>
+                      <p className="text-gray-400 line-clamp-2 text-sm">
+                        {item.description}
+                      </p>
                     </div>
-                    <p className="text-gray-400 line-clamp-2 text-sm">
-                      {item.description}
-                    </p>
+                    <div className="flex flex-col gap-2 ml-4">
+                      <button
+                        onClick={() => handleResume(item)}
+                        className="btn btn-primary btn-sm"
+                      >
+                        {item.watch_status === "Plan to Watch"
+                          ? "Start"
+                          : "Resume"}
+                      </button>
+                      <button
+                        onClick={() => handleDelete(item.id)}
+                        className="btn btn-error btn-sm"
+                      >
+                        Delete
+                      </button>
+                    </div>
                   </div>
-                  <div className="flex flex-col gap-2 ml-4">
-                    <button
-                      onClick={() => handleResume(item)}
-                      className="btn btn-primary btn-sm"
-                    >
-                      {item.watch_status === "Plan to Watch"
-                        ? "Start"
-                        : "Resume"}
-                    </button>
-                    <button
-                      onClick={() => handleDelete(item.id)}
-                      className="btn btn-error btn-sm"
-                    >
-                      Delete
-                    </button>
-                  </div>
-                </div>
+                </Link>
               </div>
             )
           )

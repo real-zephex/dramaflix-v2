@@ -40,7 +40,6 @@ const WebSeriesWatchStatus: React.FC<WebSeriesWatchStatusProps> = ({
     });
     if (watchOperationStatus) {
       setWatchStatus(value);
-      alert(`You have marked ${title} S${season}E${episode} as ${value}.`);
     } else {
       alert(
         "An error occurred while trying to save your watch status. Please try again."
