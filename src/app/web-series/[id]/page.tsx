@@ -1,5 +1,6 @@
 import { InfoImagesCreditsTV } from "@/utils/tv-requests/request";
 import { TVInfo, TVCredits, TVImages } from "@/utils/types";
+import { Metadata, ResolvingMetadata } from "next";
 import TVSeriesSeasonCardGen from "@/components/web-ui/season-cards";
 import SeriesInfoTabs from "@/components/web-ui/series-info-tabs";
 
@@ -48,18 +49,18 @@ const SeasonAccordionFormatter = async ({
   );
 };
 
-const WebSeriesInfoPage = async ({ params }: { params: { id: number } }) => {
+const WebSeriesInfoPage = async ({ params }: { params: { id: string } }) => {
   const series_info: TVInfo = await InfoImagesCreditsTV({
     type: "info",
-    id: params.id,
+    id: parseInt(params.id),
   });
   const credits_data: TVCredits = await InfoImagesCreditsTV({
     type: "credits",
-    id: params.id,
+    id: parseInt(params.id),
   });
   const images: TVImages = await InfoImagesCreditsTV({
     type: "images",
-    id: params.id,
+    id: parseInt(params.id),
   });
 
   let tempSeasonInfo = [];
@@ -107,12 +108,97 @@ const WebSeriesInfoPage = async ({ params }: { params: { id: number } }) => {
         data={series_info}
         credits={credits_data}
         artwork={images}
-      />
-      <div className="join join-vertical w-full">
-        <SeasonAccordionFormatter data={SeasonInfo} id={params.id} />
+      />      <div className="join join-vertical w-full">
+        <SeasonAccordionFormatter data={SeasonInfo} id={parseInt(params.id)} />
       </div>
     </main>
   );
 };
+
+type Props = {
+  params: { id: string };
+};
+
+export async function generateMetadata(
+  { params }: Props,
+  parent: ResolvingMetadata
+): Promise<Metadata> {
+  try {
+    // Fetch series information
+    const seriesInfo = (await InfoImagesCreditsTV({
+      type: "info",
+      id: parseInt(params.id),
+    })) as TVInfo;
+
+    if (!seriesInfo) {
+      return {
+        title: "Series Not Found",
+        description: "The requested series could not be found.",
+      };
+    }
+
+    // Create title with series name and year
+    const releaseYear = seriesInfo.first_air_date
+      ? new Date(seriesInfo.first_air_date).getFullYear()
+      : "";
+    const title = `${seriesInfo.name}${
+      releaseYear ? ` (${releaseYear})` : ""
+    } - TV Series | Dramaflix`;
+
+    // Use series overview as description
+    const description =
+      seriesInfo.overview ||
+      `Watch ${seriesInfo.name} TV series on Dramaflix. ${seriesInfo.tagline || ""
+        }`.trim();
+
+    // Determine the best image to use with proxy
+    const imageUrl =
+      seriesInfo.backdrop_path
+        ? `${process.env.NEXT_PUBLIC_PROXY}https://image.tmdb.org/t/p/original${seriesInfo.backdrop_path}`
+        : seriesInfo.poster_path
+          ? `${process.env.NEXT_PUBLIC_PROXY}https://image.tmdb.org/t/p/original${seriesInfo.poster_path}`
+          : "/placeholder.svg";
+
+    // Create keywords from genres and series info
+    const genres =
+      seriesInfo.genres?.map((genre: any) => genre.name).join(", ") || "";
+    const networks =
+      seriesInfo.networks?.map((network: any) => network.name).join(", ") ||
+      "";
+    const keywords = `${seriesInfo.name}, TV series, ${genres}, ${networks}, streaming, watch online`;
+
+    return {
+      title,
+      description,
+      keywords,
+      openGraph: {
+        title,
+        description,
+        type: "video.tv_show",
+        images: [
+          {
+            url: imageUrl,
+            width: 1920,
+            height: 1080,
+            alt: `${seriesInfo.name} TV Series Poster`,
+          },
+        ],
+        siteName: "Dramaflix",
+      },
+      twitter: {
+        card: "summary_large_image",
+        title,
+        description,
+        images: [imageUrl],
+      },
+    };
+  } catch (error) {
+    console.error("Error generating metadata:", error);
+    return {
+      title: "TV Series - Dramaflix",
+      description: "Watch TV series on Dramaflix.",
+    };
+  }
+}
 
 export default WebSeriesInfoPage;

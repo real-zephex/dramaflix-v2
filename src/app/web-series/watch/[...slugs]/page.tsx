@@ -54,11 +54,7 @@ export async function generateMetadata(
       `Watch ${seriesInfo.name} Season ${season_number}, Episode ${episode_number} on Dramaflix`;
 
     // Determine the best image to use
-    const imageUrl = episodeInfo?.still_path
-      ? `${process.env.NEXT_PUBLIC_PROXY}https://image.tmdb.org/t/p/original${episodeInfo.still_path}`
-      : seriesInfo.backdrop_path
-      ? `${process.env.NEXT_PUBLIC_PROXY}https://image.tmdb.org/t/p/original${seriesInfo.backdrop_path}`
-      : seriesInfo.poster_path
+    const imageUrl = seriesInfo.poster_path
       ? `${process.env.NEXT_PUBLIC_PROXY}https://image.tmdb.org/t/p/original${seriesInfo.poster_path}`
       : "/placeholder.svg";
     const keywords =
