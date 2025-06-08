@@ -5,7 +5,7 @@ import { GoogleAnalytics } from "@next/third-parties/google";
 
 import Navbar from "@/components/ui/navbar";
 import { font_lexend } from "@/components/fonts";
-import Donate from "@/components/ui/donate";
+// import Donate from "@/components/ui/donate";
 import Script from "next/script";
 
 const APP_NAME = "Dramaflix";
@@ -39,7 +39,7 @@ export const metadata: Metadata = {
     description: APP_DESCRIPTION,
     images: [
       {
-        url: "/hero.png",
+        url: "/logo.png",
         width: 1920,
         height: 1080,
         alt: `${APP_NAME} Logo`,
@@ -53,6 +53,7 @@ export const metadata: Metadata = {
       template: APP_TITLE_TEMPLATE,
     },
     description: APP_DESCRIPTION,
+    images: ["/logo.png"],
   },
   keywords: [
     "streaming",
