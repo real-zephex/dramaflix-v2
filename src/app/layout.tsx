@@ -39,7 +39,7 @@ export const metadata: Metadata = {
     description: APP_DESCRIPTION,
     images: [
       {
-        url: "/logo.png",
+        url: "https://free-media.netlify.app/logo.png",
         width: 1920,
         height: 1080,
         alt: `${APP_NAME} Logo`,
@@ -53,7 +53,7 @@ export const metadata: Metadata = {
       template: APP_TITLE_TEMPLATE,
     },
     description: APP_DESCRIPTION,
-    images: ["/logo.png"],
+    images: ["https://free-media.netlify.app/logo.png"],
   },
   keywords: [
     "streaming",
@@ -61,7 +61,7 @@ export const metadata: Metadata = {
     "TV shows",
     "media",
     "piracy",
-    "free streamig",
+    "free streaming",
     "free movies",
     "free anime",
     "free kdramas",
