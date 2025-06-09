@@ -16,6 +16,8 @@ const remotePatterns = [
   "goodproxy.goodproxy.workers.dev",
   "goodproxy.dramaflix.workers.dev",
   "m3u8proxy.dramaflix.workers.dev",
+  "cdn.noitatnemucod.net",
+  "i.ytimg.com",
 ];
 
 const nextConfig = {
