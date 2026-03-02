@@ -68,7 +68,8 @@ export async function generateMetadata(
 }
 
 const SeriesPlayer = async ({ params }: { params: { slugs: string[] } }) => {
-  const slugs = params?.slugs || [];
+  const { slugs } = await params;
+
   if (slugs.length < 3) {
     return (
       <div className="flex h-[80vh] items-center justify-center p-4">
