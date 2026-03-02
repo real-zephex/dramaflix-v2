@@ -1,6 +1,9 @@
-"use client"; // Error components must be Client Components
+"use client";
 
 import { useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { AlertTriangle, RefreshCcw, Home } from "lucide-react";
+import Link from "next/link";
 
 export default function Error({
   error,
@@ -15,31 +18,45 @@ export default function Error({
   }, [error]);
 
   return (
-    <div className="container mx-auto h-screen flex items-center flex-col justify-center">
-      {/* <h2>Something went wrong!</h2>
-      <button
-        onClick={
-          // Attempt to recover by trying to re-render the segment
-          () => reset()
-        }
-      >
-        Try again
-      </button> */}
-      <h1 className="text-3xl text-emerald-400 py-2 ">Oopsie Doopsie!</h1>
-      <p className="py-1">
-        Looks like we ran into some error. Sorry for the inconvienence but
-        please let me know about this error. Let me know about your experience
-        <a href="mailto:zephex@duck.com?subject=Degraded_Experience"> email</a>
-      </p>
-      <button
-        className="btn btn-wide btn-accent btn-sm"
-        onClick={
-          // Attempt to recover by trying to re-render the segment
-          () => reset()
-        }
-      >
-        Try again
-      </button>
+    <div className="flex h-[80vh] flex-col items-center justify-center space-y-6 p-4 text-center">
+      <div className="rounded-full bg-destructive/10 p-6 animate-pulse">
+        <AlertTriangle className="h-16 w-16 text-destructive" />
+      </div>
+      
+      <div className="space-y-2">
+        <h2 className="text-4xl font-extrabold tracking-tight">Oops! Something went wrong</h2>
+        <p className="max-w-md text-muted-foreground text-lg">
+            Something went wrong! But don&apos;t worry, our maintenance droids
+            are on it.
+        </p>
+      </div>
+
+      <div className="flex flex-col sm:flex-row gap-3">
+        <Button
+          variant="default"
+          size="lg"
+          onClick={() => reset()}
+          className="gap-2 min-w-[200px]"
+        >
+          <RefreshCcw className="h-5 w-5" />
+          Try Again
+        </Button>
+        <Button variant="outline" size="lg" asChild className="gap-2 min-w-[200px]">
+          <Link href="/">
+            <Home className="h-5 w-5" />
+            Back to Home
+          </Link>
+        </Button>
+      </div>
+
+      {process.env.NODE_ENV === "development" && (
+        <div className="mt-8 max-w-2xl w-full text-left">
+          <p className="text-xs font-mono text-muted-foreground mb-2 uppercase tracking-wider">Error Details (Dev Mode):</p>
+          <pre className="overflow-auto rounded-lg bg-muted p-4 text-xs font-mono text-destructive">
+            {error.message}
+          </pre>
+        </div>
+      )}
     </div>
   );
 }

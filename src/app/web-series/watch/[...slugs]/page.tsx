@@ -1,16 +1,23 @@
 import Link from "next/link";
 import Image from "next/image";
-
-import { FaStar } from "react-icons/fa";
-import { FiDownload } from "react-icons/fi";
-
+import {
+  Star,
+  Download,
+  PlayCircle,
+  Eye,
+  Info,
+  Monitor,
+  Layers,
+} from "lucide-react";
 import { EpisodeInfo, InfoImagesCreditsTV } from "@/utils/tv-requests/request";
 import { TVInfo, TVEpisodeInfo } from "@/utils/types";
 import { Metadata, ResolvingMetadata } from "next";
-// import { FlixHQEpisodeInfo } from "@/utils/tv-requests/request";
-// import SeriesCustomVideoPlayer from "@/components/web-ui/custom-video-player";
 import React from "react";
 import WebSeriesWatchStatus from "@/components/web-ui/watch-status";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 
 type Props = {
   params: { slugs: string[] };
@@ -18,204 +25,250 @@ type Props = {
 
 export async function generateMetadata(
   { params }: Props,
-  parent: ResolvingMetadata,
+  _parent: ResolvingMetadata,
 ): Promise<Metadata> {
   try {
-    const series_id = params.slugs[2];
-    const season_number = params.slugs[0];
-    const episode_number = params.slugs[1]; // Fetch series information
+    const p = await params;
+    const slugs = p.slugs || [];
+    if (slugs.length < 3) return { title: "Watch Episode | Dramaflix" };
+
+    const series_id = slugs[2];
+    const season_number = slugs[0];
+    const episode_number = slugs[1];
+
     const seriesInfo = (await InfoImagesCreditsTV({
       type: "info",
       id: parseInt(series_id),
     })) as TVInfo;
 
-    // Fetch episode information
     const episodeInfo = (await EpisodeInfo({
       id: series_id,
       season: season_number,
       episode: episode_number,
     })) as TVEpisodeInfo;
 
-    if (!seriesInfo) {
-      return {
-        title: "Series Not Found",
-        description: "The requested series could not be found.",
-      };
-    }
+    if (!seriesInfo) return { title: "Series Not Found" };
 
-    // Create dynamic title
-    const episodeName = episodeInfo?.name ? ` - ${episodeInfo.name}` : "";
-    const title = `${seriesInfo.name} - Season ${season_number}, Episode ${episode_number}${episodeName}`;
-
-    // Create description from episode overview or series overview
-    const description =
-      episodeInfo?.overview ||
-      seriesInfo.overview ||
-      `Watch ${seriesInfo.name} Season ${season_number}, Episode ${episode_number} on Dramaflix`;
-
-    // Determine the best image to use
-    const imageUrl = seriesInfo.poster_path
-      ? `${process.env.NEXT_PUBLIC_PROXY}https://image.tmdb.org/t/p/original${seriesInfo.poster_path}`
-      : "/placeholder.svg";
-    const keywords =
-      seriesInfo.genres?.map((genre: any) => genre.name).join(", ") || "";
-
+    const title = `${seriesInfo.name} - S${season_number} E${episode_number} ${episodeInfo?.name ? `- ${episodeInfo.name}` : ""}`;
     return {
-      title,
-      description,
-      keywords: `${seriesInfo.name}, TV series, Season ${season_number}, Episode ${episode_number}, ${keywords}`,
+      title: `${title} | Dramaflix`,
+      description: episodeInfo?.overview || seriesInfo.overview,
       openGraph: {
         title,
-        description,
-        type: "video.episode",
         images: [
           {
-            url: imageUrl,
-            width: 1920,
-            height: 1080,
-            alt: `${seriesInfo.name} Season ${season_number} Episode ${episode_number}`,
+            url: `https://image.tmdb.org/t/p/original${seriesInfo.poster_path}`,
           },
         ],
-        siteName: "Dramaflix",
-      },
-      twitter: {
-        card: "summary_large_image",
-        title,
-        description,
-        images: [imageUrl],
       },
     };
   } catch (error) {
-    console.error("Error generating metadata:", error);
-    return {
-      title: "Episode Not Found",
-      description: "The requested episode could not be found.",
-    };
+    return { title: "Watch Episode - Dramaflix" };
   }
 }
 
 const SeriesPlayer = async ({ params }: { params: { slugs: string[] } }) => {
-  const series_id = params.slugs[2];
-  const season_number = params.slugs[0];
-  const episode_number = params.slugs[1];
+  const slugs = params?.slugs || [];
+  if (slugs.length < 3) {
+    return (
+      <div className="flex h-[80vh] items-center justify-center p-4">
+        <h1 className="text-2xl font-bold">Invalid parameters provided.</h1>
+      </div>
+    );
+  }
 
-  // const data = await FlixHQEpisodeInfo({
-  //   seriesId: series_id,
-  //   season: season_number,
-  //   episode: episode_number,
-  // });
+  const series_id = slugs[2];
+  const season_number = slugs[0];
+  const episode_number = slugs[1];
 
-  const epData = await EpisodeInfo({
-    id: series_id,
-    season: season_number,
-    episode: episode_number,
-  });
+  let epData: TVEpisodeInfo | undefined;
+  try {
+    epData = await EpisodeInfo({
+      id: series_id,
+      season: season_number,
+      episode: episode_number,
+    });
+  } catch (error) {
+    console.error("Error fetching episode info:", error);
+  }
 
   const seriesLinksArray = [
     {
-      title: "1",
+      title: "Server 1",
       link: `https://embedmaster.link/1imz6ldd5kpmzdyi/tv/${series_id}/${season_number}/${episode_number}`,
     },
     {
-      title: "2",
+      title: "Server 2",
       link: `https://vidsrc.vip/embed/tv/${series_id}/${season_number}/${episode_number}`,
     },
     {
-      title: "3",
+      title: "Server 3",
       link: `https://vidsrc.icu/embed/tv/${series_id}/${season_number}/${episode_number}`,
     },
   ];
 
   return (
-    <main className="bg-gradient-to-b from-base-300 to-base-100">
-      <div className="container mx-auto">
-        <div role="tablist" className="tabs tabs-boxed">
-          {seriesLinksArray.map((items, index) => (
-            <React.Fragment key={items.title}>
-              <input
-                type="radio"
-                name="my_tabs_2"
-                role="tab"
-                id={`tab${index}`}
-                className="tab"
-                aria-label={items.title}
-                defaultChecked={items.title === "1" ? true : false}
-              />
-              <div
-                role="tabpanel"
-                className="tab-content bg-base-100 border-base-300 rounded-box p-2 "
+    <main className="min-h-screen pb-20">
+      <div className="container mx-auto px-4 py-6">
+        <Tabs defaultValue="Server 1" className="w-full">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-6">
+            <TabsList className="bg-muted/50 p-1 border border-border/50 rounded-xl">
+              {seriesLinksArray.map((items) => (
+                <TabsTrigger
+                  key={items.title}
+                  value={items.title}
+                  className="rounded-lg px-6 font-bold data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+                >
+                  <Monitor className="h-4 w-4 mr-2" />
+                  {items.title}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+
+            <div className="flex items-center gap-3">
+              <Badge
+                variant="outline"
+                className="px-4 py-1.5 border-primary/30 text-primary-foreground bg-primary font-black italic tracking-widest uppercase"
               >
+                Watching S{season_number} E{episode_number}
+              </Badge>
+            </div>
+          </div>
+
+          {seriesLinksArray.map((items) => (
+            <TabsContent
+              key={items.title}
+              value={items.title}
+              className="mt-0 outline-none"
+            >
+              <div className="relative aspect-video w-full rounded-3xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.8)] border border-border/50 bg-black group">
                 <iframe
                   src={items.link}
                   allowFullScreen
-                  height={720}
-                  className="w-full h-[240px] md:h-[480px] lg:h-[720px] rounded-lg"
-                ></iframe>
-                <WebSeriesWatchStatus
-                  id={series_id}
-                  season={season_number}
-                  episode={episode_number}
-                  title={
-                    epData && epData.name ? epData.name : "Unknown Episode"
-                  }
-                  posterPath={
-                    epData && epData.still_path
-                      ? epData.still_path
-                      : "/placeholder.svg"
-                  }
+                  className="absolute inset-0 w-full h-full"
+                  title={`Series Player - ${items.title}`}
                 />
               </div>
-            </React.Fragment>
-          ))}
-        </div>
 
-        <section className="mt-2 flex flex-col md:flex-row items-center bg-base-200 rounded-xl p-2">
-          {epData && (
-            <div className="bg-base-300 rounded-xl cursor-pointer w-full md:w-1/3">
-              <Image
-                src={
-                  epData.still_path
-                    ? `https://image.tmdb.org/t/p/original${epData.still_path}`
-                    : "/placeholder.svg"
-                }
-                width={300}
-                height={150}
-                alt="Episode Poster"
-                className="w-full h-auto rounded-t-xl md:rounded-tl-xl"
-              />
-              <div className="p-2">
-                <p className="text-sm">Episode {episode_number}</p>
-                <h1 className="text-xl font-semibold mt-1">{epData.name}</h1>
-                <section className="flex flex-row items-center">
-                  <FaStar className="text-yellow-300" />
-                  <span className="ml-1">{epData.vote_average}</span>
-                </section>
+              <div className="mt-6 flex flex-col lg:flex-row gap-6">
+                {/* Status and Actions Card */}
+                <Card className="flex-1 bg-card/40 border-border/50 rounded-3xl overflow-hidden">
+                  <CardContent className="p-0">
+                    <WebSeriesWatchStatus
+                      id={series_id}
+                      season={season_number}
+                      episode={episode_number}
+                      title={
+                        epData && epData.name
+                          ? epData.name
+                          : `Episode ${episode_number}`
+                      }
+                      posterPath={
+                        epData && epData.still_path
+                          ? epData.still_path
+                          : "/placeholder.svg"
+                      }
+                    />
+                  </CardContent>
+                </Card>
+
+                {/* Download and Share Card */}
+                <Card className="lg:w-80 bg-primary/5 border-primary/20 border-dashed rounded-3xl">
+                  <CardContent className="p-6 flex flex-col justify-center items-center gap-4 text-center">
+                    <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+                      <Download className="h-6 w-6 text-primary" />
+                    </div>
+                    <div className="space-y-1">
+                      <h4 className="font-bold">Quality Source</h4>
+                      <p className="text-xs text-muted-foreground italic">
+                        Download this episode for offline viewing in high
+                        quality.
+                      </p>
+                    </div>
+                    <Link
+                      href={`https://dl.vidsrc.vip/tv/${series_id}/${season_number}/${episode_number}`}
+                      target="_blank"
+                      className="w-full"
+                    >
+                      <Button className="w-full font-black uppercase tracking-widest group shadow-lg">
+                        Download{" "}
+                        <Download className="ml-2 h-4 w-4 group-hover:translate-y-0.5 transition-transform" />
+                      </Button>
+                    </Link>
+                  </CardContent>
+                </Card>
+              </div>
+            </TabsContent>
+          ))}
+        </Tabs>
+
+        {/* Episode Detailed Info Section */}
+        {epData && (
+          <section className="mt-12 group">
+            <div className="flex flex-col md:flex-row gap-8 bg-muted/20 border border-border/50 rounded-[2.5rem] p-6 lg:p-8 transition-all hover:bg-muted/30">
+              <div className="relative md:w-80 aspect-video shrink-0 rounded-2xl overflow-hidden shadow-xl border border-border/50">
+                <Image
+                  src={
+                    epData.still_path
+                      ? `https://image.tmdb.org/t/p/original${epData.still_path}`
+                      : "/placeholder.svg"
+                  }
+                  fill
+                  alt="Episode Poster"
+                  className="object-cover transition-transform duration-700 group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                <div className="absolute bottom-4 left-4">
+                  <Badge className="bg-primary/90 text-primary-foreground font-black">
+                    EPISODE {episode_number}
+                  </Badge>
+                </div>
+              </div>
+
+              <div className="flex-1 space-y-6">
+                <div className="space-y-2">
+                  <div className="flex items-center gap-3 text-yellow-500">
+                    <Star className="h-5 w-5 fill-yellow-500" />
+                    <span className="text-xl font-black">
+                      {epData.vote_average?.toFixed(1)}
+                    </span>
+                    <span className="text-muted-foreground/40 font-black">
+                      / 10
+                    </span>
+                  </div>
+                  <h2 className="text-3xl md:text-5xl font-black tracking-tighter uppercase italic leading-none">
+                    {epData.name}
+                  </h2>
+                </div>
+
+                <div className="space-y-4">
+                  <h3 className="text-xs font-black uppercase tracking-[0.2em] text-primary/60 flex items-center gap-2">
+                    <Info className="h-3 w-3" /> Intel Report
+                  </h3>
+                  <p className="text-muted-foreground text-lg leading-relaxed italic border-l-4 border-primary/20 pl-6">
+                    {epData.overview ||
+                      "No transmission data available for this episode snippet."}
+                  </p>
+                </div>
+
+                <div className="flex flex-wrap gap-4 pt-2">
+                  <div className="flex items-center gap-2 bg-background/50 px-4 py-2 rounded-full border border-border/50 shadow-sm">
+                    <Monitor className="h-4 w-4 text-primary" />
+                    <span className="text-xs font-black uppercase">
+                      Season {season_number}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2 bg-background/50 px-4 py-2 rounded-full border border-border/50 shadow-sm">
+                    <Layers className="h-4 w-4 text-primary" />
+                    <span className="text-xs font-black uppercase">
+                      TMDB ID: {series_id}
+                    </span>
+                  </div>
+                </div>
               </div>
             </div>
-          )}
-
-          <div className="mt-2 md:ml-2 md:w-2/3 w-full">
-            <p className="text-sm bg-base-300 md:w-fit w-full px-2 py-1 rounded-xl text-center">
-              Watching Episode {episode_number} - Season {season_number}
-            </p>
-            {epData && epData.overview && (
-              <p className="text-lg">
-                <strong>Overview</strong>:{" "}
-                <span className="font-normal">{epData.overview}</span>
-              </p>
-            )}
-            <div className="my-1">
-              <Link
-                href={`https://dl.vidsrc.vip/tv/${series_id}/${season_number}/${episode_number}`}
-                target="_blank"
-              >
-                <button className="btn btn-success btn-sm btn-outline">
-                  Download <FiDownload />
-                </button>
-              </Link>
-            </div>
-          </div>
-        </section>
+          </section>
+        )}
       </div>
     </main>
   );

@@ -15,22 +15,30 @@ import {
   TVEpisodeInfo,
   FlixHQMovieLinks,
 } from "../types";
-import { getRandomApiKey } from "../api-key-randomizer";
+import { buildTmdbUrl, fetchJsonWithRetry } from "../http";
 
-const api_key = getRandomApiKey();
-const parent_url = `https://api.themoviedb.org/3`;
 const CONSUMET = process.env.CONSUMET_API_URL;
 const NEXT_CACHE_DURATION = 21600 * 2;
 const VIDSRC_CC = "https://dramaflix-movielinks.vercel.app";
 
-const requestHandler = async (url: string) => {
+const requestHandler = async <T>(url: string, context: string) => {
   try {
-    const res = await fetch(url, { next: { revalidate: NEXT_CACHE_DURATION } });
-    return await res.json();
+    return await fetchJsonWithRetry<T>(url, {
+      revalidate: NEXT_CACHE_DURATION,
+      context,
+    });
   } catch (error) {
-    console.error("An error occured (logged)", url, error);
-    return {};
+    return {} as T;
   }
+};
+
+const requestTmdb = async <T>(
+  endpoint: string,
+  queryParams: Record<string, string | number> = {},
+  context: string,
+) => {
+  const url = buildTmdbUrl(endpoint, queryParams);
+  return requestHandler<T>(url, context);
 };
 
 export const TopPopularAiringTV = async ({
@@ -38,8 +46,11 @@ export const TopPopularAiringTV = async ({
 }: {
   type: "airing_today" | "top_rated" | "popular";
 }) => {
-  const url = `${parent_url}/tv/${type}?api_key=${api_key}`;
-  return (await requestHandler(url)) as TrendingPopularTopAiringTV;
+  return await requestTmdb<TrendingPopularTopAiringTV>(
+    `tv/${type}`,
+    {},
+    `tmdb:tv:${type}`,
+  );
 };
 
 export const InfoImagesCreditsTV = async ({
@@ -50,9 +61,9 @@ export const InfoImagesCreditsTV = async ({
   id: number;
 }) => {
   const urlMap: Record<string, string> = {
-    info: `${parent_url}/tv/${id}?api_key=${api_key}`,
-    images: `${parent_url}/tv/${id}/images?api_key=${api_key}`,
-    credits: `${parent_url}/tv/${id}/credits?api_key=${api_key}`,
+    info: `tv/${id}`,
+    images: `tv/${id}/images`,
+    credits: `tv/${id}/credits`,
   };
 
   const url = urlMap[type];
@@ -61,7 +72,11 @@ export const InfoImagesCreditsTV = async ({
     throw new Error("Invalid type provided");
   }
 
-  const response = await requestHandler(url);
+  const response = await requestTmdb<TVCredits | TVImages | TVInfo>(
+    url,
+    {},
+    `tmdb:tv:${id}:${type}`,
+  );
 
   switch (type) {
     case "credits":
@@ -75,10 +90,11 @@ export const InfoImagesCreditsTV = async ({
 };
 
 export const SearchTV = async ({ title }: { title: string }) => {
-  const url = `${parent_url}/search/tv?query=${encodeURIComponent(
-    title
-  )}&api_key=${api_key}`;
-  return (await requestHandler(url)) as TVSearch;
+  return await requestTmdb<TVSearch>(
+    "search/tv",
+    { query: title },
+    "tmdb:tv:search",
+  );
 };
 
 export const TrendingTV = async ({
@@ -86,8 +102,11 @@ export const TrendingTV = async ({
 }: {
   time_window: "day" | "week";
 }) => {
-  const url = `${parent_url}/trending/tv/${time_window}?api_key=${api_key}`;
-  return (await requestHandler(url)) as TrendingPopularTopAiringTV;
+  return await requestTmdb<TrendingPopularTopAiringTV>(
+    `trending/tv/${time_window}`,
+    {},
+    `tmdb:tv:trending:${time_window}`,
+  );
 };
 
 export const SeasonInfo = async ({
@@ -97,8 +116,11 @@ export const SeasonInfo = async ({
   id: number;
   season: number;
 }) => {
-  const url = `${parent_url}/tv/${id}/season/${season}?api_key=${api_key}`;
-  return (await requestHandler(url)) as TVSeasonInfo;
+  return await requestTmdb<TVSeasonInfo>(
+    `tv/${id}/season/${season}`,
+    {},
+    `tmdb:tv:${id}:season:${season}`,
+  );
 };
 
 export const EpisodeInfo = async ({
@@ -110,8 +132,11 @@ export const EpisodeInfo = async ({
   season: string;
   episode: string;
 }) => {
-  const url = `${parent_url}/tv/${id}/season/${season}/episode/${episode}?api_key=${api_key}`;
-  return (await requestHandler(url)) as TVEpisodeInfo;
+  return await requestTmdb<TVEpisodeInfo>(
+    `tv/${id}/season/${season}/episode/${episode}`,
+    {},
+    `tmdb:tv:${id}:s${season}e${episode}`,
+  );
 };
 
 export const FlixHQEpisodeInfo = async ({
@@ -124,40 +149,42 @@ export const FlixHQEpisodeInfo = async ({
   episode: string;
 }) => {
   const infoUrl = `${CONSUMET}/meta/tmdb/info/${seriesId}?type=tv`;
-  const infoData: FlixHQSeriesInfo = await fetch(infoUrl, {
-    next: { revalidate: NEXT_CACHE_DURATION },
-  }).then((response) => response.json());
+  const infoData: FlixHQSeriesInfo = await requestHandler<FlixHQSeriesInfo>(
+    infoUrl,
+    `flixhq:tv-info:${seriesId}`,
+  );
 
   // important
   const { title, id } = infoData;
 
   const seasonSection = infoData.seasons?.find(
-    (element) => element.season?.toString() == season
+    (element) => element.season?.toString() == season,
   );
   const episodeId = seasonSection?.episodes?.find(
-    (element) => element.episode?.toString() == episode
+    (element) => element.episode?.toString() == episode,
   );
 
   const cover = episodeId?.img?.hd;
 
   const seriesVideoLink = `${CONSUMET}/meta/tmdb/watch/${episodeId?.id}?id=${id}`;
-  const videoData: FlixHQSeriesLinks = await fetch(seriesVideoLink, {
-    next: { revalidate: NEXT_CACHE_DURATION },
-  }).then((response) => response.json());
+  const videoData: FlixHQSeriesLinks = await requestHandler<FlixHQSeriesLinks>(
+    seriesVideoLink,
+    `flixhq:tv-watch:${seriesId}:s${season}e${episode}`,
+  );
 
   // important
   const videoURL = videoData.sources?.find(
-    (element) => element.quality === "auto"
+    (element) => element.quality === "auto",
   );
 
   const subs = videoData.subtitles;
 
   let link2, link3;
   try {
-    const vidsrcData: VidSrcCCLinks = await fetch(
-      `{VIDSRC_CC}/vidsrc/${seriesId}?s=${season}&e=${episode}`,
-      { next: { revalidate: NEXT_CACHE_DURATION } }
-    ).then((response) => response.json());
+    const vidsrcData: VidSrcCCLinks = await requestHandler<VidSrcCCLinks>(
+      `${VIDSRC_CC}/vidsrc/${seriesId}?s=${season}&e=${episode}`,
+      `vidsrc:tv:${seriesId}:s${season}e${episode}`,
+    );
 
     if (vidsrcData.source2?.data) {
       link2 = vidsrcData.source2.data.source;
@@ -169,7 +196,8 @@ export const FlixHQEpisodeInfo = async ({
       }
     }
   } catch (error) {
-    console.error("Logged Error: ", error);
+    link2 = undefined;
+    link3 = undefined;
   }
 
   return {

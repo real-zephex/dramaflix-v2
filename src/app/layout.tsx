@@ -4,7 +4,7 @@ import NextTopLoader from "nextjs-toploader";
 import { GoogleAnalytics } from "@next/third-parties/google";
 
 import Navbar from "@/components/ui/navbar";
-import { font_lexend } from "@/components/fonts";
+import { font_inter, font_outfit } from "@/components/fonts";
 import Script from "next/script";
 
 const APP_NAME = "Dramaflix";
@@ -77,23 +77,20 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" data-theme="dark">
+    <html lang="en" className="dark" style={{ colorScheme: "dark" }}>
       <head>
         <GoogleAnalytics gaId="G-64S37Q7YY4" />
-        <Script
+        {/* <Script
           type="text/javascript"
           src="//pl25806056.effectiveratecpm.com/07/e6/31/07e6311772411d8ec4ded0982962182c.js"
-        />
+        /> */}
       </head>
-      <body className={font_lexend.className} data-theme="dark">
+      <body className={`${font_inter.variable} ${font_outfit.variable} font-sans antialiased`}>
         <NextTopLoader showSpinner={false} />
         <Navbar />
-        <section data-theme="dark">
+        <main className="min-h-screen bg-background text-foreground">
           {children}
-          {/* <div className="fixed bottom-0 left-0 z-[99] p-4">
-            <Donate />
-          </div> */}
-        </section>
+        </main>
       </body>
     </html>
   );

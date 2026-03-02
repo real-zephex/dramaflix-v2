@@ -1,21 +1,12 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
+import { motion } from "framer-motion";
 
-const HomepageCards = async () => {
+const HomepageCards = () => {
   return (
-    <div className="p-2 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-      {/* {generateCards(
-        "Anime : Depreceated",
-        "Dive into the captivating world of anime, from classic masterpieces to the latest hits.",
-        "javascript:void(0)",
-        "/anime.png"
-      )}
-      {generateCards(
-        "K-Dramas : Depreceated",
-        "Immerse yourself in the addictive and emotionally-charged stories of Korean dramas.",
-        "javascript:void(0)",
-        "/kdrama.png"
-      )} */}
+    <div className="p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
       {generateCards(
         "Movies",
         "Discover a vast collection of captivating movies from around the world.",
@@ -39,22 +30,31 @@ const generateCards = (
   image: string = "/placeholder.svg"
 ) => {
   return (
-    <Link
-      href={`${redirect}`}
-      className="transition duration-300 ease-in-out hover:bg-base-300/50 rounded-xl hover:-translate-y-1 hover:shadow-xl p-2 bg-base-300/75"
+    <motion.div
+      whileHover={{ y: -5 }}
+      transition={{ type: "spring", stiffness: 300 }}
     >
-      <Image
-        src={image}
-        width={400}
-        height={300}
-        alt={`${title} poster`}
-        className="h-80 rounded-t-xl object-cover"
-        priority
-        quality={100}
-      />
-      <h3 className="text-2xl font-bold mt-4">{title}</h3>
-      <p className="text-muted-foreground mt-2">{message}</p>
-    </Link>
+      <Link
+        href={`${redirect}`}
+        className="group relative flex flex-col overflow-hidden rounded-xl border border-border bg-card/50 shadow-sm transition-all hover:shadow-md hover:bg-accent/10"
+      >
+        <div className="aspect-[4/3] overflow-hidden">
+          <Image
+            src={image}
+            width={400}
+            height={300}
+            alt={`${title} poster`}
+            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+            priority
+            quality={100}
+          />
+        </div>
+        <div className="p-4">
+          <h3 className="text-xl font-bold tracking-tight">{title}</h3>
+          <p className="mt-2 text-sm text-muted-foreground line-clamp-2">{message}</p>
+        </div>
+      </Link>
+    </motion.div>
   );
 };
 

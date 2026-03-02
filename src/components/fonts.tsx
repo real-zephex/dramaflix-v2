@@ -3,7 +3,19 @@ import {
   Atkinson_Hyperlegible,
   Raleway,
   Rubik,
+  Outfit,
+  Inter,
 } from "next/font/google";
+
+export const font_inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+});
+
+export const font_outfit = Outfit({
+  subsets: ["latin"],
+  variable: "--font-outfit",
+});
 
 export const font_rubik = Rubik({
   subsets: ["latin"],
@@ -14,17 +26,17 @@ export const font_rubik = Rubik({
 export const font_atkinson = Atkinson_Hyperlegible({
   subsets: ["latin"],
   weight: ["400", "700"],
-  variable: "--font-rubik",
+  variable: "--font-atkinson",
 });
 
 export const font_raleway = Raleway({
   subsets: ["latin"],
   weight: "400",
-  variable: "--font-rubik",
+  variable: "--font-raleway",
 });
 
 export const font_lexend = Lexend_Deca({
   subsets: ["latin"],
   weight: ["400", "700", "900"],
-  variable: "--font-rubik",
+  variable: "--font-lexend",
 });

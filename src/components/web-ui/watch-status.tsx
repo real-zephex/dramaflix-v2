@@ -48,30 +48,29 @@ const WebSeriesWatchStatus: React.FC<WebSeriesWatchStatusProps> = ({
   }
 
   return (
-    <div className="flex flex-row items-center justify-between py-2 ">
-      <span className="font-semibold xl:text-lg lg:text-md md:text-sm text-xs">
-        Watching: <span className="text-orange-300">{title}</span>{" "}
-        <span className="text-xs mr-1">
-          (S{season}E{episode})
-        </span>
-        on{" "}
-        <span className="text-cyan-300 underline underline-offset-4">
-          <Link href={"https://free-media.netlify.app"}>Dramaflix</Link>
-        </span>
-      </span>
-      <select
-        className="select select-bordered w-full max-w-xs"
-        onChange={handleSelectChange}
-      >
-        <option disabled selected={watchStatus === "Not found"}>
-          Mark as?
-        </option>
-        <option selected={watchStatus === "Completed"}>Completed</option>
-        <option selected={watchStatus === "Plan to Watch"}>
-          Plan to Watch
-        </option>
-        <option selected={watchStatus === "Watching"}>Watching</option>
-      </select>
+    <div className="flex flex-col sm:flex-row items-center justify-between p-6 gap-4 border-t border-border/50">
+      <div className="flex flex-col gap-1">
+        <span className="text-xs font-black uppercase tracking-[0.2em] text-primary/60">Currently Broadcasting</span>
+        <h4 className="font-black text-xl italic tracking-tight leading-none">
+          {title} <span className="text-muted-foreground text-sm font-bold ml-2">S{season} E{episode}</span>
+        </h4>
+      </div>
+      
+      <div className="relative group">
+        <select
+          className="appearance-none bg-background/60 backdrop-blur-md border border-border/50 rounded-full px-8 py-3 pr-10 text-sm font-black uppercase tracking-widest hover:border-primary/50 transition-all outline-none focus:ring-2 focus:ring-primary/20 cursor-pointer shadow-lg"
+          onChange={handleSelectChange}
+          value={watchStatus === "Not found" ? "" : watchStatus}
+        >
+          <option value="" disabled>Status Upload?</option>
+          <option value="Completed">Mission Complete</option>
+          <option value="Plan to Watch">Intel Target</option>
+          <option value="Watching">In Progress</option>
+        </select>
+        <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-primary">
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M19 9l-7 7-7-7"></path></svg>
+        </div>
+      </div>
     </div>
   );
 };

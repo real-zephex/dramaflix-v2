@@ -3,10 +3,15 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import Link from "next/link";
+import { Trash2, Play, History, Clock } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { MovieInfo } from "@/utils/movie-requests/request";
 import { InfoImagesCreditsTV } from "@/utils/tv-requests/request";
 import { MovieInfoType, TVInfo } from "@/utils/types";
-import Link from "next/link";
 
 interface WatchHistoryItem {
   id: string | number;
@@ -15,7 +20,6 @@ interface WatchHistoryItem {
   description: string;
   watch_status: "Completed" | "Plan to Watch" | "Watching";
   type: "MOVIE" | "TV";
-  // For TV shows, the overview contains season and episode info in format "Season X, Episode Y"
   overview?: string;
 }
 
@@ -23,9 +27,7 @@ export default function WatchHistoryPage() {
   const router = useRouter();
   const [history, setHistory] = useState<WatchHistoryItem[]>([]);
   const [activeTab, setActiveTab] = useState("Watching");
-  const [hoverData, setHoverData] = useState<MovieInfoType | TVInfo | null>(
-    null
-  );
+  const [hoverData, setHoverData] = useState<MovieInfoType | TVInfo | null>(null);
   const [hoverPosition, setHoverPosition] = useState({ x: 0, y: 0 });
   const [isLoading, setIsLoading] = useState(false);
   const [showHoverMenu, setShowHoverMenu] = useState(false);
@@ -39,11 +41,8 @@ export default function WatchHistoryPage() {
       setHistory([]);
     }
   }, []);
-  // New hover functionality
-  const handleMouseEnter = async (
-    e: React.MouseEvent,
-    item: WatchHistoryItem
-  ) => {
+
+  const handleMouseEnter = async (e: React.MouseEvent, item: WatchHistoryItem) => {
     setHoverPosition({ x: e.clientX, y: e.clientY });
     setShowHoverMenu(true);
     setIsLoading(true);
@@ -88,11 +87,11 @@ export default function WatchHistoryPage() {
       console.error("Error saving watch history:", error);
     }
   };
+
   const handleResume = (item: WatchHistoryItem) => {
     if (item.type === "MOVIE") {
       router.push(`/movies/${item.id}`);
     } else {
-      // For TV shows, extract season and episode from overview if available
       let season = "1",
         episode = "1";
       if (item.overview) {
@@ -108,138 +107,136 @@ export default function WatchHistoryPage() {
 
   const filteredHistory = {
     Watching: history.filter((item) => item.watch_status === "Watching"),
-    "Plan to Watch": history.filter(
-      (item) => item.watch_status === "Plan to Watch"
-    ),
+    "Plan to Watch": history.filter((item) => item.watch_status === "Plan to Watch"),
     Completed: history.filter((item) => item.watch_status === "Completed"),
   };
 
   return (
     <main className="container mx-auto p-4 min-h-screen">
       <h1 className="text-3xl font-bold text-center mb-8">Watch History</h1>
-      {/* DaisyUI Tab Navigation */}
-      <div role="tablist" className="tabs tabs-boxed max-w-lg mb-6">
-        <a
-          role="tab"
-          className={`tab ${activeTab === "Watching" ? "tab-active" : ""}`}
-          onClick={() => setActiveTab("Watching")}
-        >
-          Watching
-        </a>
-        <a
-          role="tab"
-          className={`tab ${activeTab === "Plan to Watch" ? "tab-active" : ""}`}
-          onClick={() => setActiveTab("Plan to Watch")}
-        >
-          Plan to Watch
-        </a>
-        <a
-          role="tab"
-          className={`tab ${activeTab === "Completed" ? "tab-active" : ""}`}
-          onClick={() => setActiveTab("Completed")}
-        >
-          Completed
-        </a>
-      </div>{" "}
-      {/* Content Section */}
-      <div className="space-y-4">
-        {filteredHistory[activeTab as keyof typeof filteredHistory].length ===
-        0 ? (
-          <p className="text-center text-gray-500">No items in this category</p>
+      
+      <div className="flex bg-muted p-1 rounded-lg max-w-lg mb-8 mx-auto">
+        {["Watching", "Plan to Watch", "Completed"].map((tab) => (
+          <button
+            key={tab}
+            className={`flex-1 py-2 text-sm font-medium rounded-md transition-all ${
+              activeTab === tab 
+                ? "bg-background shadow-sm text-foreground" 
+                : "text-muted-foreground hover:text-foreground"
+            }`}
+            onClick={() => setActiveTab(tab)}
+          >
+            {tab}
+          </button>
+        ))}
+      </div>
+
+      <div className="grid gap-4 max-w-4xl mx-auto">
+        {(filteredHistory[activeTab as keyof typeof filteredHistory] || []).length === 0 ? (
+          <div className="text-center py-20 border-2 border-dashed rounded-xl border-muted">
+            <History className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+            <p className="text-muted-foreground text-lg">No items in this category</p>
+          </div>
         ) : (
-          filteredHistory[activeTab as keyof typeof filteredHistory].map(
-            (item) => (
-              <div
-                key={item.id}
-                className="card lg:card-side bg-base-200 shadow-xl hover:shadow-2xl transition-all duration-300"
-                onMouseEnter={(e) => handleMouseEnter(e, item)}
-                onMouseLeave={handleMouseLeave}
-                onMouseMove={handleMouseMove}
-              >
-                <Link
-                  href={`${
-                    item.type === "MOVIE"
-                      ? `/movies/${item.id}`
-                      : `/web-series/${item.id}`
-                  }`}
-                  className="flex w-full h-full"
+          filteredHistory[activeTab as keyof typeof filteredHistory].map((item) => (
+            <Card key={item.id} className="overflow-hidden group hover:shadow-md transition-shadow">
+              <div className="flex flex-col sm:flex-row">
+                <div 
+                  className="relative w-full sm:w-[150px] aspect-[2/3] sm:aspect-auto"
+                  onMouseEnter={(e) => handleMouseEnter(e, item)}
+                  onMouseLeave={handleMouseLeave}
+                  onMouseMove={handleMouseMove}
                 >
                   {item.poster && (
-                    <figure className="w-[120px] h-[180px] flex-shrink-0 relative overflow-hidden">
-                      <Image
-                        src={
-                          item.poster.startsWith("http")
-                            ? item.poster
-                            : `https://image.tmdb.org/t/p/w185${item.poster}`
-                        }
-                        alt={item.title}
-                        className="object-cover rounded-l-lg"
-                        fill
-                        sizes="120px"
-                        priority={false}
-                      />
-                    </figure>
+                    <Image
+                      src={item.poster.startsWith("http") ? item.poster : `https://image.tmdb.org/t/p/w342${item.poster}`}
+                      alt={item.title}
+                      className="object-cover"
+                      fill
+                    />
                   )}
-                  <div className="card-body flex-row justify-between items-center p-4">
-                    <div className="flex-1">
-                      <h2 className="card-title text-lg">{item.title}</h2>
-                      <div className="badge badge-primary my-2">
-                        {item.watch_status}
-                      </div>
-                      <p className="text-gray-400 line-clamp-2 text-sm">
-                        {item.description}
-                      </p>
-                    </div>
-                    <div className="flex flex-col gap-2 ml-4">
-                      <button
-                        onClick={() => handleResume(item)}
-                        className="btn btn-primary btn-sm"
-                      >
-                        {item.watch_status === "Plan to Watch"
-                          ? "Start"
-                          : "Resume"}
-                      </button>
-                      <button
-                        onClick={() => handleDelete(item.id)}
-                        className="btn btn-error btn-sm"
-                      >
-                        Delete
-                      </button>
-                    </div>
+                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none sm:pointer-events-auto">
+                    <Button 
+                      variant="secondary" 
+                      size="icon" 
+                      className="rounded-full shadow-lg scale-90 group-hover:scale-100 transition-transform"
+                      onClick={() => handleResume(item)}
+                    >
+                      <Play className="h-5 w-5 fill-current" />
+                    </Button>
                   </div>
-                </Link>
+                </div>
+                
+                <CardContent className="flex-1 p-6 flex flex-col justify-between">
+                  <div>
+                    <div className="flex justify-between items-start gap-4 mb-2">
+                      <h2 className="text-xl font-bold line-clamp-1">{item.title}</h2>
+                      <Badge variant="secondary" className="capitalize">
+                        {item.type}
+                      </Badge>
+                    </div>
+                    
+                    <p className="text-muted-foreground text-sm line-clamp-2 mb-4">
+                      {item.description}
+                    </p>
+
+                    {item.overview && (
+                      <div className="flex items-center gap-2 text-xs text-primary bg-primary/10 px-2 py-1 rounded w-fit">
+                        <Clock className="h-3 w-3" />
+                        {item.overview}
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="flex justify-end items-center gap-2 mt-6">
+                    <Button 
+                      variant="destructive" 
+                      size="sm" 
+                      className="gap-2"
+                      onClick={() => handleDelete(item.id)}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                      Remove
+                    </Button>
+                    <Button 
+                      variant="default" 
+                      size="sm" 
+                      className="gap-2 px-6"
+                      onClick={() => handleResume(item)}
+                    >
+                      <Play className="h-4 w-4 fill-current" />
+                      {activeTab === "Plan to Watch" ? "Start" : "Resume"}
+                    </Button>
+                  </div>
+                </CardContent>
               </div>
-            )
-          )
-        )}{" "}
+            </Card>
+          ))
+        )}
       </div>
-      {/* Hover Menu */}
+
       {showHoverMenu && (
         <div
-          className="fixed z-50 bg-base-300 rounded-lg shadow-xl p-4 max-w-sm border border-base-content/20"
+          className="fixed z-50 bg-popover text-popover-foreground rounded-lg shadow-2xl p-4 max-w-sm border border-border animate-in fade-in zoom-in duration-200"
           style={{
-            left: `${hoverPosition.x + 10}px`,
-            top: `${hoverPosition.y + 10}px`,
-            transform:
-              hoverPosition.x >
-              (typeof window !== "undefined" ? window.innerWidth - 400 : 800)
-                ? "translateX(-100%)"
-                : "none",
+            left: `${hoverPosition.x + 20}px`,
+            top: `${hoverPosition.y + 20}px`,
+            transform: hoverPosition.x > (typeof window !== "undefined" ? window.innerWidth - 400 : 800) ? "translateX(-110%)" : "none",
           }}
         >
           {isLoading ? (
-            <div className="flex items-center gap-2">
-              <span className="loading loading-spinner loading-sm"></span>
-              <span>Loading details...</span>
+            <div className="flex items-center gap-3">
+              <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+              <span className="text-sm font-medium">Loading details...</span>
             </div>
           ) : hoverData ? (
-            <div className="space-y-2">
-              <h3 className="font-bold text-lg">
+            <div className="space-y-3">
+              <h3 className="font-bold text-base leading-tight">
                 {"title" in hoverData ? hoverData.title : hoverData.name}
               </h3>
 
               {hoverData.backdrop_path && (
-                <div className="relative w-full h-24 rounded overflow-hidden">
+                <div className="relative w-full aspect-video rounded overflow-hidden shadow-inner">
                   <Image
                     src={`https://image.tmdb.org/t/p/w500${hoverData.backdrop_path}`}
                     alt="Backdrop"
@@ -249,61 +246,27 @@ export default function WatchHistoryPage() {
                 </div>
               )}
 
-              <p className="text-sm text-gray-400 line-clamp-3">
+              <p className="text-xs text-muted-foreground line-clamp-3">
                 {hoverData.overview}
               </p>
 
-              <div className="grid grid-cols-2 gap-2 text-xs">
+              <div className="flex flex-wrap gap-x-4 gap-y-1 text-[10px] text-muted-foreground border-t pt-2">
                 {hoverData.vote_average && (
                   <div>
-                    <span className="font-semibold">Rating:</span>{" "}
+                    <span className="font-semibold text-primary">Rating:</span>{" "}
                     {hoverData.vote_average.toFixed(1)}/10
                   </div>
                 )}
-
-                {"release_date" in hoverData && hoverData.release_date && (
-                  <div>
-                    <span className="font-semibold">Released:</span>{" "}
-                    {new Date(hoverData.release_date).getFullYear()}
-                  </div>
-                )}
-
-                {"first_air_date" in hoverData && hoverData.first_air_date && (
-                  <div>
-                    <span className="font-semibold">First Aired:</span>{" "}
-                    {new Date(hoverData.first_air_date).getFullYear()}
-                  </div>
-                )}
-
                 {"runtime" in hoverData && hoverData.runtime && (
                   <div>
-                    <span className="font-semibold">Runtime:</span>{" "}
-                    {Math.floor(hoverData.runtime / 60)}h{" "}
-                    {hoverData.runtime % 60}m
+                    <span className="font-semibold text-primary">Runtime:</span>{" "}
+                    {Math.floor(hoverData.runtime / 60)}h {hoverData.runtime % 60}m
                   </div>
                 )}
-
-                {"number_of_seasons" in hoverData &&
-                  hoverData.number_of_seasons && (
-                    <div>
-                      <span className="font-semibold">Seasons:</span>{" "}
-                      {hoverData.number_of_seasons}
-                    </div>
-                  )}
               </div>
-
-              {hoverData.genres && hoverData.genres.length > 0 && (
-                <div className="text-xs">
-                  <span className="font-semibold">Genres:</span>{" "}
-                  {hoverData.genres
-                    .slice(0, 3)
-                    .map((genre: any) => genre.name)
-                    .join(", ")}
-                </div>
-              )}
             </div>
           ) : (
-            <div className="text-sm text-gray-500">Failed to load details</div>
+            <div className="text-xs text-destructive">Failed to load details</div>
           )}
         </div>
       )}

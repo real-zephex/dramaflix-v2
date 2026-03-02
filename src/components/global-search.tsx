@@ -1,185 +1,160 @@
 "use client";
 
-import { SetStateAction, useEffect, useState, useCallback } from "react";
+import { SetStateAction, useEffect, useState, useCallback, ReactNode } from "react";
 import { usePathname } from "next/navigation";
 import { useHotkeys } from "react-hotkeys-hook";
-
-import { AnimeRequestHandler } from "@/utils/anime-requests/request";
-import AnimesSearchFormatter from "./anime-ui/anime-search-formatter";
+import { Search as SearchIcon, Loader2, Command } from "lucide-react";
 
 import MoviesSearch from "./movies-ui/movie-search-formatter";
 import { MoviesSearchRequest } from "@/utils/movie-requests/request";
-
-import { SearchDramas } from "@/utils/kdrama-requests/request";
-import DramaSearchFormatter from "./kdrama-ui/drama-search-formatter";
-
 import { SearchTV } from "@/utils/tv-requests/request";
 import SeriesSearchFormatter from "./web-ui/search-cards";
 
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+import { ScrollArea } from "@/components/ui/scroll-area";
+
 const Search = () => {
   const pathname = usePathname() as string;
-  const [provider, setProvider] = useState<string>("");
+  const [provider, setProvider] = useState<string>("movies"); // Default to movies
   const [title, setTitle] = useState<string>("");
-  const [format, setFormat] = useState<JSX.Element>(<></>);
+  const [format, setFormat] = useState<ReactNode>(<></>);
+  const [isOpen, setIsOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    const test = pathname.split("/").length !== 0 ? pathname.split("/")[1] : "";
-    setProvider(test);
+    const segments = pathname.split("/");
+    const test = segments.length > 1 ? segments[1] : "";
+    if (["movies", "web-series"].includes(test)) {
+      setProvider(test);
+    }
   }, [pathname]);
 
-  const handleChange = (event: {
-    target: { value: SetStateAction<string> };
-  }) => {
-    setProvider(event.target.value);
-    console.log(`Selected: ${event.target.value}`);
-  };
-
   const handleSearch = useCallback(
-    async (event: { key: string; code: string }) => {
-      if (event.key === "Enter" || event.code === "Enter") {
-        // Intentionally left blank (do nothing)
-      } else {
-        return; // Exit the function if it's not the Enter key
-      }
+    async (event?: React.KeyboardEvent) => {
+      if (event && event.key !== "Enter") return;
+
+      if (!title.trim()) return;
+
+      setIsLoading(true);
       setFormat(
-        <div className="flex items-center justify-center">
-          <span className="loading loading-dots loading-md"></span>
+        <div className="flex h-[300px] items-center justify-center">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
         </div>,
       );
+
       let data;
-      if (provider === "movies") {
-        data = await MoviesSearchRequest(title);
-        const search_formatter = await MoviesSearch(data);
-        setFormat(search_formatter);
-      } else if (provider === "animes") {
-        data = await AnimeRequestHandler({ search: true, searchQuery: title });
-        const search_formatter = await AnimesSearchFormatter({ data });
-        setFormat(search_formatter);
-      } else if (provider === "kdramas") {
-        data = await SearchDramas(title);
-        const search_formatter = await DramaSearchFormatter({ data });
-        setFormat(search_formatter);
-      } else if (provider === "web-series") {
-        data = await SearchTV({ title: title });
-        const search_formatter = await SeriesSearchFormatter({ data });
-        setFormat(search_formatter);
+      try {
+        if (provider === "movies") {
+          data = await MoviesSearchRequest(title);
+          const search_formatter = await MoviesSearch(data);
+          setFormat(search_formatter);
+        } else if (provider === "web-series") {
+          data = await SearchTV({ title: title });
+          const search_formatter = await SeriesSearchFormatter({ data });
+          setFormat(search_formatter);
+        }
+      } catch (error) {
+        console.error("Search failed:", error);
+        setFormat(<div className="p-4 text-center text-destructive">Search failed. Please try again.</div>);
+      } finally {
+        setIsLoading(false);
       }
     },
     [title, provider],
   );
 
   useHotkeys("ctrl+k", (event) => {
-    event.preventDefault(); // Prevent the browser's default behavior
-    event.stopPropagation(); // Stop the event from propagating
-    const modal = document.getElementById(
-      "my_modal_4",
-    ) as HTMLDialogElement | null;
-    if (modal) {
-      modal.showModal();
-    }
+    event.preventDefault();
+    setIsOpen(true);
   });
 
   return (
-    <div>
-      <button
-        className="btn btn-ghost btn-circle"
-        onClick={() => {
-          const modal = document.getElementById(
-            "my_modal_4",
-          ) as HTMLDialogElement | null;
-          if (modal) {
-            modal.showModal();
-          }
-        }}
-        hidden={pathname == "/"}
-      >
-        <div>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-5 w-5"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-            />
-          </svg>
-        </div>
-      </button>
-      <dialog id="my_modal_4" className="modal items-start p-2">
-        <form method="dialog" className="modal-backdrop">
-          <button>close</button>
-        </form>
-        <div className="modal-box md:w-11/12 md:max-w-6xl p-2 w-full">
-          <div className="modal-action">
-            <form method="dialog">
-              <button className="btn btn-sm btn-circle absolute right-2 top-2">
-                ✕
-              </button>
-            </form>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      <DialogTrigger asChild>
+        <Button
+          variant="ghost"
+          className="relative h-9 w-9 md:w-auto md:h-10 md:px-4 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 text-muted-foreground hover:text-foreground transition-all flex items-center gap-2 group"
+          onClick={() => setIsOpen(true)}
+        >
+          <SearchIcon className="h-4 w-4 group-hover:scale-110 transition-transform" />
+          <span className="hidden md:inline-flex font-display text-sm font-medium">Search...</span>
+          <kbd className="pointer-events-none hidden md:flex h-5 select-none items-center gap-1 rounded-full bg-white/10 px-2 font-mono text-[10px] font-medium opacity-50">
+            <span className="text-[10px]">⌘</span>K
+          </kbd>
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="max-w-4xl p-0 gap-0 overflow-hidden bg-background/60 backdrop-blur-3xl border-white/10 shadow-2xl rounded-[2rem] md:rounded-[3rem]">
+        <div className="p-4 md:p-6 space-y-4">
+          <div className="relative group">
+            <div className="absolute inset-0 bg-primary/20 blur-2xl rounded-full opacity-0 group-focus-within:opacity-100 transition-opacity duration-500" />
+            <div className="relative flex items-center gap-3 bg-white/5 border border-white/10 rounded-full px-4 md:px-6 py-3 md:py-4 transition-all group-focus-within:border-primary/50 group-focus-within:bg-white/10">
+              <SearchIcon className="h-5 w-5 md:h-6 md:w-6 text-muted-foreground group-focus-within:text-primary transition-colors" />
+              <Input
+                className="flex-1 border-none bg-transparent shadow-none focus-visible:ring-0 text-base md:text-xl h-auto p-0 font-display font-medium placeholder:text-muted-foreground/50"
+                placeholder="What are you looking for?"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                onKeyDown={handleSearch}
+                autoFocus
+              />
+              <div className="flex items-center gap-2">
+                <Select value={provider} onValueChange={setProvider}>
+                  <SelectTrigger className="w-[100px] md:w-[140px] h-8 md:h-10 bg-white/5 border-white/10 rounded-full text-[10px] md:text-xs font-display">
+                    <SelectValue placeholder="Category" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-background/90 backdrop-blur-xl border-white/10 rounded-2xl">
+                    <SelectItem value="movies">Movies</SelectItem>
+                    <SelectItem value="web-series">Web-Series</SelectItem>
+                  </SelectContent>
+                </Select>
+                <Button
+                  size="sm"
+                  className="h-8 md:h-10 rounded-full font-display font-bold px-4 md:px-6 bg-primary hover:scale-105 transition-transform"
+                  onClick={() => handleSearch()}
+                  disabled={isLoading}
+                >
+                  {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Find"}
+                </Button>
+              </div>
+            </div>
           </div>
 
-          <section className="flex mt-4">
-            <div className="w-full">
-              <label className="input input-bordered flex items-center gap-2">
-                <input
-                  type="search"
-                  className="grow"
-                  placeholder="Search"
-                  value={title}
-                  onChange={(event) => {
-                    setTitle(event.target.value);
-                  }}
-                  onKeyDown={handleSearch}
-                  autoFocus={true}
-                />
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 16 16"
-                  fill="currentColor"
-                  className="h-4 w-4 opacity-70"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06l-2.755-2.754ZM10.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-              </label>
-            </div>
-            <select
-              className="select select-accent w-full max-w-36 ml-1"
-              onChange={handleChange}
-              value={provider}
-              defaultValue={"movies"}
+          <ScrollArea className="h-[50vh] md:h-[60vh] px-2">
+            <div
+              onClick={() => {
+                setIsOpen(false);
+                setTitle("");
+              }}
+              className="pb-4"
             >
-              <option value={"movies"}>Movies</option>
-              {/*<option value={"kdramas"}> K-Dramas</option>*/}
-              {/*<option value={"animes"}>Anime</option>*/}
-              <option value={"web-series"}>Web-Series</option>
-            </select>
-          </section>
-          <div
-            className="mt-1"
-            onClick={() => {
-              const modal = document.getElementById(
-                "my_modal_4",
-              ) as HTMLDialogElement | null;
-              if (modal) {
-                modal.close();
-              }
-              setTitle("");
-            }}
-          >
-            {format}
-          </div>
+              {format}
+            </div>
+            {!title && !format && (
+              <div className="flex flex-col items-center justify-center py-20 text-muted-foreground/40">
+                <Command className="h-16 w-16 mb-4 opacity-10" />
+                <p className="font-display text-lg font-medium tracking-wide">Enter a title to begin your journey</p>
+              </div>
+            )}
+          </ScrollArea>
         </div>
-      </dialog>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 };
+
 export default Search;

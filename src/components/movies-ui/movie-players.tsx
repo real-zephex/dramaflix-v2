@@ -1,11 +1,13 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-// import { FlixHQResultsHandler } from "@/utils/movie-requests/request";
-// import CustomVideoPlayer from "./custom-video-player";
 import { MovieInfoType } from "@/utils/types";
 import Link from "next/link";
 import { storeIntoLocal, watchStatusRetriever } from "@/utils/localStorage";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Card, CardContent } from "@/components/ui/card";
+import { Tv, Monitor, PlayCircle, Eye } from "lucide-react";
 
 const MoviePlayer = ({
   id,
@@ -14,105 +16,102 @@ const MoviePlayer = ({
   id: string;
   movieData: MovieInfoType;
 }) => {
-  // const data = await FlixHQResultsHandler({ movieId: id });
-
   const [watchStatus, setWatchStatus] = useState<string>("Not found");
   const vidLinksArray = [
-    // { title: "vidsrc.to", link: `https://vidsrc.to/embed/movie/${id}` },
     {
-      title: "1",
+      title: "Server 1",
       link: `https://embedmaster.link/1imz6ldd5kpmzdyi/movie/${id}`,
     },
-    // { title: "player-2", link: `https://playsrc.streamscripts.xyz/embed/movie/${id}` },
-    // {
-    //   title: "2",
-    //   link: `https://multiembed.mov/directstream.php?video_id=${id}&tmdb=1`,
-    // },
     {
-      title: "2",
+      title: "Server 2",
       link: `https://vidsrc.vip/embed/movie/${id}?autoplay=false`,
     },
-    // {
-    //   title: "player-3",
-    //   link: `https://sup-proxy.zephex0-f6c.workers.dev/api-content?url=https://stable-one.autoembed.cc/movie/${id}`,
-    // },
     {
-      title: "3",
+      title: "Server 3",
       link: `https://vidsrc.icu/embed/movie/${id}`,
     },
   ];
 
   useEffect(() => {
-    const watchStatus = watchStatusRetriever(String(movieData.id));
-    setWatchStatus(watchStatus);
-  }, []);
+    const status = watchStatusRetriever(String(movieData.id));
+    setWatchStatus(status);
+  }, [movieData.id]);
 
-  function detectSelectChange(event: React.ChangeEvent<HTMLSelectElement>) {
-    const value = event.target.value;
+  const handleStatusChange = (value: string) => {
     const watchOperationStatus = storeIntoLocal({
       type: "MOVIE",
       movieData,
       status: value as "Completed" | "Plan to Watch" | "Watching",
     });
     if (watchOperationStatus) {
+      setWatchStatus(value);
     } else {
-      alert(
-        "An error occurred while trying to save your watch status. Please try again.",
-      );
+      alert("An error occurred while trying to save your watch status. Please try again.");
     }
-  }
+  };
 
   return (
-    <div role="tablist" className="tabs tabs-boxed">
-      {vidLinksArray.map((items, index) => (
-        <React.Fragment key={items.title}>
-          <input
-            type="radio"
-            name="my_tabs_2"
-            role="tab"
-            id={`tab${index}`}
-            className="tab"
-            aria-label={items.title}
-            defaultChecked={items.title === "1" ? true : false}
-          />
-          <div
-            role="tabpanel"
-            className="tab-content bg-base-100 border-base-300 rounded-box p-2 "
-          >
-            <iframe
-              src={items.link}
-              allowFullScreen
-              height={720}
-              className="w-full h-[240px] md:h-[480px] lg:h-[720px] rounded-lg"
-            />
-            <div className="py-2 flex flex-row items-center justify-between">
-              <p className="xl:text-lg lg:text-md md:text-sm text-xs">
-                You are watching{" "}
-                <span className="text-orange-300">{movieData.title}</span> on{" "}
-                <span className="text-cyan-300 underline underline-offset-4">
-                  <Link href={"https://free-media.netlify.app"}>Dramaflix</Link>
-                </span>
-              </p>
-              <select
-                className="select select-bordered w-full max-w-xs"
-                onChange={detectSelectChange}
+    <Card className="border-none bg-transparent shadow-none">
+      <Tabs defaultValue="Server 1" className="w-full">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
+          <TabsList className="bg-muted/50 p-1 rounded-xl border border-border/50">
+            {vidLinksArray.map((items) => (
+              <TabsTrigger 
+                key={items.title} 
+                value={items.title} 
+                className="rounded-lg data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-bold"
               >
-                <option disabled selected={watchStatus === "Not found"}>
-                  Mark as?
-                </option>
-                <option selected={watchStatus === "Completed"}>
-                  Completed
-                </option>
-                <option selected={watchStatus === "Plan to Watch"}>
-                  Plan to Watch
-                </option>
-                <option selected={watchStatus === "Watching"}>Watching</option>
-              </select>
-            </div>
+                <Monitor className="h-4 w-4 mr-2" />
+                {items.title}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+
+          <div className="flex items-center gap-3">
+            <span className="text-xs font-black uppercase tracking-widest text-muted-foreground whitespace-nowrap">Status:</span>
+            <Select onValueChange={handleStatusChange} value={watchStatus === "Not found" ? undefined : watchStatus}>
+              <SelectTrigger className="w-[180px] bg-card border-border/50 font-bold">
+                <SelectValue placeholder="Mark as?" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="Watching" className="font-bold">Watching</SelectItem>
+                <SelectItem value="Completed" className="font-bold">Completed</SelectItem>
+                <SelectItem value="Plan to Watch" className="font-bold">Plan to Watch</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
-        </React.Fragment>
-      ))}
-    </div>
+        </div>
+
+        {vidLinksArray.map((items) => (
+          <TabsContent key={items.title} value={items.title} className="mt-0 focus-visible:outline-none focus-visible:ring-0">
+            <div className="relative aspect-video w-full rounded-2xl overflow-hidden shadow-2xl border border-border/50 bg-black">
+              <iframe
+                src={items.link}
+                allowFullScreen
+                className="absolute inset-0 w-full h-full"
+                title={`Movie Player - ${items.title}`}
+              />
+            </div>
+            
+            <div className="mt-4 p-4 bg-muted/20 rounded-2xl border border-border/50 flex flex-col md:flex-row md:items-center justify-between gap-2">
+              <div className="flex items-center gap-2">
+                <PlayCircle className="h-5 w-5 text-primary" />
+                <p className="text-sm font-medium">
+                  Streaming <span className="text-primary font-black italic">{movieData.title}</span> on 
+                  <span className="ml-1 text-foreground font-bold underline decoration-primary/30 underline-offset-4 cursor-pointer hover:text-primary transition-colors">
+                    Dramaflix
+                  </span>
+                </p>
+              </div>
+              <div className="flex items-center gap-2 text-xs text-muted-foreground font-bold">
+                <Eye className="h-3 w-3" />
+                <span>Source: {items.title}</span>
+              </div>
+            </div>
+          </TabsContent>
+        ))}
+      </Tabs>
+    </Card>
   );
 };
 
