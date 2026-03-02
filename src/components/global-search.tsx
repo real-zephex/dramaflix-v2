@@ -44,7 +44,7 @@ const Search = () => {
       setFormat(
         <div className="flex items-center justify-center">
           <span className="loading loading-dots loading-md"></span>
-        </div>
+        </div>,
       );
       let data;
       if (provider === "movies") {
@@ -65,14 +65,14 @@ const Search = () => {
         setFormat(search_formatter);
       }
     },
-    [title, provider]
+    [title, provider],
   );
 
   useHotkeys("ctrl+k", (event) => {
     event.preventDefault(); // Prevent the browser's default behavior
     event.stopPropagation(); // Stop the event from propagating
     const modal = document.getElementById(
-      "my_modal_4"
+      "my_modal_4",
     ) as HTMLDialogElement | null;
     if (modal) {
       modal.showModal();
@@ -85,7 +85,7 @@ const Search = () => {
         className="btn btn-ghost btn-circle"
         onClick={() => {
           const modal = document.getElementById(
-            "my_modal_4"
+            "my_modal_4",
           ) as HTMLDialogElement | null;
           if (modal) {
             modal.showModal();
@@ -155,13 +155,11 @@ const Search = () => {
               className="select select-accent w-full max-w-36 ml-1"
               onChange={handleChange}
               value={provider}
+              defaultValue={"movies"}
             >
-              <option disabled value={""}>
-                Select
-              </option>
               <option value={"movies"}>Movies</option>
-              <option value={"kdramas"}> K-Dramas</option>
-              <option value={"animes"}>Anime</option>
+              {/*<option value={"kdramas"}> K-Dramas</option>*/}
+              {/*<option value={"animes"}>Anime</option>*/}
               <option value={"web-series"}>Web-Series</option>
             </select>
           </section>
@@ -169,7 +167,7 @@ const Search = () => {
             className="mt-1"
             onClick={() => {
               const modal = document.getElementById(
-                "my_modal_4"
+                "my_modal_4",
               ) as HTMLDialogElement | null;
               if (modal) {
                 modal.close();

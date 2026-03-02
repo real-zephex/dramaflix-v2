@@ -5,7 +5,6 @@ import { GoogleAnalytics } from "@next/third-parties/google";
 
 import Navbar from "@/components/ui/navbar";
 import { font_lexend } from "@/components/fonts";
-// import Donate from "@/components/ui/donate";
 import Script from "next/script";
 
 const APP_NAME = "Dramaflix";
