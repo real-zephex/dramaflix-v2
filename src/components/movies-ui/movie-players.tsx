@@ -19,7 +19,10 @@ const MoviePlayer = ({
   const [watchStatus, setWatchStatus] = useState<string>("Not found");
   const vidLinksArray = [
     // { title: "vidsrc.to", link: `https://vidsrc.to/embed/movie/${id}` },
-    { title: "1", link: `https://embedmaster.link/movie/${id}` },
+    {
+      title: "1",
+      link: `https://embedmaster.link/1imz6ldd5kpmzdyi/movie/${id}`,
+    },
     // { title: "player-2", link: `https://playsrc.streamscripts.xyz/embed/movie/${id}` },
     // {
     //   title: "2",

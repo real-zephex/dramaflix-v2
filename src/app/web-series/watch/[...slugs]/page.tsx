@@ -18,7 +18,7 @@ type Props = {
 
 export async function generateMetadata(
   { params }: Props,
-  parent: ResolvingMetadata
+  parent: ResolvingMetadata,
 ): Promise<Metadata> {
   try {
     const series_id = params.slugs[2];
@@ -114,7 +114,7 @@ const SeriesPlayer = async ({ params }: { params: { slugs: string[] } }) => {
   const seriesLinksArray = [
     {
       title: "1",
-      link: `https://vidsrc.pro/embed/tv/${series_id}/${season_number}/${episode_number}`,
+      link: `https://embedmaster.link/1imz6ldd5kpmzdyi/tv/${series_id}/${season_number}/${episode_number}`,
     },
     {
       title: "2",
