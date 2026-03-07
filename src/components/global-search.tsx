@@ -61,12 +61,10 @@ const Search = () => {
       try {
         if (provider === "movies") {
           data = await MoviesSearchRequest(title);
-          const search_formatter = await MoviesSearch(data);
-          setFormat(search_formatter);
+          setFormat(<MoviesSearch data={data} />);
         } else if (provider === "web-series") {
           data = await SearchTV({ title: title });
-          const search_formatter = await SeriesSearchFormatter({ data });
-          setFormat(search_formatter);
+          setFormat(<SeriesSearchFormatter data={data} />);
         }
       } catch (error) {
         console.error("Search failed:", error);

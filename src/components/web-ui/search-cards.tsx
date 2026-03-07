@@ -1,11 +1,9 @@
-"use server";
-
 import Image from "next/image";
 import Link from "next/link";
 
 import { TVSearch } from "@/utils/types";
 
-const SeriesSearchFormatter = async ({ data }: { data: TVSearch | null }) => {
+const SeriesSearchFormatter = ({ data }: { data: TVSearch | null }) => {
   return (
     <div className="flex flex-col mt-4">
       {data?.results && data.results.length > 0 ? (

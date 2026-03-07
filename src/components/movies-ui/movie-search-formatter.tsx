@@ -1,11 +1,13 @@
-"use server";
-
 import Image from "next/image";
 import Link from "next/link";
 
 import { MoviesHomepageResults } from "@/utils/types";
 
-const MoviesSearch = async (data: MoviesHomepageResults | undefined) => {
+const MoviesSearch = ({
+  data,
+}: {
+  data: MoviesHomepageResults | undefined;
+}) => {
   return (
     <div className="flex flex-col mt-4">
       {data && data.results.length > 0 ? (
