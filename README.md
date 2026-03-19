@@ -1,6 +1,10 @@
 # Dramaflix - Modern Streaming Platform
 
-A feature-rich streaming platform for movies and TV series built with Next.js 16, React 19, and TypeScript. Browse, search, and watch your favorite content with multi-source playback options and intelligent watch history tracking.
+> **⚠️ Educational Project | For Learning Purposes Only**
+
+A feature-rich streaming **aggregator** for movies and TV series built with Next.js 16, React 19, and TypeScript. This is a **frontend application** that demonstrates modern web development practices by aggregating metadata from legitimate APIs and linking to external streaming services. It does **not perform scraping** or host any content.
+
+Browse, search, and manage your watch history with multi-source playback options.
 
 ![Next.js](https://img.shields.io/badge/Next.js-16.1.6-black?style=flat-square&logo=next.js)
 ![React](https://img.shields.io/badge/React-19.2.4-61dafb?style=flat-square&logo=react)
@@ -18,6 +22,78 @@ A feature-rich streaming platform for movies and TV series built with Next.js 16
 - 🎨 **Responsive Design** - Perfect experience on mobile, tablet, and desktop
 - 🌙 **Dark Mode** - Beautifully crafted dark theme by default
 - ⌨️ **Keyboard Shortcuts** - System shortcuts for search and player controls
+
+## ⚠️ Legal Disclaimer & Educational Use
+
+**IMPORTANT:** This project is a **frontend application for educational purposes only**. It is designed to demonstrate modern web development practices using Next.js, React, and TypeScript.
+
+### What This Project Does NOT Do
+- ❌ **Does NOT perform web scraping** - This is not a scraper
+- ❌ **Does NOT host any content** - No movies, series, or media files are stored on this project
+- ❌ **Does NOT bypass copyright protection** - It does not circumvent DRM or access controls
+- ❌ **Does NOT distribute protected content** - It is merely a user interface/aggregator
+
+### What This Project Actually Does
+- ✅ **Aggregates metadata** from legitimate, publicly-available APIs (TMDB)
+- ✅ **Displays information** about movies and TV series (titles, descriptions, cast, ratings)
+- ✅ **Links to external services** - All streaming content is provided through third-party services
+- ✅ **Uses existing, authorized APIs** - TMDB API is free and publicly available with proper attribution
+
+### Educational Purpose
+This project is created to:
+- Learn and demonstrate modern frontend development with Next.js 16 and React 19
+- Practice TypeScript, component design, and state management
+- Understand API integration and data fetching patterns
+- Develop responsive UI with Tailwind CSS and accessible components (Radix UI)
+- Implement features like search, filtering, and local storage
+
+### User Responsibility & Legal Notice
+**Users of this project are solely responsible for:**
+- Ensuring their use complies with **local laws and regulations** in their jurisdiction
+- Respecting the **terms of service** of any streaming platforms they access through this application
+- Verifying they have **legal rights** to watch content through available services
+- Understanding that the project creator/maintainers are **not responsible** for how users utilize this application
+
+### Important Notes
+
+1. **API Attribution**: This project uses:
+   - [TMDB API](https://www.themoviedb.org/) - Metadata and information
+   - [Consumet API](https://api.consumet.org/) - Streaming aggregation service
+   - Third-party embed services - For actual video playback
+
+2. **No Content Stored Here**: 
+   - This repository contains only source code
+   - No movies, series, images, or media files are included
+   - All content is fetched from external APIs at runtime
+
+3. **Previous Repository Takedown**:
+   - The original Dramaflix repository was taken down due to DMCA concerns
+   - This version is designed with **explicit focus on legality and proper API usage**
+   - It demonstrates how to build streaming platforms **responsibly**
+
+4. **Proper Usage**:
+   - Deploy this on your own infrastructure
+   - Ensure you have proper API keys and comply with API terms
+   - Use only with content you have rights to access
+   - Respect copyright and intellectual property rights
+
+### Copyright & Intellectual Property
+This project itself is MIT licensed, but **you are responsible for respecting copyrights** of:
+- Movies and TV series metadata
+- Streaming content accessed through the application
+- Third-party services and their terms of service
+
+If you are a copyright holder and believe this project violates your rights, please contact the project maintainers immediately.
+
+---
+
+**By using this project, you acknowledge that:**
+1. You understand it is for educational purposes
+2. You will use it in compliance with applicable laws
+3. You will respect the terms of service of any platforms you access
+4. You accept full responsibility for your usage
+
+---
 
 ## Tech Stack
 
@@ -230,6 +306,35 @@ bun run lint
 - **CSS Optimization**: Tailwind CSS purging unused classes
 
 
+## API Integration
+
+### TMDB API (The Movie Database)
+
+**Legal Status**: ✅ Free, public, and officially authorized API
+**Base URL**: `https://api.themoviedb.org/3/`
+
+**Key Endpoints** (metadata only):
+- `/discover/movie` - Discover movies with filters
+- `/movie/{id}` - Movie details
+- `/movie/{id}/credits` - Movie cast and crew
+- `/trending/tv/week` - Trending TV series
+- `/tv/{id}/season/{season_number}` - Season episodes
+- `/tv/{id}/season/{season_number}/episode/{episode_number}` - Episode details
+
+**Implementation**: See `src/utils/movie-requests/request.ts` and `src/utils/tv-requests/request.ts`
+
+**Compliance Note**: TMDB is a **legitimate, authorized API** that provides metadata. You must sign up for an API key at [themoviedb.org](https://www.themoviedb.org/settings/api). The API has terms of service that should be respected.
+
+### Consumet API (Third-party Aggregator)
+
+**Purpose**: Links to external streaming services
+
+**Endpoints**:
+- `/tmdb/info/` - Movie/series metadata
+- `/tmdb/watch/` - Streaming links
+
+**Compliance Note**: Consumet is a third-party service that aggregates links. Users should verify the legality of content they access through this service based on their local laws and streaming service terms.
+
 ## Deployment
 
 ### Deploy to Vercel (Recommended)
@@ -296,6 +401,8 @@ Contributions are welcome! Please:
 ## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
+
+**License Disclaimer**: The MIT license applies to the **source code** of this project only. Users are entirely responsible for ensuring their use of this application complies with applicable laws, the terms of service of any streaming platforms they access, and respecting the intellectual property rights of copyright holders.
 
 ## Acknowledgments
 
