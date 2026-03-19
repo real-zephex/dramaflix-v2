@@ -30,6 +30,10 @@ const MoviePlayer = ({
       title: "Server 3",
       link: `https://vidsrc.icu/embed/movie/${id}`,
     },
+    {
+      title: "Server 4",
+      link: `https://vidzen.fun/movie/${id}`,
+    },
   ];
 
   useEffect(() => {
